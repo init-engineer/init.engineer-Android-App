@@ -1,7 +1,8 @@
-package engineer.kaobei
+package engineer.kaobei.Activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import engineer.kaobei.R
 
 class MainActivity : AppCompatActivity() {
 
