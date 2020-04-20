@@ -1,0 +1,2 @@
+rootProject.name='init.engineer-Android-App'
+include ':app'
