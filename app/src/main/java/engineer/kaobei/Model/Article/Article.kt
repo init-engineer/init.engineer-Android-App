@@ -2,20 +2,22 @@ package engineer.kaobei.Model.Article
 
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-data class Data(
+data class Article(
+
     @SerializedName("content")
-    val content: String,
+    val content: String = "",
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: String = "",
     @SerializedName("created_diff")
-    val createdDiff: String,
+    val createdDiff: String = "",
     @SerializedName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerializedName("image")
-    val image: String,
+    val image: String = "",
     @SerializedName("updated_at")
-    val updatedAt: String,
+    val updatedAt: String = "",
     @SerializedName("updated_diff")
-    val updatedDiff: String
+    val updatedDiff: String = ""
 )

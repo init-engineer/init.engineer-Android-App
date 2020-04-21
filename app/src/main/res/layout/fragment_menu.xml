@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".Fragment.MenuFragment">
+
+    <ImageView
+        android:scaleType="centerCrop"
+        android:id="@+id/background_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:src="@drawable/kb" />
+
+        <TextView
+            android:id="@+id/menu_item_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="20sp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/menu_1B"
+            android:fontFamily="@font/dos"
+            android:textColor="@color/FxWhite"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/menu_item_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20sp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/menu_2B"
+            android:fontFamily="@font/dos"
+            android:textColor="@color/FxWhite"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/menu_item_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20sp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/dos"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/menu_3B"
+            android:textColor="@color/FxWhite"
+            android:textSize="20sp" />
+
+        <TextView
+            android:fontFamily="@font/dos"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:id="@+id/menu_item_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20sp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/menu_4B"
+            android:textColor="@color/FxWhite"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

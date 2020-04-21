@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 /**
  * Base class for the function to implement load more on recyclerview
-
  */
 class RecyclerViewLoadMoreScroll : RecyclerView.OnScrollListener {
 
