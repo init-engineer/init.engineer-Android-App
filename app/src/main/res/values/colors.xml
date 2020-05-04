@@ -5,4 +5,15 @@
     <color name="colorAccent">#00FF00</color>
 
     <color name="FxWhite">#FAFAFA</color>
+    <color name="FxBlack">#121212</color>
+    <color name="FxBlackT">#252525</color>
+
+    <color name="FxFB">#374CD1</color>
+    <color name="FxPL">#FF4E47</color>
+
+    <color name="FXTW">#00ACEE</color>
+    <color name="FXYE">#FFFF00</color>
+    <color name="FXLL">#536DFE</color>
+    <color name="FXGY">#1C536DFE</color>
+    <color name="FXBB">#E51331D8</color>
 </resources>

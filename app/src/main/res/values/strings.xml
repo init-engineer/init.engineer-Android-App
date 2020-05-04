@@ -10,14 +10,23 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="card1_see_more">詳細內容</string>
+
+
     <string name="menu_1A">首頁 Index</string>
     <string name="menu_1B">Index.js</string>
     <string name="menu_2A">文章列表 ArticleList</string>
     <string name="menu_2B">ArticleList.php</string>
     <string name="menu_3A">儀錶板 Dashboard</string>
     <string name="menu_3B">Dashboard.py</string>
-    <string name="menu_4A">關於 About</string>
-    <string name="menu_4B">About.html</string>
+    <string name="menu_4A">發表文章 NewArticle</string>
+    <string name="menu_4B">NewArticle.html</string>
 
+    <string name="media_fb1">Facebook 主站</string>
+    <string name="media_fb2">Facebook 次站</string>
+    <string name="media_plurk">Plurk 主站</string>
+    <string name="media_twitter">Twitter 主站</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

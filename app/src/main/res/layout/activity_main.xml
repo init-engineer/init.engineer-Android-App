@@ -1,34 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".Activity.MainActivity">
+    app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+    tools:context=".Activity.ui.MainActivity">
+
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/mobile_navigation" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="@dimen/fab_margin"
+        android:elevation="0dp"
+        android:text="選單"
+        android:visibility="gone"
+        app:backgroundTint="@color/colorAccent"
+        app:icon="@drawable/ic_menu_white_24dp"
+        app:layout_behavior="@string/fab_transformation_scrim_behavior"
+        app:shapeAppearance="@style/MainMenuFabShapeOverlay" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:elevation="5dp"
+        android:visibility="visible"
+        app:cardBackgroundColor="@color/FxBlackT"
+        app:cardCornerRadius="10dp">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:orientation="horizontal">
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/main_viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+             <!--   <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="純"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="靠"
+                    android:textColor="@color/FXYE"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="北"
+                    android:textColor="@android:color/holo_blue_bright"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="工"
+                    android:textColor="@android:color/holo_purple"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="程"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="師"
+                    android:textColor="@color/FXLL"
+                    android:textSize="16sp" />-->
+
+                <TextView
+                    android:fontFamily="@font/dos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Init.Engineer"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/nav_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/FxBlackT"
+                app:itemIconTint="@color/bnv_color"
+                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+                app:labelVisibilityMode="unlabeled"
+                android:layout_gravity="bottom"
+                app:menu="@menu/navigation">
+
+            </com.google.android.material.bottomnavigation.BottomNavigationView>
+
         </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:text="選單"
-            android:id="@+id/fab"
-            android:elevation="0dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|left"
-            app:backgroundTint="@color/colorAccent"
-            app:icon="@drawable/ic_menu_white_24dp"
-            app:layout_behavior="@string/fab_transformation_scrim_behavior"
-            android:layout_margin="@dimen/fab_margin" />
+
+    </com.google.android.material.card.MaterialCardView>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

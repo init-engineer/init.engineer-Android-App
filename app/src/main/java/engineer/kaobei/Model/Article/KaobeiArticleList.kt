@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class KaobeiArticleList(
     @SerializedName("data")
-    val `data`: List<Article>,
+    val `data`: List<Article>  = listOf(),
     @SerializedName("meta")
-    val meta: Meta
+    val meta: Meta = Meta()
 )

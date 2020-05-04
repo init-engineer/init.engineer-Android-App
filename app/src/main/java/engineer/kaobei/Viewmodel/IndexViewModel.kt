@@ -1,7 +1,7 @@
-package engineer.kaobei.Fragment
+package engineer.kaobei.Viewmodel
 
 import androidx.lifecycle.ViewModel
 
-class DashBoardViewModel : ViewModel() {
+class IndexViewModel : ViewModel() {
     // TODO: Implement the ViewModel
 }

@@ -1,6 +1,7 @@
 package engineer.kaobei.Fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -10,12 +11,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
+import engineer.kaobei.Activity.ui.ArticleActivity
+import engineer.kaobei.Viewmodel.ArticleListViewModel
 import engineer.kaobei.Model.Article.Article
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
@@ -23,18 +26,16 @@ import engineer.kaobei.RecyclerViewLoadMoreScroll
 
 class ArticleListFragment : Fragment() {
 
-    //The First loading of RecyclerView
-    var init = false
-
-    lateinit var headerView : TextView
-    lateinit var recyclerView : RecyclerView
-    lateinit var shimmer1 : ShimmerFrameLayout
-    lateinit var shimmer2 : ShimmerFrameLayout
-    lateinit var shimmer3 : ShimmerFrameLayout
-    lateinit var scrollListener : RecyclerViewLoadMoreScroll
+    lateinit var headerView: TextView
+    lateinit var recyclerView: RecyclerView
+    lateinit var shimmer1: ShimmerFrameLayout
+    lateinit var shimmer2: ShimmerFrameLayout
+    lateinit var shimmer3: ShimmerFrameLayout
+    lateinit var scrollListener: RecyclerViewLoadMoreScroll
 
     companion object {
-        private lateinit var adapter : LoadMoreRecyclerView
+        //The First loading of RecyclerView
+        private lateinit var adapter: LoadMoreRecyclerView
         fun newInstance() = ArticleListFragment()
     }
 
@@ -48,6 +49,7 @@ class ArticleListFragment : Fragment() {
             R.layout.fragment_article_list, container,
             false
         )
+        init = false
         headerView = view.findViewById(R.id.header_view)
         shimmer1 = view.findViewById(R.id.shimmer_view_container1)
         shimmer2 = view.findViewById(R.id.shimmer_view_container2)
@@ -56,11 +58,24 @@ class ArticleListFragment : Fragment() {
         return view
     }
 
+    var init = false
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(ArticleListViewModel::class.java)
+        viewModel.addOnReceiveDataListener(object :
+            ArticleListViewModel.OnReceiveDataListener {
+            override fun onReceiveData(list: List<Article>) {
+                if (init) {
+                    adapter.removeLoadingView()
+                    scrollListener.setLoaded()
+                }
+            }
+
+        })
+
         viewModel.getArticles().observe(this, Observer<List<Article>> { articles ->
-            if(!init){
+            if (!init) {
                 headerView.visibility = View.GONE
                 shimmer1.visibility = View.GONE
                 shimmer2.visibility = View.GONE
@@ -71,25 +86,34 @@ class ArticleListFragment : Fragment() {
                     .alpha(1f)
                     .setDuration(200)
                     .setListener(null)
-                adapter= context?.let { LoadMoreRecyclerView(it,articles,viewModel) }!!
-                recyclerView.adapter = adapter
+                adapter = context?.let {
+                    LoadMoreRecyclerView(
+                        it,
+                        articles,
+                        viewModel
+                    )
+                }!!
+                recyclerView.adapter =
+                    adapter
                 init = true
             }
-            scrollListener.setLoaded()
             adapter.notifyDataSetChanged()
         })
         // TODO: Use the ViewModel
     }
 
-    fun initRecyclerview(view : View){
+    fun initRecyclerview(view: View) {
         recyclerView = view.findViewById(R.id.articleList_recyclerView)
         recyclerView.visibility = View.GONE
         recyclerView.isNestedScrollingEnabled = false
         val mLayoutManager = LinearLayoutManager(context)
-        scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager)
+        scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager,10)
         scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
             override fun onLoadMore() {
-                viewModel.loadArticles()
+                adapter.addLoadingView()
+                Handler().postDelayed({
+                    viewModel.loadArticles()
+                },1000)
             }
         })
         recyclerView.layoutManager = mLayoutManager
@@ -110,14 +134,20 @@ class LoadMoreRecyclerView(
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val id = itemView.findViewById<TextView>(R.id.style1_id)
         private val date = itemView.findViewById<TextView>(R.id.style1_date)
-        private val thumbnail = itemView.findViewById<ImageView>(R.id.style1_thumbnail)
+        private var thumbnail = itemView.findViewById<ImageView>(R.id.style1_thumbnail)
 
         fun bind(article: Article) {
-            id?.text = "#純靠北工程師"+article.id.toString(36)
+            id?.text = "#純靠北工程師" + article.id.toString(36)
             date?.text = article.createdDiff
-            Glide.with(context).load(article.image).into(thumbnail)
+            Glide
+                .with(context)
+                .load(article.image)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(thumbnail)
             itemView.setOnClickListener {
-                //TODO: Implement OnClickListener
+                var intent = Intent(context, ArticleActivity::class.java)
+                intent.putExtra("ARTICLE_KEY", article)
+                context.startActivity(intent)
             }
         }
     }
@@ -130,11 +160,12 @@ class LoadMoreRecyclerView(
             val view =
                 LayoutInflater.from(parent.context).inflate(R.layout.cardview_style1, parent, false)
             return ItemViewHolder(view)
-        } else if(viewType == VIEW_TYPE_HEADER){
+        } else if (viewType == VIEW_TYPE_HEADER) {
             val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.cardview_header1, parent, false)
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.cardview_header1, parent, false)
             return HeaderViewHolder(view)
-        }else {
+        } else {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.progress_loading, parent, false)
             return LoadingViewHolder(view)
@@ -142,14 +173,20 @@ class LoadMoreRecyclerView(
     }
 
     override fun getItemCount(): Int {
-        return this.articles.count()
+        return if(loadingIndex==0){
+            this.articles.count()
+        }else{
+            this.articles.count()+1
+        }
     }
 
 
     override fun getItemViewType(position: Int): Int {
-        return if (position==0) {
+        return if (position == 0) {
             VIEW_TYPE_HEADER
-        }  else {
+        } else if (articles[position-1].id == 0) {
+            VIEW_TYPE_LOADING
+        } else {
             VIEW_TYPE_ITEM
         }
     }
@@ -160,5 +197,19 @@ class LoadMoreRecyclerView(
         }
     }
 
+    var loadingIndex = 0
+    fun addLoadingView() {
+        //Add loading item
+        viewModel.addArticle(Article())
+        loadingIndex = articles.size - 1
+    }
+
+    fun removeLoadingView() {
+        //Remove loading item
+        if (articles.isNotEmpty()) {
+            viewModel.removeAt(loadingIndex)
+            loadingIndex=0
+        }
+    }
 
 }

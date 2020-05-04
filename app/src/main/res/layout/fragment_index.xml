@@ -3,17 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.IndexFragment">
 
-    <TextView
-        android:fontFamily="@font/dos"
-        android:id="@+id/header_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <LinearLayout
         android:layout_margin="20dp"
-        android:paddingTop="?attr/actionBarSize"
-        android:text="@string/menu_1A"
-        android:textColor="@color/FxWhite"
-        android:textSize="24sp" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:fontFamily="@font/dos"
+            android:id="@+id/header_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="?attr/actionBarSize"
+            android:text="@string/menu_1A"
+            android:textColor="@color/FxWhite"
+            android:textSize="24sp" />
+
+    </LinearLayout>
 
 </FrameLayout>

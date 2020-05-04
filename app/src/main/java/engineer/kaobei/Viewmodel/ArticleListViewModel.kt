@@ -1,4 +1,4 @@
-package engineer.kaobei.Fragment
+package engineer.kaobei.Viewmodel
 
 
 import androidx.lifecycle.LiveData
@@ -18,7 +18,8 @@ import java.io.IOException
  */
 class ArticleListViewModel : ViewModel() {
 
-    private var page = 0
+    private lateinit var mOnReceiveDataListener : OnReceiveDataListener;
+    private var page = 1
     private val  mArticles = ArrayList<Article>()
     private val mArticlesLiveData: MutableLiveData<ArrayList<Article>> by lazy {
         MutableLiveData<ArrayList<Article>>().also {
@@ -48,6 +49,7 @@ class ArticleListViewModel : ViewModel() {
             override fun onResponse(response: Response?) {
                 val responseData = response?.body()?.string()
                 val bean = Gson().fromJson(responseData, KaobeiArticleList::class.javaObjectType)
+                mOnReceiveDataListener.onReceiveData(bean.data)
                 addArticles(bean.data)
             }
         })
@@ -63,9 +65,23 @@ class ArticleListViewModel : ViewModel() {
         mArticlesLiveData.postValue(mArticles)
     }
 
-    fun removeArticle(index : Int) {
+    fun addArticleAt(index : Int,article:Article) {
+        mArticles.add(index,article)
+        mArticlesLiveData.postValue(mArticles)
+    }
+
+    fun removeAt(index : Int) {
         mArticles.removeAt(index)
         mArticlesLiveData.postValue(mArticles)
     }
+
+    fun addOnReceiveDataListener(mOnReceiveDataListener: OnReceiveDataListener){
+        this.mOnReceiveDataListener = mOnReceiveDataListener
+    }
+
+    interface OnReceiveDataListener {
+        fun onReceiveData(list:List<Article>)
+    }
+
 
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.DashBoardFragment">
 
     <TextView
@@ -15,4 +16,16 @@
         android:text="@string/menu_3A"
         android:textColor="@color/FxWhite"
         android:textSize="24sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_login"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:text="登入"
+        android:textColor="@color/FxBlack"
+        app:backgroundTint="@color/FxWhite" />
+
+
 </FrameLayout>

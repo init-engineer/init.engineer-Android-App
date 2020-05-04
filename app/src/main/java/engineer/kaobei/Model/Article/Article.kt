@@ -20,4 +20,4 @@ data class Article(
     val updatedAt: String = "",
     @SerializedName("updated_diff")
     val updatedDiff: String = ""
-)
+): Serializable

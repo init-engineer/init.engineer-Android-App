@@ -23,6 +23,18 @@ android {
         }
     }
 
+    // To inline the bytecode built with JVM target 1.8 into
+    // bytecode that is being built with JVM target 1.6. (e.g. navArgs)
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
 }
 
 dependencies {
@@ -45,4 +57,7 @@ dependencies {
     implementation 'com.squareup.okhttp:okhttp:2.5.0'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'androidx.browser:browser:1.2.0'
+    implementation "androidx.paging:paging-runtime:2.1.2"
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
 }
