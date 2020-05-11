@@ -29,7 +29,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
-            app:shimmer_base_color="@color/FxWhite"
+            app:shimmer_highlight_color="@color/FxBlackT"
+            app:shimmer_base_color="@color/FxBlackT"
             app:shimmer_clip_to_children="false"
             app:shimmer_colored="true">
 
@@ -42,7 +43,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
-            app:shimmer_base_color="@color/FxWhite"
+            app:shimmer_highlight_color="@color/FxBlackT"
+            app:shimmer_base_color="@color/FxBlackT"
             app:shimmer_clip_to_children="false"
             app:shimmer_colored="true"></com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -53,7 +55,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
-            app:shimmer_base_color="@color/FxWhite"
+            app:shimmer_highlight_color="@color/FxBlackT"
+            app:shimmer_base_color="@color/FxBlackT"
             app:shimmer_clip_to_children="false"
             app:shimmer_colored="true"></com.facebook.shimmer.ShimmerFrameLayout>
 

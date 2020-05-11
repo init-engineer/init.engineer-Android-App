@@ -1,5 +1,6 @@
 package engineer.kaobei.Fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,107 +19,119 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
-import engineer.kaobei.Activity.ui.ArticleActivity
-import engineer.kaobei.Viewmodel.ArticleListViewModel
+import engineer.kaobei.Activity.ArticleActivity
 import engineer.kaobei.Model.Article.Article
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewLoadMoreScroll
+import engineer.kaobei.Util.SnackbarUtil
+import engineer.kaobei.Viewmodel.ArticleListViewModel
 
 class ArticleListFragment : Fragment() {
 
-    lateinit var headerView: TextView
-    lateinit var recyclerView: RecyclerView
-    lateinit var shimmer1: ShimmerFrameLayout
-    lateinit var shimmer2: ShimmerFrameLayout
-    lateinit var shimmer3: ShimmerFrameLayout
-    lateinit var scrollListener: RecyclerViewLoadMoreScroll
+    //limited recyclerview loading time
+    private val visibleThreshold = 10
+    private val recyclerviewDelayLoadingTime: Long = 500
+
+    private lateinit var mCoorView: CoordinatorLayout //Mainactivity view
+    private lateinit var mHeaderView: TextView
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var mShimmer1: ShimmerFrameLayout
+    private lateinit var mShimmer2: ShimmerFrameLayout
+    private lateinit var mShimmer3: ShimmerFrameLayout
+    private lateinit var mScrollListener: RecyclerViewLoadMoreScroll
+
+    private lateinit var mViewModel: ArticleListViewModel
+    private lateinit var adapter: LoadMoreRecyclerView
 
     companion object {
-        //The First loading of RecyclerView
-        private lateinit var adapter: LoadMoreRecyclerView
+        var init = false     //The First loading of RecyclerView
+        var page: Int = 1    //Paging
         fun newInstance() = ArticleListFragment()
     }
-
-    private lateinit var viewModel: ArticleListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: View = inflater.inflate(
+        val view = inflater.inflate(
             R.layout.fragment_article_list, container,
             false
         )
         init = false
-        headerView = view.findViewById(R.id.header_view)
-        shimmer1 = view.findViewById(R.id.shimmer_view_container1)
-        shimmer2 = view.findViewById(R.id.shimmer_view_container2)
-        shimmer3 = view.findViewById(R.id.shimmer_view_container3)
-        initRecyclerview(view)
+        mCoorView = activity?.findViewById(R.id.main_coordinator)!!
+        mHeaderView = view.findViewById(R.id.header_view)
+        mShimmer1 = view.findViewById(R.id.shimmer_view_container1)
+        mShimmer2 = view.findViewById(R.id.shimmer_view_container2)
+        mShimmer3 = view.findViewById(R.id.shimmer_view_container3)
+        mRecyclerView = view.findViewById(R.id.articleList_recyclerView)
+        initRecyclerview()
         return view
     }
 
-    var init = false
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(ArticleListViewModel::class.java)
-        viewModel.addOnReceiveDataListener(object :
+
+        //Article ViewModel
+        mViewModel = ViewModelProviders.of(this).get(ArticleListViewModel::class.java)
+        mViewModel.addOnReceiveDataListener(object :
             ArticleListViewModel.OnReceiveDataListener {
             override fun onReceiveData(list: List<Article>) {
+                //remove the loading view
                 if (init) {
                     adapter.removeLoadingView()
-                    scrollListener.setLoaded()
+                    mScrollListener.setLoaded()
                 }
             }
 
+            override fun onFailure() {
+                //remove the loading view and show status
+                page--
+                if (init) {
+                    adapter.removeLoadingView()
+                    mScrollListener.setLoaded()
+                }
+                SnackbarUtil.makeAnchorSnackbar(mCoorView, "讀取資料失敗，請稍後再試", R.id.gap)
+            }
         })
-
-        viewModel.getArticles().observe(this, Observer<List<Article>> { articles ->
+        mViewModel.getArticles().observe(viewLifecycleOwner, Observer<List<Article>> { articles ->
             if (!init) {
-                headerView.visibility = View.GONE
-                shimmer1.visibility = View.GONE
-                shimmer2.visibility = View.GONE
-                shimmer3.visibility = View.GONE
-                recyclerView.alpha = 0f
-                recyclerView.visibility = View.VISIBLE
-                recyclerView.animate()
-                    .alpha(1f)
-                    .setDuration(200)
-                    .setListener(null)
+                mHeaderView.visibility = View.GONE
+                mShimmer1.visibility = View.GONE
+                mShimmer2.visibility = View.GONE
+                mShimmer3.visibility = View.GONE
+                mRecyclerView.visibility = View.VISIBLE
                 adapter = context?.let {
                     LoadMoreRecyclerView(
                         it,
                         articles,
-                        viewModel
+                        mViewModel
                     )
                 }!!
-                recyclerView.adapter =
-                    adapter
+                mRecyclerView.adapter = adapter
                 init = true
             }
             adapter.notifyDataSetChanged()
         })
-        // TODO: Use the ViewModel
     }
 
-    fun initRecyclerview(view: View) {
-        recyclerView = view.findViewById(R.id.articleList_recyclerView)
-        recyclerView.visibility = View.GONE
-        recyclerView.isNestedScrollingEnabled = false
+    private fun initRecyclerview() {
+        mRecyclerView.visibility = View.GONE
+        mRecyclerView.isNestedScrollingEnabled = false
         val mLayoutManager = LinearLayoutManager(context)
-        scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager,10)
-        scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
+        mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visibleThreshold)
+        mScrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
             override fun onLoadMore() {
-                adapter.addLoadingView()
-                Handler().postDelayed({
-                    viewModel.loadArticles()
-                },1000)
+                if(init){
+                    adapter.addLoadingView()
+                    Handler().postDelayed({
+                        mViewModel.loadArticles(++page)
+                    }, recyclerviewDelayLoadingTime)
+                }
             }
         })
-        recyclerView.layoutManager = mLayoutManager
-        recyclerView.addOnScrollListener(scrollListener)
+        mRecyclerView.layoutManager = mLayoutManager
+        mRecyclerView.addOnScrollListener(mScrollListener)
     }
 }
 
@@ -127,17 +141,24 @@ class LoadMoreRecyclerView(
     private val viewModel: ArticleListViewModel
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val VIEW_TYPE_HEADER = 0
-    private val VIEW_TYPE_LOADING = 1
-    private val VIEW_TYPE_ITEM = 2
+    //for deleting loading view
+    var loadingIndex = 0
+
+    companion object {
+        const val VIEW_TYPE_HEADER = 0
+        const val VIEW_TYPE_LOADING = 1
+        const val VIEW_TYPE_ITEM = 2
+    }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val id = itemView.findViewById<TextView>(R.id.style1_id)
         private val date = itemView.findViewById<TextView>(R.id.style1_date)
         private var thumbnail = itemView.findViewById<ImageView>(R.id.style1_thumbnail)
 
+        @SuppressLint("SetTextI18n")
         fun bind(article: Article) {
-            id?.text = "#純靠北工程師" + article.id.toString(36)
+            id?.text =
+                "#" + context.resources.getString(R.string.app_name_ch) + article.id.toString(36)
             date?.text = article.createdDiff
             Glide
                 .with(context)
@@ -145,8 +166,8 @@ class LoadMoreRecyclerView(
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(thumbnail)
             itemView.setOnClickListener {
-                var intent = Intent(context, ArticleActivity::class.java)
-                intent.putExtra("ARTICLE_KEY", article)
+                val intent = Intent(context, ArticleActivity::class.java)
+                intent.putExtra(ArticleActivity.ARTICLE_KEY, article)
                 context.startActivity(intent)
             }
         }
@@ -173,18 +194,13 @@ class LoadMoreRecyclerView(
     }
 
     override fun getItemCount(): Int {
-        return if(loadingIndex==0){
-            this.articles.count()
-        }else{
-            this.articles.count()+1
-        }
+        return this.articles.count()
     }
-
 
     override fun getItemViewType(position: Int): Int {
         return if (position == 0) {
             VIEW_TYPE_HEADER
-        } else if (articles[position-1].id == 0) {
+        } else if (articles[position].id == 0) {
             VIEW_TYPE_LOADING
         } else {
             VIEW_TYPE_ITEM
@@ -193,11 +209,10 @@ class LoadMoreRecyclerView(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ItemViewHolder) {
-            holder.bind(articles[position-1])
+            holder.bind(articles[position])
         }
     }
 
-    var loadingIndex = 0
     fun addLoadingView() {
         //Add loading item
         viewModel.addArticle(Article())
@@ -207,8 +222,10 @@ class LoadMoreRecyclerView(
     fun removeLoadingView() {
         //Remove loading item
         if (articles.isNotEmpty()) {
-            viewModel.removeAt(loadingIndex)
-            loadingIndex=0
+            if (loadingIndex >= 0) {
+                viewModel.removeAt(loadingIndex)
+                loadingIndex = 0
+            }
         }
     }
 

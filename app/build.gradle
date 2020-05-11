@@ -2,6 +2,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdkVersion 28
 
@@ -14,12 +18,25 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "OATH2CLIENTID", apikeyProperties['oath2clientid'])
+        buildConfigField("String", "OATH2CLIENTSECRET", apikeyProperties['oath2clientsecret'])
+        buildConfigField("String", "OATH2REDIRECTURL", "\""+apikeyProperties['oath2scheme']+"://"+apikeyProperties['oath2host']+apikeyProperties['oath2path']+"\"")
+        manifestPlaceholders = [
+                schemeName:apikeyProperties['oath2scheme'],
+                hostName:apikeyProperties['oath2host'],
+                pathName:apikeyProperties['oath2path'],
+        ]
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+
+
         }
     }
 
@@ -50,14 +67,25 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    //ui
     implementation 'com.google.android.material:material:1.2.0-alpha06'
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.squareup.okhttp:okhttp:2.5.0'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'androidx.browser:browser:1.2.0'
     implementation "androidx.paging:paging-runtime:2.1.2"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
+
+    //gson
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+
+    //okHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.6.0'
+
+    //oath2
+    implementation 'net.openid:appauth:0.7.1'
 }

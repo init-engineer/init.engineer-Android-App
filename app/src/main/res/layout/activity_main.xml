@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_coordinator"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-    tools:context=".Activity.ui.MainActivity">
+    tools:context=".Activity.MainActivity">
 
     <fragment
         android:id="@+id/nav_host_fragment"
@@ -30,97 +30,110 @@
         app:layout_behavior="@string/fab_transformation_scrim_behavior"
         app:shapeAppearance="@style/MainMenuFabShapeOverlay" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/sheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <LinearLayout
         android:layout_gravity="bottom"
-        android:layout_margin="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/gap"
+            android:layout_width="match_parent"
+            android:layout_height="1dp">
+        </View>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/sheet"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:elevation="5dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/FxBlackT"
+            app:cardCornerRadius="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:fontFamily="@font/dos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="Init.Engineer"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/nav_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:backgroundTint="@color/FxBlackT"
+                    app:itemIconTint="@color/bnv_color"
+                    app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+                    app:labelVisibilityMode="unlabeled"
+                    android:layout_gravity="bottom"
+                    app:menu="@menu/navigation">
+
+                </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+            </LinearLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/big_card"
+        android:layout_margin="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
         android:elevation="5dp"
         android:visibility="visible"
         app:cardBackgroundColor="@color/FxBlackT"
         app:cardCornerRadius="10dp">
 
         <LinearLayout
+            android:gravity="center"
+            android:background="@color/FxBlackT"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center">
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:src="@drawable/img_kb" />
 
-             <!--   <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="純"
-                    android:textColor="@android:color/holo_red_light"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="靠"
-                    android:textColor="@color/FXYE"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="北"
-                    android:textColor="@android:color/holo_blue_bright"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="工"
-                    android:textColor="@android:color/holo_purple"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="程"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="師"
-                    android:textColor="@color/FXLL"
-                    android:textSize="16sp" />-->
-
-                <TextView
-                    android:fontFamily="@font/dos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Init.Engineer"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/nav_view"
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_title_splash"
+                android:fontFamily="@font/dos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@color/FxBlackT"
-                app:itemIconTint="@color/bnv_color"
-                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-                app:labelVisibilityMode="unlabeled"
-                android:layout_gravity="bottom"
-                app:menu="@menu/navigation">
-
-            </com.google.android.material.bottomnavigation.BottomNavigationView>
+                android:text="Init.Engineer"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
-
     </com.google.android.material.card.MaterialCardView>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

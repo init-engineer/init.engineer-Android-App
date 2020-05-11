@@ -7,7 +7,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowTranslucentStatus">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+        <item name="snackbarStyle">@style/SnackbarMessageStyle</item>
+    </style>
+
+    <style name="SnackbarMessageStyle" parent="@style/Widget.MaterialComponents.Snackbar">
+        <item name="android:layout_margin">15dp</item>
     </style>
 
     <style name="AppBottomSheetDialogTheme"

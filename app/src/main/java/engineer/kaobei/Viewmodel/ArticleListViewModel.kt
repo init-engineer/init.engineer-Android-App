@@ -5,12 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import com.squareup.okhttp.Callback
-import com.squareup.okhttp.OkHttpClient
-import com.squareup.okhttp.Request
-import com.squareup.okhttp.Response
 import engineer.kaobei.Model.Article.Article
 import engineer.kaobei.Model.Article.KaobeiArticleList
+import okhttp3.*
 import java.io.IOException
 
 /**
@@ -18,12 +15,12 @@ import java.io.IOException
  */
 class ArticleListViewModel : ViewModel() {
 
-    private lateinit var mOnReceiveDataListener : OnReceiveDataListener;
-    private var page = 1
-    private val  mArticles = ArrayList<Article>()
+    private var init = false
+    private lateinit var mOnReceiveDataListener: OnReceiveDataListener;
+    private val mArticles = ArrayList<Article>()
     private val mArticlesLiveData: MutableLiveData<ArrayList<Article>> by lazy {
         MutableLiveData<ArrayList<Article>>().also {
-            loadArticles()
+            loadArticles(1)
         }
     }
 
@@ -31,23 +28,27 @@ class ArticleListViewModel : ViewModel() {
         return mArticlesLiveData
     }
 
-    fun loadArticles() {
+    fun loadArticles(page: Int) {
         // Do an asynchronous operation to fetch articles.
-        loadMoreArticles(page++)
+        loadMoreArticles(page)
     }
 
     private fun loadMoreArticles(page: Int) {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("https://kaobei.engineer/api/frontend/social/cards?page="+ page)
+            .url("https://kaobei.engineer/api/frontend/social/cards?page=" + page)
             .build()
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(request: Request?, e: IOException?) {
-
+            override fun onFailure(call: Call, e: IOException) {
+                mOnReceiveDataListener.onFailure()
             }
 
-            override fun onResponse(response: Response?) {
-                val responseData = response?.body()?.string()
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response.body?.string()
+                if (response.code != 200) {
+                    mOnReceiveDataListener.onFailure()
+                    return
+                }
                 val bean = Gson().fromJson(responseData, KaobeiArticleList::class.javaObjectType)
                 mOnReceiveDataListener.onReceiveData(bean.data)
                 addArticles(bean.data)
@@ -57,6 +58,10 @@ class ArticleListViewModel : ViewModel() {
 
     fun addArticles(articles: List<Article>) {
         mArticles.addAll(articles)
+        if (!init) {
+            mArticles.add(0, Article())
+            init = true
+        }
         mArticlesLiveData.postValue(mArticles)
     }
 
@@ -65,22 +70,23 @@ class ArticleListViewModel : ViewModel() {
         mArticlesLiveData.postValue(mArticles)
     }
 
-    fun addArticleAt(index : Int,article:Article) {
-        mArticles.add(index,article)
+    fun addArticleAt(index: Int, article: Article) {
+        mArticles.add(index, article)
         mArticlesLiveData.postValue(mArticles)
     }
 
-    fun removeAt(index : Int) {
+    fun removeAt(index: Int) {
         mArticles.removeAt(index)
         mArticlesLiveData.postValue(mArticles)
     }
 
-    fun addOnReceiveDataListener(mOnReceiveDataListener: OnReceiveDataListener){
+    fun addOnReceiveDataListener(mOnReceiveDataListener: OnReceiveDataListener) {
         this.mOnReceiveDataListener = mOnReceiveDataListener
     }
 
     interface OnReceiveDataListener {
-        fun onReceiveData(list:List<Article>)
+        fun onReceiveData(list: List<Article>)
+        fun onFailure()
     }
 
 
