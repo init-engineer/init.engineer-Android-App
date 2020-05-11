@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:orientation="vertical">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_container1"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="20dp"
+        app:shimmer_base_color="@color/FxWhite"
+        app:shimmer_clip_to_children="false"
+        app:shimmer_colored="true">
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+    <LinearLayout
+        android:id="@+id/view_links"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:paddingTop="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_favorite_white_24dp" />
+
+                <TextView
+                    android:id="@+id/tv_fb1_fv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="1dp"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_link_fb1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/FxFB"
+                android:fontFamily="@font/dos"
+                android:gravity="center"
+                android:text="FB主站"
+                android:textSize="10sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reply_white_24dp" />
+
+                <TextView
+                    android:id="@+id/tv_fb1_ry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="1dp"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:paddingTop="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_favorite_white_24dp" />
+
+                <TextView
+                    android:id="@+id/tv_fb2_fv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="1dp"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_link_fb2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/FxFB"
+                android:fontFamily="@font/dos"
+                android:gravity="center"
+                android:text="FB次站"
+                android:textSize="10sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reply_white_24dp" />
+
+                <TextView
+                    android:id="@+id/tv_fb2_ry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="1dp"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:paddingTop="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_favorite_white_24dp" />
+
+                <TextView
+                    android:id="@+id/tv_pl_fv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="1dp"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_link_pl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/FxPL"
+                android:fontFamily="@font/dos"
+                android:gravity="center"
+                android:text="PLURK"
+                android:textSize="10sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reply_white_24dp" />
+
+                <TextView
+                    android:id="@+id/tv_pl_ry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="1dp"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:paddingTop="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_favorite_white_24dp" />
+
+                <TextView
+                    android:id="@+id/tv_tw_fv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="1dp"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite" />
+
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/btn_link_tw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/FXTW"
+                android:fontFamily="@font/dos"
+                android:gravity="center"
+                android:text="TWITTER"
+                android:textSize="10sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reply_white_24dp" />
+
+                <TextView
+                    android:id="@+id/tv_tw_ry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="1dp"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

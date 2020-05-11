@@ -1,0 +1,202 @@
+{
+  "themes": [
+    {
+      "name": "黑底綠字",
+      "text_color": "#28a745",
+      "background_color": "#212529",
+      "value": "2e6046c7387d8fbe9acd700394a3add3",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "黑底黃字",
+      "text_color": "#ffc107",
+      "background_color": "#212529",
+      "value": "be551aa525b9d13790278b008a9ec7bf",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "黑底白字",
+      "text_color": "#fafafa",
+      "background_color": "#212529",
+      "value": "8a755c0bd32e29f813c1aa4267357d5a",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "黑底紅字",
+      "text_color": "#dc3545",
+      "background_color": "#212529",
+      "value": "507d8c23bdcc98850c7be1c1286d5dcf",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "甜甜香草巧克力熊貓",
+      "text_color": "#fafafa",
+      "background_color": "#e83e8c",
+      "value": "7d37ef838c73b3397403eec4bf4f3839",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "藍白屏",
+      "text_color": "#fafafa",
+      "background_color": "#007bff",
+      "value": "4834578267bcb800feb2762d2a3ccff2",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "PostgreSQL",
+      "text_color": "#007bff",
+      "background_color": "#fafafa",
+      "value": "dc7b1c2c41639e5cf10f725d60ad8c64",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "Laravel",
+      "text_color": "#fafafa",
+      "background_color": "#f4645f",
+      "value": "a5c95b86291ea299fcbe64458ed12702",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "軟體綠",
+      "text_color": "#212529",
+      "background_color": "#39c5bb",
+      "value": "731019ad725385614d65fbcc5fb1758e",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "皮卡丘",
+      "text_color": "#ffd547",
+      "background_color": "#2f3437",
+      "value": "9CE44F88A25272B6D9CBB430EBBCFCF1",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "伊布",
+      "text_color": "#e7af56",
+      "background_color": "#2f3437",
+      "value": "640ED62B7D35C1765A05EB8724535A53",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "反向 皮卡丘",
+      "text_color": "#2f3437",
+      "background_color": "#ffd547",
+      "value": "9A2E33D968A1AF98B09E26AC63CB6DCB",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "反向 伊布",
+      "text_color": "#2f3437",
+      "background_color": "#e7af56",
+      "value": "98C614FBC16CCF5D5740BD4D4E00757C",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "新年限定主題",
+      "text_color": "#d8b06a",
+      "background_color": "#a61723",
+      "value": "2be6c9a365a26a12876145e9229639b1",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "反向 新年限定主題",
+      "text_color": "#a61723",
+      "background_color": "#d8b06a",
+      "value": "b9b8ae80a601616cb9af07aaabe532f4",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    },
+    {
+      "name": "恭迎慈孤觀音 渡世靈顯四方",
+      "text_color": "#343a40",
+      "background_color": "#f11541",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "drawable.devotion_bg"
+      },
+      "value": "05217b7d4741e38096a54eff4226c217"
+    },
+    {
+      "name": "Windows 最棒的畫面",
+      "text_color": "#fafafa",
+      "background_color": "#007bd0",
+      "additional": {
+        "header": "drawable.test2",
+        "footer": "drawable.test1",
+        "background_image": "0"
+      },
+      "value": "32d2a897602ef652ed8e15d66128aa74"
+    },
+    {
+      "name": "粉紅色",
+      "text_color": "#ff5376",
+      "background_color": "#f8c0c8",
+      "value": "j874kwoxi2nh64yt67wtphy9m5dmea4q",
+      "additional": {
+        "header": "0",
+        "footer": "1",
+        "background_image": "0"
+      }
+    }
+  ]
+}

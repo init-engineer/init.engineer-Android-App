@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:adjustViewBounds="true"
+        android:src="@drawable/test2"
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:id="@+id/content_view"
+        android:background="#007bd0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/content_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/content_text"
+            android:paddingTop="50dp"
+            android:paddingBottom="50dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textColor="#fafafa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="解藥跟不上屍毒擴散就會變成殭屍喔"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/footer1"
+        android:background="#007bd0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv1_footer1"
+            android:layout_margin="5dp"
+            android:textColor="#fafafa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="發文傳送門 https://kaobei.engineer"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv2_footer1"
+            android:gravity="right"
+            android:layout_margin="5dp"
+            android:textColor="#fafafa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="純靠北工程師"
+            android:textSize="14sp" />
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:adjustViewBounds="true"
+        android:padding="0dp"
+        android:id="@+id/footer2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/test1" />
+
+</LinearLayout>
