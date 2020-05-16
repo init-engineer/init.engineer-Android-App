@@ -23,6 +23,7 @@
             android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardview_avatar"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_marginTop="15dp"
@@ -33,15 +34,6 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
-
-                        <ProgressBar
-                            android:layout_width="10dp"
-                            android:layout_height="10dp"
-                            android:layout_centerInParent="true"
-                            android:indeterminate="true"
-                            android:indeterminateTint="@color/colorAccent"
-                            android:visibility="visible" />
-
                         <ImageView
                             android:id="@+id/content_background"
                             android:layout_width="match_parent"

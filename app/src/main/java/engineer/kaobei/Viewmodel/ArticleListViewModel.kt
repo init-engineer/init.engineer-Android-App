@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import engineer.kaobei.Model.Article.Article
-import engineer.kaobei.Model.Article.KaobeiArticleList
+import engineer.kaobei.Model.Articles.Article
+import engineer.kaobei.Model.Articles.KaobeiArticleList
 import okhttp3.*
 import java.io.IOException
 

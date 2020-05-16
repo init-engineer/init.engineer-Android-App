@@ -19,8 +19,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.Activity.ArticleActivity
-import engineer.kaobei.Model.Article.Article
+import engineer.kaobei.Model.Articles.Article
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewLoadMoreScroll
@@ -29,9 +30,13 @@ import engineer.kaobei.Viewmodel.ArticleListViewModel
 
 class ArticleListFragment : Fragment() {
 
-    //limited recyclerview loading time
-    private val visibleThreshold = 10
-    private val recyclerviewDelayLoadingTime: Long = 500
+    companion object {
+        const val visibleThreshold = 10
+        const val recyclerviewDelayLoadingTime: Long = 500    //limited recyclerview loading time
+        var init = false     //The First loading of RecyclerView
+        var page: Int = 1    //Paging
+        fun newInstance() = ArticleListFragment()
+    }
 
     private lateinit var mCoorView: CoordinatorLayout //Mainactivity view
     private lateinit var mHeaderView: TextView
@@ -44,12 +49,6 @@ class ArticleListFragment : Fragment() {
     private lateinit var mViewModel: ArticleListViewModel
     private lateinit var adapter: LoadMoreRecyclerView
 
-    companion object {
-        var init = false     //The First loading of RecyclerView
-        var page: Int = 1    //Paging
-        fun newInstance() = ArticleListFragment()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,6 +57,10 @@ class ArticleListFragment : Fragment() {
             R.layout.fragment_article_list, container,
             false
         )
+        val forward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, true)
+        val backward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, false)
+        enterTransition = forward
+        exitTransition = backward
         init = false
         mCoorView = activity?.findViewById(R.id.main_coordinator)!!
         mHeaderView = view.findViewById(R.id.header_view)
@@ -71,7 +74,10 @@ class ArticleListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        val forward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, true)
+        val backward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, false)
+        enterTransition = forward
+        exitTransition = backward
         //Article ViewModel
         mViewModel = ViewModelProviders.of(this).get(ArticleListViewModel::class.java)
         mViewModel.addOnReceiveDataListener(object :
@@ -86,8 +92,8 @@ class ArticleListFragment : Fragment() {
 
             override fun onFailure() {
                 //remove the loading view and show status
-                page--
                 if (init) {
+                    page--
                     adapter.removeLoadingView()
                     mScrollListener.setLoaded()
                 }

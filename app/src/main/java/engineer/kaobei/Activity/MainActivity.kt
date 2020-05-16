@@ -10,12 +10,16 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialSharedAxis
+import engineer.kaobei.Database.AuthStateManager
+import engineer.kaobei.Fragment.*
 import engineer.kaobei.R
 
 
@@ -25,11 +29,13 @@ import engineer.kaobei.R
 class MainActivity : AppCompatActivity() {
 
     //Bottom sheet status
-    var titleClicked = false
+    private var titleClicked = false
 
-    lateinit var title: TextView
-    lateinit var sheet: CardView
-    lateinit var big_card: CardView
+    private lateinit var title: TextView
+    private lateinit var sheet: CardView
+    private lateinit var big_card: CardView
+
+    private lateinit var authStateManager:AuthStateManager
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -40,60 +46,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         showSplashScreen()
+        authStateManager = AuthStateManager.getInstance(this)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         navView.setupWithNavController(navController)
-        /*navView.setOnNavigationItemSelectedListener {it ->
-             onNavDestinationSelected(it,navController)
-        }*/
 
-        title = findViewById<TextView>(R.id.tv_title)
-        sheet = findViewById<CardView>(R.id.sheet)
-        big_card = findViewById<CardView>(R.id.big_card)
+
+        title = findViewById(R.id.tv_title)
+        sheet = findViewById(R.id.sheet)
+        big_card = findViewById(R.id.big_card)
         title.setOnClickListener {
             enterView()
         }
 
     }
 
-    fun onNavDestinationSelected(it:MenuItem,navController: NavController) : Boolean{
-        when(it.itemId){
-            R.id.navigation_home ->{
-
-            }
-            R.id.navigation_article_list ->{
-
-            }
-            R.id.navigation_create_article ->{
-
-            }
-            R.id.navigation_dashboard ->{
-
-            }
-            else ->{
-                return false
-            }
-        }
-        return true
-    }
-
-    fun showSplashScreen() {
+    private fun showSplashScreen() {
         Handler().postDelayed({
             exitView()
         }, 1000)
     }
 
     //show splash screen and hide sheet
-    fun enterView() {
+    private fun enterView() {
         val transform = MaterialContainerTransform().apply {
             // Manually tell the container transform which Views to transform between.
             startView = sheet
@@ -116,7 +97,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //hide splash screen and show sheet
-    fun exitView() {
+    private fun exitView() {
         val transform = MaterialContainerTransform().apply {
             // Manually tell the container transform which Views to transform between.
             startView = big_card

@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:fontFamily="@font/dos"
-                android:text="分享"
+                android:text="@string/bottom_sheet_share"
                 android:textColor="@color/FxWhite"
                 android:textSize="14sp" />
 

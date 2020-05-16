@@ -1,4 +1,4 @@
-package engineer.kaobei.Model.Article
+package engineer.kaobei.Model.Articles
 
 
 import com.google.gson.annotations.SerializedName

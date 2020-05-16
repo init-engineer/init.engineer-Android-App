@@ -21,11 +21,11 @@ android {
 
         buildConfigField("String", "OATH2CLIENTID", apikeyProperties['oath2clientid'])
         buildConfigField("String", "OATH2CLIENTSECRET", apikeyProperties['oath2clientsecret'])
-        buildConfigField("String", "OATH2REDIRECTURL", "\""+apikeyProperties['oath2scheme']+"://"+apikeyProperties['oath2host']+apikeyProperties['oath2path']+"\"")
+        buildConfigField("String", "OATH2REDIRECTURL", "\"" + apikeyProperties['oath2scheme'] + "://" + apikeyProperties['oath2host'] + apikeyProperties['oath2path'] + "\"")
         manifestPlaceholders = [
-                schemeName:apikeyProperties['oath2scheme'],
-                hostName:apikeyProperties['oath2host'],
-                pathName:apikeyProperties['oath2path'],
+                schemeName: apikeyProperties['oath2scheme'],
+                hostName  : apikeyProperties['oath2host'],
+                pathName  : apikeyProperties['oath2path'],
         ]
     }
 
@@ -34,7 +34,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug{
+        debug {
 
 
         }
@@ -64,17 +64,20 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.preference:preference:1.1.0-rc01'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     //ui
     implementation 'com.google.android.material:material:1.2.0-alpha06'
-    implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'androidx.browser:browser:1.2.0'
     implementation "androidx.paging:paging-runtime:2.1.2"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
+
+    //shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     //gson
     implementation 'com.google.code.gson:gson:2.8.5'

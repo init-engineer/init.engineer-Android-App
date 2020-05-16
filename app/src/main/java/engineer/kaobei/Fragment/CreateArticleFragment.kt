@@ -15,23 +15,25 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.transition.MaterialSharedAxis
+import engineer.kaobei.Activity.LoginActivity
 import engineer.kaobei.Database.AuthStateManager
 import engineer.kaobei.Database.FontManager
 import engineer.kaobei.Database.ThemeManager
 import engineer.kaobei.Model.Fonts.Font
 import engineer.kaobei.Model.Themes.Theme
 import engineer.kaobei.R
+import engineer.kaobei.Util.SnackbarUtil
 import engineer.kaobei.Util.ViewUtil.addGapController
 import engineer.kaobei.View.AnimatedGap
 import engineer.kaobei.View.KaobeiArticleViewer
@@ -61,10 +63,10 @@ class CreateArticleFragment : Fragment() {
     private lateinit var currentTheme: Theme
     private lateinit var themeManager: ThemeManager
     private lateinit var fontManager: FontManager
-    private lateinit var file: File
     private lateinit var imageUri: Uri
     private lateinit var img_ArticleImg: ImageView
     private lateinit var authStateManager: AuthStateManager
+    private lateinit var mCoorView: CoordinatorLayout //Mainactivity view
 
     lateinit var reInTop: Ref.BooleanRef
 
@@ -84,11 +86,28 @@ class CreateArticleFragment : Fragment() {
             false
         )
         authStateManager = AuthStateManager.getInstance(view.context)
+
+        val view_create_article:CoordinatorLayout = view.findViewById(R.id.view_create_article)
+        val view_not_authorized:LinearLayout = view.findViewById(R.id.view_not_authorized)
+        val login_button: Button = view.findViewById(R.id.login_button)
+
+        if(authStateManager.getCurrent().isAuthorized){
+            view_create_article.visibility = View.VISIBLE
+            view_not_authorized.visibility = View.GONE
+        }else{
+            view_create_article.visibility = View.GONE
+            view_not_authorized.visibility = View.VISIBLE
+            login_button.setOnClickListener {
+                val intent = Intent(context, LoginActivity::class.java)
+                activity?.startActivityForResult(intent, LoginActivity.RC_AUTH)
+            }
+        }
         themeManager = ThemeManager.getInstance(view.context)
         fontManager = FontManager.getInstance(view.context)
         currentTheme = themeManager.getThemes()[0]
         currentFont = fontManager.getFonts()[0]
         imageUri = Uri.EMPTY
+        mCoorView = activity?.findViewById(R.id.main_coordinator)!!
 
         val kaobeiArticleViewer = view.findViewById<KaobeiArticleViewer>(R.id.viewer)
         kaobeiArticleViewer.setTextContent(content)
@@ -122,7 +141,7 @@ class CreateArticleFragment : Fragment() {
             val gap = mView.findViewById<AnimatedGap>(R.id.gap)
             reInTop = Ref.BooleanRef()
             reInTop.element = false
-            addGapController(rv_theme, gap, reInTop)
+            addGapController(rv_theme, gap)
             adapter.setOnItemClickListener(object : SelectThemeAdapter.OnItemClickListener {
                 override fun onItemClick(t: Theme) {
                     currentTheme = t
@@ -151,7 +170,7 @@ class CreateArticleFragment : Fragment() {
             val gap = mView.findViewById<AnimatedGap>(R.id.gap)
             reInTop = Ref.BooleanRef()
             reInTop.element = false
-            addGapController(rv_font, gap, reInTop)
+            addGapController(rv_font, gap)
             adapter.setOnItemClickListener(object : SelectFontAdapter.OnItemClickListener {
                 override fun onItemClick(t: Font) {
                     currentFont = t
@@ -173,42 +192,86 @@ class CreateArticleFragment : Fragment() {
 
         val cardview_submit = view.findViewById<CardView>(R.id.cardview_submit)
         cardview_submit.setOnClickListener {
-            val bt_sheet = BottomSheetDialog(view.context)
-            val mView = LayoutInflater.from(view.context)
-                .inflate(R.layout.bottom_sheet_submit_article, null)
-            val cardview_submit: CardView = mView.findViewById(R.id.cardview_submit)
-            val cardview_cancel: CardView = mView.findViewById(R.id.cardview_cancel)
-            cardview_submit.setOnClickListener {
-                submitArticle(
-                    content,
-                    currentTheme,
-                    currentFont,
-                    imageUri,
-                    authStateManager.getCurrent().accessToken
-                )
-                bt_sheet.dismiss()
+            if(content.length<10){
+                SnackbarUtil.makeAnchorSnackbar(mCoorView,"字數少於10 AAAAAAAAAAAA",R.id.gap)
+            }else{
+                val bt_sheet = BottomSheetDialog(view.context)
+                val mView = LayoutInflater.from(view.context)
+                    .inflate(R.layout.bottom_sheet_submit_article, null)
+                val layout_confirm : LinearLayout = mView.findViewById(R.id.layout_confirm)
+                val layout_transmission :LinearLayout =mView.findViewById(R.id.layout_transmission)
+                val cardview_submit: CardView = mView.findViewById(R.id.cardview_submit)
+                val cardview_cancel: CardView = mView.findViewById(R.id.cardview_cancel)
+                val cardview_cancel_2: CardView = mView.findViewById(R.id.cardview_cancel_2)
+                val tv_bs_title_2 : TextView = mView.findViewById(R.id.tv_bs_title_2)
+                val progressbar : ProgressBar = mView.findViewById(R.id.progressbar)
+                val img_success : ImageView = mView.findViewById(R.id.img_success)
+                val img_failed : ImageView = mView.findViewById(R.id.img_failed)
+                bt_sheet.setCancelable(false)
+                cardview_submit.setOnClickListener {
+                    layout_transmission.visibility = View.VISIBLE
+                    layout_confirm.visibility = View.GONE
+                    val request = submitArticle(
+                        content,
+                        currentTheme,
+                        currentFont,
+                        imageUri,
+                        authStateManager.getCurrent().accessToken
+                    )
+                    val client = OkHttpClient()
+                    if(request!=null){
+                        client.newCall(request).enqueue(object : Callback {
+                            override fun onFailure(call: Call, e: IOException) {
+                                tv_bs_title_2.text="發送失敗。原因:"+e.toString()
+                                progressbar.visibility = View.GONE
+                                img_failed.visibility = View.VISIBLE
+                                cardview_cancel_2.visibility = View.VISIBLE
+                            }
+
+                            override fun onResponse(call: Call, response: Response) {
+                                progressbar.visibility = View.GONE
+                                val responseData = response.body?.string()
+                                if (response.code != 200) {
+                                    tv_bs_title_2.text="發送失敗。原因:"+response.code
+                                    img_failed.visibility = View.VISIBLE
+                                    return
+                                }
+                                tv_bs_title_2.text="發送成功!"
+                                img_success.visibility = View.VISIBLE
+                                cardview_cancel_2.visibility = View.VISIBLE
+                            }
+                        })
+                    }else{
+                        Toast.makeText(
+                            context,
+                            "尚未登入",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                cardview_cancel.setOnClickListener {
+                    bt_sheet.dismiss()
+                }
+                bt_sheet.setContentView(mView)
+                bt_sheet.show()
             }
-            cardview_cancel.setOnClickListener {
-                bt_sheet.dismiss()
-            }
-            bt_sheet.setContentView(mView)
-            bt_sheet.show()
         }
 
         return view
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val forward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, true)
+        val backward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, false)
+        enterTransition = forward
+        exitTransition = backward
+    }
 
-    fun submitArticle(content: String, theme: Theme, font: Font, img: Uri, accessToken: String?) {
-        if (accessToken == null) {
-            Toast.makeText(
-                context,
-                "尚未登入",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
+    fun submitArticle(content: String, theme: Theme, font: Font, img: Uri, accessToken: String?):Request? {
+        if (accessToken == null || accessToken.isEmpty()) {
+            return null
         }
-        val client = OkHttpClient()
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("content", content)
@@ -219,41 +282,17 @@ class CreateArticleFragment : Fragment() {
             val mFile = File(path)
             val fileRequestBody = mFile.asRequestBody("image/jpeg".toMediaType())
             requestBody
-                .addFormDataPart("avatar", "img", fileRequestBody)
+                .addFormDataPart("avatar", "img.jpg", fileRequestBody)
         }
 
         val request: Request = Request.Builder()
             .url("https://kaobei.engineer/api/frontend/social/cards/api/publish")
             .addHeader("Authorization", "Bearer " + accessToken)
-            .addHeader("Accept","*/*")
+            .addHeader("Accept","*application/json")
             .post(requestBody.build())
             .build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Looper.prepare()
-                Toast.makeText(
-                    context,
-                    "失敗",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Looper.loop()
-            }
 
-            override fun onResponse(call: Call, response: Response) {
-                val responseData = response.body?.string()
-                if (response.code != 200) {
-                    return
-                }
-                Looper.prepare()
-                Toast.makeText(
-                    context,
-                    "還真的發送成功了ㄚ",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Looper.loop()
-            }
-        })
-
+        return request
     }
 
     fun checkPermission(context: Context) {
@@ -306,7 +345,6 @@ class CreateArticleFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             if (data != null) {
                 imageUri = data.data
-                file = File(imageUri.toString())
                 img_ArticleImg.setImageURI(imageUri)
             }
         }
@@ -344,7 +382,7 @@ class CreateArticleFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
             CreateArticleFragment().apply {
 
             }

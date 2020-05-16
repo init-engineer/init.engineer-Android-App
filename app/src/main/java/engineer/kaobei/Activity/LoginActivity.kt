@@ -5,8 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import engineer.kaobei.BuildConfig
 import engineer.kaobei.Database.AuthStateManager
 import engineer.kaobei.R
@@ -16,18 +19,16 @@ import net.openid.appauth.AuthorizationService.TokenResponseCallback
 
 class LoginActivity : AppCompatActivity() {
 
-    val redirectUrl: String = BuildConfig.OATH2REDIRECTURL
-    val oath2clientid: String = BuildConfig.OATH2CLIENTID
-    val oath2clientsecret: String = BuildConfig.OATH2CLIENTSECRET
-    val website = "https://kaobei.engineer/oauth/authorize"
+    private val redirectUrl: String = BuildConfig.OATH2REDIRECTURL
+    private val oath2clientid: String = BuildConfig.OATH2CLIENTID
+    private val oath2clientsecret: String = BuildConfig.OATH2CLIENTSECRET
 
-    lateinit var serviceConfig: AuthorizationServiceConfiguration
-    lateinit var authRequestBuilder: AuthorizationRequest.Builder
+    private lateinit var serviceConfig: AuthorizationServiceConfiguration
+    private lateinit var authRequestBuilder: AuthorizationRequest.Builder
 
     companion object {
-        lateinit var service : AuthorizationService
+        private lateinit var service : AuthorizationService
         private lateinit var authStateManager: AuthStateManager
-        lateinit var authState: AuthState
         const val RC_AUTH = 0
         const val AUTH_SUCCESS = 1
     }
@@ -35,6 +36,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        val container :ImageView= findViewById(R.id.container)
+        Glide.with(this).load(resources.getDrawable(R.drawable.img_background_star)).into(container)
         service = AuthorizationService(this)
         authStateManager = AuthStateManager.getInstance(this)
         serviceConfig =
@@ -57,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun login() {
+    private fun login() {
         doAuthorization(authRequestBuilder.build())
     }
 
@@ -85,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
                     TokenResponseCallback { r, e ->
                         if (r != null) {
                             val state2 = authStateManager.updateAfterTokenResponse(r, e)
-                            Toast.makeText(this, "Login success!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Welcome!", Toast.LENGTH_SHORT).show()
                             setResult(AUTH_SUCCESS)
                             finish()
                         } else {

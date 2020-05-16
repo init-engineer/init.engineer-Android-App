@@ -1,12 +1,9 @@
 package engineer.kaobei.Activity
 
-import android.content.ClipData
-import android.content.ClipboardManager
+
 import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,7 +15,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -28,18 +24,18 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import engineer.kaobei.Model.Article.Article
+import engineer.kaobei.Model.Articles.Article
 import engineer.kaobei.Model.Comments.Comment
 import engineer.kaobei.Model.Link.KaobeiLink
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewLoadMoreScroll
+import engineer.kaobei.Util.ClipBoardUtil
+import engineer.kaobei.Util.CustomTabUtil
 import engineer.kaobei.Util.ViewUtil
-import engineer.kaobei.View.AnimatedGap
 import engineer.kaobei.Viewmodel.CommentsViewModel
 import engineer.kaobei.Viewmodel.LinkViewModel
 import kotlinx.android.synthetic.main.activity_article.*
-import kotlin.jvm.internal.Ref
 
 
 class ArticleActivity : AppCompatActivity() {
@@ -54,9 +50,7 @@ class ArticleActivity : AppCompatActivity() {
     private lateinit var linkViewModel: LinkViewModel
     private lateinit var adapter: LoadMoreRecyclerView
 
-
     private var init = false
-    private var reInTop: Ref.BooleanRef = Ref.BooleanRef()
     private var page: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,17 +58,14 @@ class ArticleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_article)
 
         val article = intent.extras?.get(ARTICLE_KEY) as Article
-        reInTop.element = false
 
-        //Backpress button
+        //BackPress button
         tv_backpress.setOnClickListener {
             onBackPressed()
         }
 
         val mLayoutManager = LinearLayoutManager(this)
         val scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visbleThreshold)
-        val gap = findViewById<AnimatedGap>(R.id.gap)
-        comments_recyclerView.layoutManager = LinearLayoutManager(this)
         scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
             override fun onLoadMore() {
                 if (init) {
@@ -85,8 +76,8 @@ class ArticleActivity : AppCompatActivity() {
                 }
             }
         })
-
-        ViewUtil.addGapController(comments_recyclerView, gap, reInTop)
+        comments_recyclerView.layoutManager = mLayoutManager
+        ViewUtil.addGapController(comments_recyclerView, gap)
         commentsViewModel = ViewModelProviders.of(this).get(CommentsViewModel::class.java)
         commentsViewModel.addOnReceiveDataListener(object :
             CommentsViewModel.OnReceiveDataListener {
@@ -96,7 +87,6 @@ class ArticleActivity : AppCompatActivity() {
                     scrollListener.setLoaded()
                 }
             }
-
             override fun onFailure() {
                 if (!init) {
                     page--
@@ -111,11 +101,9 @@ class ArticleActivity : AppCompatActivity() {
                 ).show()
                 Looper.loop()
             }
-
             override fun onNoMoreComments() {
                 scrollListener.setIsScrolledToEnd()
             }
-
         })
         commentsViewModel.getComments(article.id)
             .observe(this, Observer { comments ->
@@ -150,12 +138,11 @@ class ArticleActivity : AppCompatActivity() {
         adapter.setHasStableIds(true)
         comments_recyclerView.adapter = adapter
         comments_recyclerView.addOnScrollListener(scrollListener)
-
     }
 }
 
 class LoadMoreRecyclerView(
-    private val Context: Context,
+    private val context: Context,
     private val article: Article,
     private val viewModel: CommentsViewModel
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -219,18 +206,18 @@ class LoadMoreRecyclerView(
             /**
              *   Hint:可能會Lag
              * */
-            /*   Glide
+               Glide
                    .with(context)
                    .load(content.resources.getDrawable(R.drawable.img_animated_rainbow))
-                   .into(avatar_background)*/
+                   .into(avatar_background)
             if (comment.avatar == "/img/frontend/user/nopic_192.gif") {
                 Glide
-                    .with(Context)
+                    .with(context)
                     .load(content.resources.getDrawable(R.drawable.img_nopic_192))
                     .into(avatar)
             } else {
                 Glide
-                    .with(Context)
+                    .with(context)
                     .load(comment.avatar)
                     .into(avatar)
             }
@@ -254,17 +241,17 @@ class LoadMoreRecyclerView(
             content?.text = article.content
             created_at?.text = article.createdDiff
             Glide
-                .with(Context)
+                .with(context)
                 .load(content.resources.getDrawable(R.drawable.img_animated_rainbow))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(avatar_background)
             Glide
-                .with(Context)
+                .with(context)
                 .load(content.resources.getDrawable(animalAvatar.id))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(avatar)
             Glide
-                .with(Context)
+                .with(context)
                 .load(article.image)
                 .into(image)
             share.setOnClickListener {
@@ -293,21 +280,11 @@ class LoadMoreRecyclerView(
                 it.context.startActivity(sendIntent)
             }
             cardview2.setOnClickListener {
-                val myClipboard: ClipboardManager? =
-                    Context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-                val myClip: ClipData? = ClipData.newPlainText("text", url)
-                myClipboard?.primaryClip = myClip;
+                ClipBoardUtil.copy(it.context,url)
                 bt_sheet.cancel()
             }
             cardview3.setOnClickListener {
-                val builder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
-                builder.setToolbarColor(Context.resources.getColor(R.color.colorPrimary))
-                builder.setShowTitle(true)
-                val customTabsIntent: CustomTabsIntent = builder.build()
-                customTabsIntent.launchUrl(
-                    view.context,
-                    Uri.parse(url)
-                )
+                CustomTabUtil.createCustomTab(it.context,url)
             }
             textView.text = url
             bt_sheet.setContentView(mView)
@@ -381,20 +358,10 @@ class LoadMoreRecyclerView(
             val cardview1: CardView = mView.findViewById(R.id.cardview_chrome_intent)
             val cardview2: CardView = mView.findViewById(R.id.cardview_intent)
             cardview1.setOnClickListener {
-                val builder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
-                builder.setToolbarColor(Context.resources.getColor(R.color.colorPrimary))
-                builder.setShowTitle(true)
-                val customTabsIntent: CustomTabsIntent = builder.build()
-                customTabsIntent.launchUrl(
-                    view.context,
-                    Uri.parse(url)
-                )
+                CustomTabUtil.createCustomTab(it.context,url)
             }
             cardview2.setOnClickListener {
-                var myClipboard: ClipboardManager? =
-                    Context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-                var myClip: ClipData? = ClipData.newPlainText("text", url)
-                myClipboard?.primaryClip = myClip;
+                ClipBoardUtil.copy(it.context,url)
                 bt_sheet.cancel()
             }
             textView.text = url

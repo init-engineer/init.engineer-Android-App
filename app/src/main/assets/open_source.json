@@ -1,0 +1,29 @@
+{
+  "data": [
+    {
+      "name": "Shimmer for Android",
+      "author": "Facebook",
+      "url": "https://github.com/facebook/shimmer-android"
+    },
+    {
+      "name": "Gson",
+      "author": "Google",
+      "url": "https://github.com/google/gson"
+    },
+    {
+      "name": "Glide",
+      "author": "Bumptech",
+      "url": "https://github.com/bumptech/glide"
+    },
+    {
+      "name": "OkHttp",
+      "author": "Square",
+      "url": "https://github.com/square/okhttp"
+    },
+    {
+      "name": "AppAuth-Android",
+      "author": "OpenID",
+      "url": "https://github.com/openid/AppAuth-Android"
+    }
+  ]
+}

@@ -10,54 +10,126 @@
         android:layout_margin="20dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_bs_title"
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/layout_transmission"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="真的要發文了嗎?????"
-            android:fontFamily="@font/dos"
-            android:textColor="@color/FxWhite" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview_cancel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/FxBlack">
+            android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/tv_bs_title_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_margin="5dp"
+                android:text="傳送中..."
                 android:fontFamily="@font/dos"
-                android:text="取消"
-                android:textColor="@color/FxWhite"
-                android:textSize="14sp" />
+                android:textColor="@color/FxWhite" />
 
-        </com.google.android.material.card.MaterialCardView>
+            <ProgressBar
+                android:id="@+id/progressbar"
+                android:layout_margin="50dp"
+                android:layout_gravity="center"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview_submit"
+            <ImageView
+                android:id="@+id/img_success"
+                android:visibility="gone"
+                android:src="@drawable/ic_thumb_up_white_24dp"
+                android:layout_margin="50dp"
+                android:layout_gravity="center"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+
+            <ImageView
+                android:id="@+id/img_failed"
+                android:visibility="gone"
+                android:src="@drawable/ic_warning_red_24dp"
+                android:layout_margin="50dp"
+                android:layout_gravity="center"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardview_cancel_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/FxBlack">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:fontFamily="@font/dos"
+                    android:text="關閉"
+                    android:textColor="@color/FxWhite"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_confirm"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/FxBlack">
+            android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/tv_bs_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_margin="5dp"
+                android:text="真的要發文了嗎?????"
                 android:fontFamily="@font/dos"
-                android:text="發表文章"
-                android:textColor="@color/FxWhite"
-                android:textSize="14sp" />
+                android:textColor="@color/FxWhite" />
 
-        </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardview_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/FxBlack">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:fontFamily="@font/dos"
+                    android:text="取消"
+                    android:textColor="@color/FxWhite"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardview_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/FxBlack">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:fontFamily="@font/dos"
+                    android:text="發表文章"
+                    android:textColor="@color/FxWhite"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </LinearLayout>
 

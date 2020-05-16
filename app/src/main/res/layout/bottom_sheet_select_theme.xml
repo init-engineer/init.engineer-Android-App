@@ -20,7 +20,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/dos"
-            android:text="選擇主題"
+            android:text="@string/bottom_sheet_theme"
             android:textColor="@color/FxWhite" />
 
         <RelativeLayout
@@ -40,8 +40,6 @@
                 android:layout_height="25dp"/>
 
         </RelativeLayout>
-
-
 
 
     </LinearLayout>

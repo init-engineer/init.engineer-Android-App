@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.ImageViewTarget
@@ -20,6 +21,7 @@ class UserViewer : LinearLayout{
     private lateinit var img_avatar_background : ImageView
     private lateinit var tv_name : TextView
     private lateinit var tv_email : TextView
+    private lateinit var cardview_avatar : CardView
     private  var authorized: Boolean = false
 
     constructor(context: Context) : super(context) {
@@ -44,6 +46,7 @@ class UserViewer : LinearLayout{
         img_avatar_background = findViewById(R.id.content_background)
         tv_name = findViewById(R.id.tv_name)
         tv_email = findViewById(R.id.tv_email)
+        cardview_avatar = findViewById(R.id.cardview_avatar)
     }
 
     fun setProfile(kaobeiUser: KaobeiUser){
@@ -64,8 +67,11 @@ class UserViewer : LinearLayout{
             tv_email.text = ""
         }else{
             this.authorized = false
-            tv_name.text = "尚未登入"
-            tv_email.text = ""
+            tv_name.text = "點擊登入"
+            tv_email.visibility=View.GONE
+            Glide.with(this)
+                .load(resources.getDrawable(R.drawable.img_kb))
+                .into(img_avatar)
         }
     }
 }

@@ -18,21 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:fontFamily="@font/dos"
-            android:text="@string/bottom_sheet_font"
-            android:textColor="@color/FxWhite" />
-
-        <TextView
-            android:gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textSize="14sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/dos"
-            android:text="P.S 發文後才會顯示"
+            android:text="@string/pref_title_opensource"
             android:textColor="@color/FxWhite" />
 
         <RelativeLayout
@@ -42,7 +30,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:id="@+id/rv_font"
+                android:id="@+id/rv_open_source"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 

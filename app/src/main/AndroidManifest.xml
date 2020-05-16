@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="engineer.kaobei">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -13,7 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.LoginActivity"></activity>
+        <activity
+            android:theme="@style/SettingTheme"
+            android:name=".Activity.SettingsActivity"
+            android:label="@string/title_activity_settings">
+        </activity>
+        <activity android:name=".Activity.LoginActivity" />
         <activity android:name=".Activity.ArticleActivity" />
         <activity android:name=".Activity.MainActivity">
             <intent-filter>
@@ -26,12 +31,15 @@
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
             tools:node="replace">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="${schemeName}"
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
                     android:host="${hostName}"
-                    android:path="${pathName}"/>
+                    android:path="${pathName}"
+                    android:scheme="${schemeName}" />
             </intent-filter>
         </activity>
     </application>
