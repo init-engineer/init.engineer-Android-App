@@ -55,7 +55,7 @@ import java.net.UnknownServiceException
 class DashBoardFragment : Fragment() {
 
     companion object {
-        const val recyclerviewDelayLoadingTime: Long = 500
+        const val recyclerviewDelayLoadingTime: Long = 300
         const val visibleThreshold = 10
         private lateinit var authStateManager : AuthStateManager
         private var isAuthorized = false

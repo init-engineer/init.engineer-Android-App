@@ -31,11 +31,11 @@ class CommentsViewModel() : ListViewModel<Comment>() {
                 response: retrofit2.Response<KaobeiComments>
             ) {
                 if (response.isSuccessful) {
+                    mOnReceiveDataListener?.onReceiveData(response.body()?.data!!)
+                    add(response.body()?.data!!)
                     if (response.body()?.meta?.pagination?.currentPage == response.body()?.meta?.pagination?.totalPages) {
                         mOnReceiveDataListener?.onNoMoreData()
                     }
-                    mOnReceiveDataListener?.onReceiveData(response.body()?.data!!)
-                    add(response.body()?.data!!)
                 } else {
                     mOnReceiveDataListener?.onFailureToReceiveData()
                 }

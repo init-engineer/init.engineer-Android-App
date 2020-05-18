@@ -35,7 +35,7 @@ class ArticleListFragment : Fragment() {
 
     companion object {
         const val visibleThreshold = 10
-        const val recyclerviewDelayLoadingTime: Long = 500    //limited recyclerview loading time
+        const val recyclerviewDelayLoadingTime: Long = 300    //limited recyclerview loading time
         var page: Int = 1    //Paging
         fun newInstance() = ArticleListFragment()
     }

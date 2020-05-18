@@ -45,8 +45,8 @@ class ArticleActivity : AppCompatActivity() {
 
     companion object {
         const val ARTICLE_KEY: String = "ARTICLE_KEY"
-        const val loadingDelayTime: Long = 500
-        const val visbleThreshold = 17
+        const val loadingDelayTime: Long = 300
+        const val visbleThreshold = 15
     }
 
     private lateinit var adapter: ArticleRecyclerViewAdapter
@@ -127,6 +127,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         const val VIEW_TYPE_LOADING = 1
         const val VIEW_TYPE_ITEM = 2
         const val VIEW_TYPE_LINK = 3
+        const val VIEW_TYPE_LASTONE = 4
     }
 
     constructor(
@@ -157,6 +158,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
 
             override fun onNoMoreData() {
                 mListener?.onNoMoreData()
+                addLastOne()
             }
         })
         mViewModel.getLiveData().observe(context , Observer<List<Comment>> { comments ->
@@ -239,6 +241,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    inner class LastOneViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var avatar = itemView.findViewById<ImageView>(R.id.header2_avatar)
         private var avatar_background =
@@ -397,7 +400,12 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.cardview_style_link, parent, false)
             return LinkViewHolder(view)
-        } else {
+        } else if (viewType == VIEW_TYPE_LASTONE){
+            val view =
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.view_last_one, parent, false)
+            return LastOneViewHolder(view)
+        } else{
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.progress_loading, parent, false)
             return LoadingViewHolder(view)
@@ -415,7 +423,9 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             VIEW_TYPE_LINK
         } else if (comments[position].created == "") {
             VIEW_TYPE_LOADING
-        } else {
+        } else if (comments[position].created == "1") {
+            VIEW_TYPE_LASTONE
+        }else {
             VIEW_TYPE_ITEM
         }
     }
@@ -434,6 +444,10 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         if (holder is LinkViewHolder) {
             holder.bind(mLinks)
         }
+    }
+
+    fun addLastOne() {
+        mViewModel.add(Comment(created = "1"))
     }
 
     fun addLoadingView() {
