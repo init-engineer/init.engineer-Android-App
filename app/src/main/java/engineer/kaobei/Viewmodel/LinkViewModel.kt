@@ -1,41 +1,61 @@
 package engineer.kaobei.Viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import engineer.kaobei.BASE_URL
-import engineer.kaobei.KaobeiEngineerService
 import engineer.kaobei.Model.Link.KaobeiLink
 import okhttp3.*
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
-class LinkViewModel : ObjectViewModel<KaobeiLink>() {
+class LinkViewModel : ViewModel() {
+
+    private lateinit var mOnReceiveDataListener : LinkViewModel.OnReceiveDataListener;
+    private var id = 0
+    private val mCommentsLiveData: MutableLiveData<KaobeiLink> by lazy {
+        MutableLiveData<KaobeiLink>().also {
+            loadLink(id)
+        }
+    }
+
+    fun getLink(id : Int): LiveData<KaobeiLink> {
+        this.id = id
+        return mCommentsLiveData
+    }
 
     fun loadLink(id:Int) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+        // Do an asynchronous operation to fetch articles.
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("https://kaobei.engineer/api/frontend/social/cards/$id/links")
             .build()
-        val service = retrofit.create(KaobeiEngineerService::class.java)
-        service.links(id.toString()).enqueue(object :retrofit2.Callback<KaobeiLink>{
-            override fun onFailure(call: retrofit2.Call<KaobeiLink>, t: Throwable) {
-                TODO("Not yet implemented")
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                mOnReceiveDataListener.onFailure()
+
             }
 
-            override fun onResponse(
-                call: retrofit2.Call<KaobeiLink>,
-                response: retrofit2.Response<KaobeiLink>
-            ) {
-                if (response.isSuccessful) {
-                    response.body()?.let { change(it) }
-                    mOnReceiveDataListener?.onReceiveData()
-                } else {
-                    mOnReceiveDataListener?.onFailureReceiveData()
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response.body?.string()
+                if(response.code !=200){
+                    mOnReceiveDataListener.onFailure()
+                    return
                 }
+                val bean = Gson().fromJson(responseData, KaobeiLink::class.javaObjectType)
+                mOnReceiveDataListener.onReceiveData(bean)
+                mCommentsLiveData.postValue(bean)
             }
 
         })
+    }
+
+    fun addOnReceiveDataListener(mOnReceiveDataListener: OnReceiveDataListener){
+        this.mOnReceiveDataListener = mOnReceiveDataListener
+    }
+
+    interface OnReceiveDataListener {
+        fun onReceiveData(kaobeiLink: KaobeiLink)
+        fun onFailure()
     }
 
 }

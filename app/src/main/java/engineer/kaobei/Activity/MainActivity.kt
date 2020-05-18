@@ -5,17 +5,21 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.transition.TransitionManager
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.Database.AuthStateManager
+import engineer.kaobei.Fragment.*
 import engineer.kaobei.R
 
 
@@ -46,14 +50,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        MobileAds.initialize(this)
-
         showSplashScreen()
         authStateManager = AuthStateManager.getInstance(this)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
         navView.setupWithNavController(navController)
+
 
         title = findViewById(R.id.tv_title)
         sheet = findViewById(R.id.sheet)

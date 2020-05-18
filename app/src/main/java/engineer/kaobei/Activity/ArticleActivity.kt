@@ -1,6 +1,7 @@
 package engineer.kaobei.Activity
 
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -15,7 +16,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,15 +29,12 @@ import engineer.kaobei.Model.Comments.Comment
 import engineer.kaobei.Model.Link.KaobeiLink
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
-import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
 import engineer.kaobei.Util.ClipBoardUtil
 import engineer.kaobei.Util.CustomTabUtil
 import engineer.kaobei.Util.ViewUtil
 import engineer.kaobei.Viewmodel.CommentsViewModel
-import engineer.kaobei.Viewmodel.ListViewModel
 import engineer.kaobei.Viewmodel.LinkViewModel
-import engineer.kaobei.Viewmodel.ObjectViewModel
 import kotlinx.android.synthetic.main.activity_article.*
 
 
@@ -46,10 +43,14 @@ class ArticleActivity : AppCompatActivity() {
     companion object {
         const val ARTICLE_KEY: String = "ARTICLE_KEY"
         const val loadingDelayTime: Long = 500
-        const val visbleThreshold = 17
+        const val visbleThreshold = 15
     }
 
-    private lateinit var adapter: ArticleRecyclerViewAdapter
+    private lateinit var commentsViewModel: CommentsViewModel
+    private lateinit var linkViewModel: LinkViewModel
+    private lateinit var adapter: LoadMoreRecyclerView
+
+    private var init = false
     private var page: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,29 +68,31 @@ class ArticleActivity : AppCompatActivity() {
         val scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visbleThreshold)
         scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
             override fun onLoadMore() {
-                if(adapter.isInit()){
+                if (init) {
+                    adapter.addLoadingView()
                     Handler().postDelayed({
-                        adapter.loadMoreComment(++page)
+                        commentsViewModel.loadComments(article.id, ++page)
                     }, loadingDelayTime)
                 }
             }
         })
         comments_recyclerView.layoutManager = mLayoutManager
         ViewUtil.addGapController(comments_recyclerView, gap)
-        adapter = ArticleRecyclerViewAdapter(this,article, KaobeiLink(), listOf())
-        adapter.setHasStableIds(true)
-        adapter.setListener(object : RecyclerViewAdapterListener<Comment>{
-            override fun onTheFirstInit(list: List<Comment>) {
-
+        commentsViewModel = ViewModelProviders.of(this).get(CommentsViewModel::class.java)
+        commentsViewModel.addOnReceiveDataListener(object :
+            CommentsViewModel.OnReceiveDataListener {
+            override fun onReceiveData(list: List<Comment>) {
+                if (init) {
+                    adapter.removeLoadingView()
+                    scrollListener.setLoaded()
+                }
             }
-
-            override fun onReceiveData() {
-                scrollListener.setLoaded()
-            }
-
-            override fun onFailedToReceiveData() {
-                page--
-                scrollListener.setLoaded()
+            override fun onFailure() {
+                if (!init) {
+                    page--
+                    adapter.removeLoadingView()
+                    scrollListener.setLoaded()
+                }
                 Looper.prepare()
                 Toast.makeText(
                     this@ArticleActivity,
@@ -98,30 +101,59 @@ class ArticleActivity : AppCompatActivity() {
                 ).show()
                 Looper.loop()
             }
-
-            override fun onNoMoreData() {
+            override fun onNoMoreComments() {
                 scrollListener.setIsScrolledToEnd()
             }
-
         })
+        commentsViewModel.getComments(article.id)
+            .observe(this, Observer { comments ->
+                if (!init) {
+                    adapter.setComments(comments)
+                    init = true
+                }
+                adapter.notifyDataSetChanged()
+            })
+        linkViewModel = ViewModelProviders.of(this).get(LinkViewModel::class.java)
+        linkViewModel.getLink(article.id).observe(this, Observer { links ->
+            adapter.setLinks(links)
+            adapter.notifyItemChanged(1)
+        })
+        linkViewModel.addOnReceiveDataListener(object :
+            LinkViewModel.OnReceiveDataListener {
+            override fun onReceiveData(kaobeiLink: KaobeiLink) {
+
+            }
+
+            override fun onFailure() {
+                linkViewModel.loadLink(article.id)
+                adapter.notifyDataSetChanged()
+            }
+        })
+        adapter =
+            LoadMoreRecyclerView(
+                this,
+                article,
+                commentsViewModel
+            )
+        adapter.setHasStableIds(true)
         comments_recyclerView.adapter = adapter
         comments_recyclerView.addOnScrollListener(scrollListener)
     }
 }
 
-class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LoadMoreRecyclerView(
+    private val context: Context,
+    private val article: Article,
+    private val viewModel: CommentsViewModel
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var mListener: RecyclerViewAdapterListener<Comment>? = null
     private var loadingIndex = 0
-    private var comments: List<Comment> = listOf()
+
+    private var comments: MutableList<Comment> = mutableListOf()
     private var linksIsLoaded = false
+    private var links: KaobeiLink = KaobeiLink()
     private var animalAvatar = animalList.random()
-    private lateinit var mViewModel: CommentsViewModel
-    private lateinit var mLinksViewModel: LinkViewModel
-    private var init = false
-    private lateinit var mArticle: Article
-    private lateinit var mLinks: KaobeiLink
-    private lateinit var mContext: FragmentActivity
+
     companion object {
         const val VIEW_TYPE_HEADER = 0
         const val VIEW_TYPE_LOADING = 1
@@ -129,58 +161,13 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         const val VIEW_TYPE_LINK = 3
     }
 
-    constructor(
-        context: FragmentActivity,
-        article: Article,
-        links: KaobeiLink,
-        comments: List<Comment>
-    ) : this() {
-        this.mContext = context
+    fun setComments(comments: MutableList<Comment>) {
         this.comments = comments
-        this.mArticle = article
-        this.mLinks = links
-        mViewModel = ViewModelProviders.of(context).get(CommentsViewModel::class.java)
-        mLinksViewModel = ViewModelProviders.of(context).get(LinkViewModel::class.java)
-        mViewModel.addOnReceiveDataListener(object : ListViewModel.OnReceiveDataListener<Comment> {
-            override fun onReceiveData(list: List<Comment>) {
-                if (!init) {
-                    init = true
-                    mListener?.onTheFirstInit(list)
-                }
-                removeLoadingView()
-                mListener?.onReceiveData()
-            }
-            override fun onFailureToReceiveData() {
-                removeLoadingView()
-                mListener?.onFailedToReceiveData()
-            }
+    }
 
-            override fun onNoMoreData() {
-                mListener?.onNoMoreData()
-            }
-        })
-        mViewModel.getLiveData().observe(context , Observer<List<Comment>> { comments ->
-            this.comments = comments
-            notifyDataSetChanged()
-        })
-        mLinksViewModel.getLiveData().observe(mContext, Observer { links ->
-            setLinks(links)
-            notifyItemChanged(1)
-        })
-        mLinksViewModel.addOnReceiveDataListener(object :
-            ObjectViewModel.OnReceiveDataListener {
-            override fun onReceiveData() {
-
-            }
-
-            override fun onFailureReceiveData() {
-                mLinksViewModel.loadLink(article.id)
-            }
-        })
-        mViewModel.add(0, Comment())
-        mViewModel.add(0, Comment())
-        mViewModel.loadComments(article.id, 1)
-        mLinksViewModel.loadLink(article.id)
+    fun setLinks(links: KaobeiLink) {
+        linksIsLoaded = true
+        this.links = links
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -219,18 +206,18 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             /**
              *   Hint:可能會Lag
              * */
-            Glide
-                .with(mContext)
-                .load(content.resources.getDrawable(R.drawable.img_animated_rainbow))
-                .into(avatar_background)
+               Glide
+                   .with(context)
+                   .load(content.resources.getDrawable(R.drawable.img_animated_rainbow))
+                   .into(avatar_background)
             if (comment.avatar == "/img/frontend/user/nopic_192.gif") {
                 Glide
-                    .with(mContext)
+                    .with(context)
                     .load(content.resources.getDrawable(R.drawable.img_nopic_192))
                     .into(avatar)
             } else {
                 Glide
-                    .with(mContext)
+                    .with(context)
                     .load(comment.avatar)
                     .into(avatar)
             }
@@ -238,6 +225,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
     }
+
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var avatar = itemView.findViewById<ImageView>(R.id.header2_avatar)
@@ -253,17 +241,17 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             content?.text = article.content
             created_at?.text = article.createdDiff
             Glide
-                .with(mContext)
+                .with(context)
                 .load(content.resources.getDrawable(R.drawable.img_animated_rainbow))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(avatar_background)
             Glide
-                .with(mContext)
+                .with(context)
                 .load(content.resources.getDrawable(animalAvatar.id))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(avatar)
             Glide
-                .with(mContext)
+                .with(context)
                 .load(article.image)
                 .into(image)
             share.setOnClickListener {
@@ -292,17 +280,18 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 it.context.startActivity(sendIntent)
             }
             cardview2.setOnClickListener {
-                ClipBoardUtil.copy(it.context, url)
+                ClipBoardUtil.copy(it.context,url)
                 bt_sheet.cancel()
             }
             cardview3.setOnClickListener {
-                CustomTabUtil.createCustomTab(it.context, url)
+                CustomTabUtil.createCustomTab(it.context,url)
             }
             textView.text = url
             bt_sheet.setContentView(mView)
             bt_sheet.show()
         }
     }
+
     inner class LinkViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var btnFb1 = itemView.findViewById<Button>(R.id.btn_link_fb1)
         private var tvFb1Fv = itemView.findViewById<TextView>(R.id.tv_fb1_fv)
@@ -369,10 +358,10 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             val cardview1: CardView = mView.findViewById(R.id.cardview_chrome_intent)
             val cardview2: CardView = mView.findViewById(R.id.cardview_intent)
             cardview1.setOnClickListener {
-                CustomTabUtil.createCustomTab(it.context, url)
+                CustomTabUtil.createCustomTab(it.context,url)
             }
             cardview2.setOnClickListener {
-                ClipBoardUtil.copy(it.context, url)
+                ClipBoardUtil.copy(it.context,url)
                 bt_sheet.cancel()
             }
             textView.text = url
@@ -405,7 +394,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     override fun getItemCount(): Int {
-        return this.comments.count()
+        return this.comments.count() + 2
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -413,7 +402,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             VIEW_TYPE_HEADER
         } else if (position == 1) {
             VIEW_TYPE_LINK
-        } else if (comments[position].created == "") {
+        } else if (comments[position - 2].created == "") {
             VIEW_TYPE_LOADING
         } else {
             VIEW_TYPE_ITEM
@@ -426,46 +415,28 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ItemViewHolder) {
-            holder.bind(comments[position])
+            holder.bind(comments[position - 2])
         }
         if (holder is HeaderViewHolder) {
-            holder.bind(mArticle)
+            holder.bind(article)
         }
         if (holder is LinkViewHolder) {
-            holder.bind(mLinks)
+            holder.bind(links)
         }
     }
 
     fun addLoadingView() {
-        mViewModel.add(Comment())
+        viewModel.addComment(Comment())
         loadingIndex = comments.size - 1
     }
 
     fun removeLoadingView() {
         if (comments.isNotEmpty()) {
             if (loadingIndex >= 1) {
-                mViewModel.remove(loadingIndex)
+                viewModel.removeCommentAt(loadingIndex)
                 loadingIndex = 0
             }
         }
-    }
-
-    fun loadMoreComment(page : Int){
-        addLoadingView()
-        mViewModel.loadComments(mArticle.id,page)
-    }
-
-    fun isInit() : Boolean{
-        return init
-    }
-
-    fun setLinks(links: KaobeiLink) {
-        linksIsLoaded = true
-        this.mLinks = links
-    }
-
-    fun setListener(mListener: RecyclerViewAdapterListener<Comment>) {
-        this.mListener = mListener
     }
 
 }

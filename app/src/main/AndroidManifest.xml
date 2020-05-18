@@ -13,11 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
+            android:theme="@style/SettingTheme"
             android:name=".Activity.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/SettingTheme"></activity>
+            android:label="@string/title_activity_settings">
+        </activity>
         <activity android:name=".Activity.LoginActivity" />
         <activity android:name=".Activity.ArticleActivity" />
         <activity android:name=".Activity.MainActivity">
@@ -27,7 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
             tools:node="replace">
@@ -43,11 +42,6 @@
                     android:scheme="${schemeName}" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="${admobID}"/>
-
     </application>
 
 </manifest>

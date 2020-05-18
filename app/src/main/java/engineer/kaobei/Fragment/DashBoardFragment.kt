@@ -15,7 +15,6 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,23 +32,18 @@ import engineer.kaobei.Activity.SettingsActivity
 import engineer.kaobei.Database.AuthStateManager
 import engineer.kaobei.Model.Articles.Article
 import engineer.kaobei.Model.KaobelUser.BeanKaobeiUser
-import engineer.kaobei.Model.KaobelUser.KaobeiUser
 import engineer.kaobei.Model.UserArticles.UserArticle
 import engineer.kaobei.Model.UserArticles.UserArticles
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
-import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
 import engineer.kaobei.Util.SnackbarUtil
 import engineer.kaobei.View.UserViewer
-import engineer.kaobei.Viewmodel.UserArticleListViewModel
-import engineer.kaobei.Viewmodel.ListViewModel
-import engineer.kaobei.Viewmodel.ProfileViewModel
+import engineer.kaobei.Viewmodel.DashBoardViewModel
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import net.openid.appauth.AuthState
 import okhttp3.*
 import java.io.IOException
-import java.net.UnknownServiceException
 
 
 class DashBoardFragment : Fragment() {
@@ -62,9 +56,11 @@ class DashBoardFragment : Fragment() {
         fun newInstance() = DashBoardFragment()
     }
 
+    var init = false
     var page: Int = 1
 
     private lateinit var mCoorView: CoordinatorLayout
+    private lateinit var mViewModel: DashBoardViewModel
     private lateinit var adapter: HistoryLoadMoreRecyclerView
     private lateinit var mScrollListener: RecyclerViewLoadMoreScroll
 
@@ -72,7 +68,6 @@ class DashBoardFragment : Fragment() {
     private lateinit var mShimmer2: ShimmerFrameLayout
     private lateinit var mShimmer3: ShimmerFrameLayout
     private lateinit var tv_no_post:TextView
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -109,35 +104,70 @@ class DashBoardFragment : Fragment() {
         }
 
         if(authStateManager.getCurrent().isAuthorized){
-            val accessToken : String? = authStateManager.getCurrent().accessToken
-            if(accessToken!=null){
-                isAuthorized = true
-                userviewer.initView(true)
-                userviewer.setOnClickListener {
-                    val bt_sheet = BottomSheetDialog(view?.context)
-                    val mView = LayoutInflater.from(view?.context).inflate(R.layout.bottom_sheet_authorized, null)
-                    val cardview_logout : CardView = mView.findViewById(R.id.cardview_logout)
-                    cardview_logout.setOnClickListener{
-                        logout()
-                    }
-                    val cardview_setting : CardView = mView.findViewById(R.id.cardview_setting)
-                    cardview_setting.setOnClickListener {
-                        val intent = Intent(context, SettingsActivity::class.java)
-                        activity?.startActivity(intent)
-                    }
-                    bt_sheet.setContentView(mView)
-                    bt_sheet.show()
+            isAuthorized = true
+            userviewer.initView(true)
+            userviewer.setOnClickListener {
+                val bt_sheet = BottomSheetDialog(view?.context)
+                val mView = LayoutInflater.from(view?.context).inflate(R.layout.bottom_sheet_authorized, null)
+                val cardview_logout : CardView = mView.findViewById(R.id.cardview_logout)
+                cardview_logout.setOnClickListener{
+                    logout()
                 }
-                val rv_dashboard : RecyclerView = view.findViewById(R.id.rv_dashboard)
-                rv_dashboard.visibility = View.GONE
-                val mLayoutManager = LinearLayoutManager(context)
-                rv_dashboard.layoutManager = mLayoutManager
+                val cardview_setting : CardView = mView.findViewById(R.id.cardview_setting)
+                cardview_setting.setOnClickListener {
+                    val intent = Intent(context, SettingsActivity::class.java)
+                    activity?.startActivity(intent)
+                }
+                bt_sheet.setContentView(mView)
+                bt_sheet.show()
+            }
+            authStateManager.getCurrent().accessToken?.let { loadProfile(it) }
 
-                adapter = HistoryLoadMoreRecyclerView(view.context, accessToken, listOf())
-                adapter.setListener(object:RecyclerViewAdapterListener<UserArticle>{
-                    override fun onTheFirstInit(list: List<UserArticle>) {
-                        activity?.runOnUiThread{
-                            if(list.isEmpty()){
+            val rv_dashboard : RecyclerView = view.findViewById(R.id.rv_dashboard)
+            val mLayoutManager = LinearLayoutManager(context)
+            rv_dashboard.layoutManager = mLayoutManager
+            mViewModel = ViewModelProviders.of(this).get(DashBoardViewModel::class.java)
+            mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visibleThreshold)
+            mScrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
+                override fun onLoadMore() {
+                    if(init){
+                        adapter.addLoadingView()
+                        Handler().postDelayed({
+                            authStateManager.getCurrent().accessToken?.let {
+                                mViewModel.loadArticles(
+                                    it,++page)
+                            }
+                        }, recyclerviewDelayLoadingTime)
+                    }
+                }
+            })
+            mViewModel.addOnReceiveDataListener(object :
+                DashBoardViewModel.OnReceiveDataListener {
+                override fun onReceiveData(list: List<UserArticle>) {
+                    //remove the loading view
+                    if (init) {
+                        adapter.removeLoadingView()
+                        mScrollListener.setLoaded()
+                    }
+                }
+
+                override fun onFailure() {
+                    //remove the loading view and show status
+                    if (init) {
+                        page--
+                        adapter.removeLoadingView()
+                        mScrollListener.setLoaded()
+                    }
+                    SnackbarUtil.makeAnchorSnackbar(mCoorView, "讀取資料失敗，請稍後再試", R.id.gap)
+                }
+            })
+
+
+            authStateManager.getCurrent().accessToken?.let {
+                mViewModel.getArticles(it).observe(viewLifecycleOwner,
+                    Observer<List<UserArticle>> { articles ->
+                        if (!init) {
+                            if(articles.size == 0){
                                 tv_no_post.visibility = View.VISIBLE
                             }else{
                                 tv_no_post.visibility = View.GONE
@@ -146,43 +176,15 @@ class DashBoardFragment : Fragment() {
                             mShimmer2.visibility = View.GONE
                             mShimmer3.visibility = View.GONE
                             rv_dashboard.visibility = View.VISIBLE
+                            adapter = HistoryLoadMoreRecyclerView(view.context,articles,mViewModel)
+                            rv_dashboard.adapter = adapter
+                            init = true
                         }
-                    }
-
-                    override fun onReceiveData() {
-                        mScrollListener.setLoaded()
-                    }
-
-                    override fun onFailedToReceiveData() {
-                        page--
-                        mScrollListener.setLoaded()
-                        SnackbarUtil.makeAnchorSnackbar(mCoorView, "讀取資料失敗，請稍後再試", R.id.gap)
-                    }
-
-                    override fun onNoMoreData() {
-                        TODO("Not yet implemented")
-                    }
-
-                })
-                rv_dashboard.adapter = adapter
-
-                mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visibleThreshold)
-                mScrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
-                    override fun onLoadMore() {
-                        if(adapter.isInit()){
-                            Handler().postDelayed({
-                                adapter.loadMoreArticle(++page)
-                            }, recyclerviewDelayLoadingTime)
-                        }
-                    }
-                })
-
-                val profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
-                profileViewModel.getLiveData().observe(viewLifecycleOwner , Observer<KaobeiUser> { user ->
-                    userviewer.setProfile(user)
-                })
-                profileViewModel.loadProfile(accessToken)
+                        adapter.notifyDataSetChanged()
+                    })
             }
+
+
         }else{
             isAuthorized = false
             mShimmer1.visibility = View.GONE
@@ -227,52 +229,65 @@ class DashBoardFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
+    fun loadDashBoard(accessToken:String) {
+        // Do an asynchronous operation .
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("https://kaobei.engineer/api/frontend/social/cards/api/dashboard")
+            .addHeader("Authorization","Bearer "+accessToken)
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
 
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response?.body?.string()
+                if(response?.code !=200){
+                    return
+                }
+                val bean = Gson().fromJson(responseData,UserArticles::class.javaObjectType)
+            }
+
+        })
+    }
+
+    fun loadProfile(accessToken:String) {
+        // Do an asynchronous operation .
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("https://kaobei.engineer/api/frontend/user/profile")
+            .addHeader("Authorization","Bearer "+accessToken)
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response?.body?.string()
+                if(response?.code !=200){
+                    return
+                }
+                val bean = Gson().fromJson(responseData,BeanKaobeiUser::class.javaObjectType)
+                activity?.runOnUiThread {
+                    userviewer?.setProfile(bean.data)
+                }
+            }
+
+        })
+    }
 
 }
 
-class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HistoryLoadMoreRecyclerView(
+    private val context: Context,
+    private val userArticles: List<UserArticle>,
+    private val viewModel: DashBoardViewModel
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     //for deleting loading view
-    private var mListener : RecyclerViewAdapterListener<UserArticle>? = null
-    private lateinit var mContext : FragmentActivity
-    private lateinit var mViewModel : UserArticleListViewModel
-
-    var articleList : List<UserArticle> = listOf()
-    private lateinit var accessToken: String
-    private var loadingIndex = 0
-    private var init = false
-
-    constructor( context: Context,accessToken: String, articleList : List<UserArticle>) : this() {
-        this.mContext = context as FragmentActivity
-        this.articleList = articleList
-        this.accessToken = accessToken
-        mViewModel = ViewModelProviders.of(context).get(UserArticleListViewModel::class.java)
-        mViewModel.addOnReceiveDataListener(object :ListViewModel.OnReceiveDataListener<UserArticle>{
-            override fun onReceiveData(list: List<UserArticle>) {
-                removeLoadingView()
-                if(!init){
-                    init = true
-                    mListener?.onTheFirstInit(list)
-                }
-                mListener?.onReceiveData()
-            }
-            override fun onFailureToReceiveData() {
-                removeLoadingView()
-                mListener?.onFailedToReceiveData()
-            }
-
-            override fun onNoMoreData() {
-                mListener?.onNoMoreData()
-            }
-        })
-        mViewModel.getLiveData().observe(mContext , Observer<List<UserArticle>> { articles ->
-            this.articleList = articles
-            notifyDataSetChanged()
-        })
-        mViewModel.loadArticles(accessToken,1)
-    }
-
+    var loadingIndex = 0
 
     companion object {
         const val VIEW_TYPE_LOADING = 1
@@ -295,18 +310,18 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
                 banned_layout.visibility = View.GONE
             }
             id?.text =
-                "#" + mContext.resources.getString(R.string.app_name_ch) + userArticle.id.toString(36)
+                "#" + context.resources.getString(R.string.app_name_ch) + userArticle.id.toString(36)
             date?.text = userArticle.createdDiff
             Glide
-                .with(mContext)
+                .with(context)
                 .load(userArticle.image)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(thumbnail)
             itemView.setOnClickListener {
                 val article = Article(userArticle.content,userArticle.createdAt,userArticle.createdDiff,userArticle.id,userArticle.image,userArticle.updatedAt,userArticle.updatedDiff)
-                val intent = Intent(mContext, ArticleActivity::class.java)
+                val intent = Intent(context, ArticleActivity::class.java)
                 intent.putExtra(ArticleActivity.ARTICLE_KEY, article)
-                mContext.startActivity(intent)
+                context.startActivity(intent)
             }
         }
     }
@@ -326,11 +341,11 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     override fun getItemCount(): Int {
-        return this.articleList.count()
+        return this.userArticles.count()
     }
 
     override fun getItemViewType(position: Int): Int {
-        return  if (articleList[position].id == 0) {
+        return  if (userArticles[position].id == 0) {
             VIEW_TYPE_LOADING
         } else {
             VIEW_TYPE_ITEM
@@ -339,39 +354,25 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ItemViewHolder) {
-            holder.bind(articleList[position])
+            holder.bind(userArticles[position])
         }
     }
 
     fun addLoadingView() {
         //Add loading item
-        mViewModel.add(UserArticle())
-        loadingIndex = articleList.size - 1
+        viewModel.addArticle(UserArticle())
+        loadingIndex = userArticles.size - 1
     }
 
     fun removeLoadingView() {
         //Remove loading item
-        if (articleList.isNotEmpty()) {
+        if (userArticles.isNotEmpty()) {
             if (loadingIndex >= 0) {
-                mViewModel.remove(loadingIndex)
+                viewModel.removeAt(loadingIndex)
                 loadingIndex = 0
             }
         }
     }
 
-    fun loadMoreArticle(page : Int){
-        addLoadingView()
-        mViewModel.loadArticles(accessToken,page)
-    }
-
-
-    fun isInit() : Boolean{
-        return init
-    }
-
-
-    fun setListener(mArticleListRecyclerViewAdapterListener : RecyclerViewAdapterListener<UserArticle>){
-        this.mListener = mArticleListRecyclerViewAdapterListener
-    }
 
 }

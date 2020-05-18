@@ -24,11 +24,6 @@
       "name": "AppAuth-Android",
       "author": "OpenID",
       "url": "https://github.com/openid/AppAuth-Android"
-    },
-    {
-      "name": "Retrofit",
-      "author": "Square",
-      "url": "https://github.com/square/retrofit"
     }
   ]
 }

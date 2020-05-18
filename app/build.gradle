@@ -9,10 +9,6 @@ apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 android {
     compileSdkVersion 28
 
-    //Facebook Audience0
-    packagingOptions {
-        exclude 'AndroidManifest.xml'
-    }
 
     defaultConfig {
         applicationId "engineer.kaobei"
@@ -26,13 +22,10 @@ android {
         buildConfigField("String", "OATH2CLIENTID", apikeyProperties['oath2clientid'])
         buildConfigField("String", "OATH2CLIENTSECRET", apikeyProperties['oath2clientsecret'])
         buildConfigField("String", "OATH2REDIRECTURL", "\"" + apikeyProperties['oath2scheme'] + "://" + apikeyProperties['oath2host'] + apikeyProperties['oath2path'] + "\"")
-        buildConfigField("String", "ADMOB_1", apikeyProperties['admob1'])
-
         manifestPlaceholders = [
                 schemeName: apikeyProperties['oath2scheme'],
                 hostName  : apikeyProperties['oath2host'],
                 pathName  : apikeyProperties['oath2path'],
-                admobID  : apikeyProperties['admobID'],
         ]
     }
 
@@ -83,10 +76,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
 
-    //ads
-    implementation 'com.google.android.gms:play-services-ads:19.1.0'
-    implementation 'com.facebook.android:audience-network-sdk:5.0.0'
-
     //shimmer
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
@@ -99,8 +88,6 @@ dependencies {
 
     //okHttp
     implementation 'com.squareup.okhttp3:okhttp:4.6.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
 
     //oath2
     implementation 'net.openid:appauth:0.7.1'

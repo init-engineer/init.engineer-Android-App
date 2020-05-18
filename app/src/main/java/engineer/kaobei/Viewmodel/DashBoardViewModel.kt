@@ -1,42 +1,42 @@
 package engineer.kaobei.Viewmodel
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import engineer.kaobei.Model.Articles.Article
-import engineer.kaobei.Model.Articles.KaobeiArticleList
+import engineer.kaobei.Model.UserArticles.UserArticle
+import engineer.kaobei.Model.UserArticles.UserArticles
 import okhttp3.*
 import java.io.IOException
 
-/**
- * A ViewModel used for the {@link ArticleListFragment}.
- */
-class ArticleListViewModel : ViewModel() {
+class DashBoardViewModel : ViewModel() {
 
     private var init = false
+    private lateinit var accessToken:String
     private lateinit var mOnReceiveDataListener: OnReceiveDataListener;
-    private val mArticles = ArrayList<Article>()
-    private val mArticlesLiveData: MutableLiveData<ArrayList<Article>> by lazy {
-        MutableLiveData<ArrayList<Article>>().also {
-            loadArticles(1)
+    private val mArticles = ArrayList<UserArticle>()
+    private val mArticlesLiveData: MutableLiveData<ArrayList<UserArticle>> by lazy {
+        MutableLiveData<ArrayList<UserArticle>>().also {
+            loadArticles(accessToken,1)
         }
     }
 
-    fun getArticles(): LiveData<ArrayList<Article>> {
+    fun getArticles(accessToken: String): LiveData<ArrayList<UserArticle>> {
+        this.accessToken = accessToken
         return mArticlesLiveData
     }
 
-    fun loadArticles(page: Int) {
+    fun loadArticles(accessToken:String,page: Int) {
         // Do an asynchronous operation to fetch articles.
-        loadMoreArticles(page)
+        loadDashBoard(accessToken,page)
     }
 
-    private fun loadMoreArticles(page: Int) {
+    fun loadDashBoard(accessToken:String,page: Int) {
+        // Do an asynchronous operation .
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("https://kaobei.engineer/api/frontend/social/cards?page=" + page)
+            .url("https://kaobei.engineer/api/frontend/social/cards/api/dashboard?page="+ page)
+            .addHeader("Authorization","Bearer "+accessToken)
             .build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -44,33 +44,30 @@ class ArticleListViewModel : ViewModel() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val responseData = response.body?.string()
-                if (response.code != 200) {
-                    mOnReceiveDataListener.onFailure()
+                val responseData = response?.body?.string()
+                if(response?.code !=200){
                     return
                 }
-                val bean = Gson().fromJson(responseData, KaobeiArticleList::class.javaObjectType)
+                val bean = Gson().fromJson(responseData, UserArticles::class.javaObjectType)
                 mOnReceiveDataListener.onReceiveData(bean.data)
                 addArticles(bean.data)
             }
+
         })
     }
 
-    fun addArticles(articles: List<Article>) {
+    fun addArticles(articles: List<UserArticle>) {
         mArticles.addAll(articles)
-        if (!init) {
-            mArticles.add(0, Article())
-            init = true
-        }
         mArticlesLiveData.postValue(mArticles)
     }
 
-    fun addArticle(article: Article) {
+
+    fun addArticle(article: UserArticle) {
         mArticles.add(article)
         mArticlesLiveData.postValue(mArticles)
     }
 
-    fun addArticleAt(index: Int, article: Article) {
+    fun addArticleAt(index: Int, article: UserArticle) {
         mArticles.add(index, article)
         mArticlesLiveData.postValue(mArticles)
     }
@@ -85,9 +82,8 @@ class ArticleListViewModel : ViewModel() {
     }
 
     interface OnReceiveDataListener {
-        fun onReceiveData(list: List<Article>)
+        fun onReceiveData(list: List<UserArticle>)
         fun onFailure()
     }
-
 
 }
