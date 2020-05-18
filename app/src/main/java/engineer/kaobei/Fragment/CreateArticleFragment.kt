@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
@@ -23,13 +22,14 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.Activity.LoginActivity
+import engineer.kaobei.BASE_URL
 import engineer.kaobei.Database.AuthStateManager
 import engineer.kaobei.Database.FontManager
 import engineer.kaobei.Database.ThemeManager
+import engineer.kaobei.KaobeiEngineerService
 import engineer.kaobei.Model.Fonts.Font
 import engineer.kaobei.Model.Themes.Theme
 import engineer.kaobei.R
@@ -41,6 +41,8 @@ import kotlinx.android.synthetic.main.fragment_create_article.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.IOException
 import kotlin.jvm.internal.Ref
@@ -211,28 +213,39 @@ class CreateArticleFragment : Fragment() {
                 cardview_submit.setOnClickListener {
                     layout_transmission.visibility = View.VISIBLE
                     layout_confirm.visibility = View.GONE
-                    val request = submitArticle(
+                    val request = createRequestBody(
                         content,
                         currentTheme,
                         currentFont,
                         imageUri,
                         authStateManager.getCurrent().accessToken
                     )
-                    val client = OkHttpClient()
+
+                    val retrofit = Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                    val service = retrofit.create(KaobeiEngineerService::class.java)
+
                     if(request!=null){
-                        client.newCall(request).enqueue(object : Callback {
-                            override fun onFailure(call: Call, e: IOException) {
-                                tv_bs_title_2.text="發送失敗。原因:"+e.toString()
+                        service.publishArticle(authStateManager.getCurrent().accessToken!!,request).enqueue(object :retrofit2.Callback<ResponseBody>{
+                            override fun onFailure(
+                                call: retrofit2.Call<ResponseBody>,
+                                t: Throwable
+                            ) {
+                                tv_bs_title_2.text="發送失敗。原因:"+t.toString()
                                 progressbar.visibility = View.GONE
                                 img_failed.visibility = View.VISIBLE
                                 cardview_cancel_2.visibility = View.VISIBLE
                             }
 
-                            override fun onResponse(call: Call, response: Response) {
+                            override fun onResponse(
+                                call: retrofit2.Call<ResponseBody>,
+                                response: retrofit2.Response<ResponseBody>
+                            ) {
                                 progressbar.visibility = View.GONE
-                                val responseData = response.body?.string()
-                                if (response.code != 200) {
-                                    tv_bs_title_2.text="發送失敗。原因:"+response.code
+                                if (!response.isSuccessful) {
+                                    tv_bs_title_2.text="發送失敗。原因:"+response.code()
                                     img_failed.visibility = View.VISIBLE
                                     return
                                 }
@@ -240,6 +253,7 @@ class CreateArticleFragment : Fragment() {
                                 img_success.visibility = View.VISIBLE
                                 cardview_cancel_2.visibility = View.VISIBLE
                             }
+
                         })
                     }else{
                         Toast.makeText(
@@ -268,10 +282,11 @@ class CreateArticleFragment : Fragment() {
         exitTransition = backward
     }
 
-    fun submitArticle(content: String, theme: Theme, font: Font, img: Uri, accessToken: String?):Request? {
+    fun createRequestBody(content: String, theme: Theme, font: Font, img: Uri, accessToken: String?):RequestBody? {
         if (accessToken == null || accessToken.isEmpty()) {
             return null
         }
+
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("content", content)
@@ -285,14 +300,14 @@ class CreateArticleFragment : Fragment() {
                 .addFormDataPart("avatar", "img.jpg", fileRequestBody)
         }
 
-        val request: Request = Request.Builder()
+     /*   val request: Request = Request.Builder()
             .url("https://kaobei.engineer/api/frontend/social/cards/api/publish")
             .addHeader("Authorization", "Bearer " + accessToken)
             .addHeader("Accept","*application/json")
             .post(requestBody.build())
-            .build()
+            .build()*/
 
-        return request
+        return requestBody.build()
     }
 
     fun checkPermission(context: Context) {

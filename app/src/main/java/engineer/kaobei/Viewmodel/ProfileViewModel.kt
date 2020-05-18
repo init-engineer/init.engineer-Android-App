@@ -1,34 +1,34 @@
 package engineer.kaobei.Viewmodel
 
-import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
 import engineer.kaobei.BASE_URL
 import engineer.kaobei.KaobeiEngineerService
-import engineer.kaobei.Model.Link.KaobeiLink
-import okhttp3.*
+import engineer.kaobei.Model.KaobelUser.BeanKaobeiUser
+import engineer.kaobei.Model.KaobelUser.KaobeiUser
+import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 
-class LinkViewModel : ObjectViewModel<KaobeiLink>() {
 
-    fun loadLink(id:Int) {
+class ProfileViewModel : ObjectViewModel<KaobeiUser>(){
+
+    fun loadProfile(accessToken:String) {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val service = retrofit.create(KaobeiEngineerService::class.java)
-        service.links(id.toString()).enqueue(object :retrofit2.Callback<KaobeiLink>{
-            override fun onFailure(call: retrofit2.Call<KaobeiLink>, t: Throwable) {
-                TODO("Not yet implemented")
+        service.profile("Bearer " + accessToken).enqueue(object :retrofit2.Callback<BeanKaobeiUser>{
+            override fun onFailure(call: Call<BeanKaobeiUser>, t: Throwable) {
+                mOnReceiveDataListener?.onFailureReceiveData()
             }
 
             override fun onResponse(
-                call: retrofit2.Call<KaobeiLink>,
-                response: retrofit2.Response<KaobeiLink>
+                call: Call<BeanKaobeiUser>,
+                response: Response<BeanKaobeiUser>
             ) {
                 if (response.isSuccessful) {
-                    response.body()?.let { change(it) }
+                    response.body()?.data?.let { change(it) }
                     mOnReceiveDataListener?.onReceiveData()
                 } else {
                     mOnReceiveDataListener?.onFailureReceiveData()
@@ -39,3 +39,4 @@ class LinkViewModel : ObjectViewModel<KaobeiLink>() {
     }
 
 }
+
