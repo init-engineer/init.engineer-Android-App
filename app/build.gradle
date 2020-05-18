@@ -23,10 +23,10 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "OATH2CLIENTID", apikeyProperties['oath2clientid'])
-        buildConfigField("String", "OATH2CLIENTSECRET", apikeyProperties['oath2clientsecret'])
+        buildConfigField("String", "OATH2CLIENTID", "\""+apikeyProperties['oath2clientid']+"\"")
+        buildConfigField("String", "OATH2CLIENTSECRET", "\""+apikeyProperties['oath2clientsecret']+"\"")
         buildConfigField("String", "OATH2REDIRECTURL", "\"" + apikeyProperties['oath2scheme'] + "://" + apikeyProperties['oath2host'] + apikeyProperties['oath2path'] + "\"")
-        buildConfigField("String", "ADMOB_1", apikeyProperties['admob1'])
+        buildConfigField("String", "ADMOB_1", "\""+apikeyProperties['admob1']+"\"")
 
         manifestPlaceholders = [
                 schemeName: apikeyProperties['oath2scheme'],
