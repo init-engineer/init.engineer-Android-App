@@ -343,6 +343,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <include
+            android:visibility="gone"
             layout="@layout/ads_style1"/>
 
     </LinearLayout>
