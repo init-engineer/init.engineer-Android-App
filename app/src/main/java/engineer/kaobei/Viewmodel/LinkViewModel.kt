@@ -21,6 +21,7 @@ class LinkViewModel : ObjectViewModel<KaobeiLink>() {
         service.links(id.toString()).enqueue(object :retrofit2.Callback<KaobeiLink>{
             override fun onFailure(call: retrofit2.Call<KaobeiLink>, t: Throwable) {
                 TODO("Not yet implemented")
+                mOnReceiveDataListener?.onFailureReceiveData()
             }
 
             override fun onResponse(
