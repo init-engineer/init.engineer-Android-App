@@ -90,13 +90,11 @@ class ArticleActivity : AppCompatActivity() {
             override fun onFailedToReceiveData() {
                 page--
                 scrollListener.setLoaded()
-                Looper.prepare()
                 Toast.makeText(
                     this@ArticleActivity,
                     this@ArticleActivity.resources.getText(R.string.loading_failed),
                     Toast.LENGTH_SHORT
                 ).show()
-                Looper.loop()
             }
 
             override fun onNoMoreData() {
