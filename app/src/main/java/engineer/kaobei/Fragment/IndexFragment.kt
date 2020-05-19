@@ -117,7 +117,7 @@ class IndexFragment : Fragment() {
         // now, while you are testing and replace it later when you have signed up.
         // While you are using this temporary code you will only get test ads and if you release
         // your code like this to the Google Play your users will not receive ads (you will get a no fill error).
-        val nativeAd = NativeAd(context, "246180196469606_246180519802907")
+        val nativeAd = NativeAd(context, BuildConfig.AUDIENCE_1)
         val TAG = "TAG"
         val loadAdConfig = nativeAd.buildLoadAdConfig()
             .withAdListener(object:NativeAdListener{
