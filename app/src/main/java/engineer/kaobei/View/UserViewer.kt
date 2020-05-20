@@ -1,7 +1,6 @@
 package engineer.kaobei.View
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
@@ -9,12 +8,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
-import com.bumptech.glide.request.target.ImageViewTarget
 import engineer.kaobei.Model.KaobelUser.KaobeiUser
 import engineer.kaobei.R
 
-
+/**
+ * Class UserViewer.
+ */
 class UserViewer : LinearLayout{
 
     private lateinit var img_avatar : ImageView

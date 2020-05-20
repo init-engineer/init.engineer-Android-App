@@ -28,11 +28,12 @@ class AuthStateManager() {
         mCurrentAuthState = AtomicReference()
     }
 
-    companion object{
+    companion object {
         private val INSTANCE_REF =
             AtomicReference(
                 WeakReference<AuthStateManager>(null)
             )
+
         fun getInstance(context: Context): AuthStateManager {
             var manager = INSTANCE_REF.get().get()
             if (manager == null) {
@@ -66,7 +67,7 @@ class AuthStateManager() {
 
     @AnyThread
     fun updateConfig(
-        config:AuthorizationServiceConfiguration
+        config: AuthorizationServiceConfiguration
     ): AuthState {
         val current = getCurrent()
 
@@ -87,7 +88,7 @@ class AuthStateManager() {
     @AnyThread
     fun updateAfterTokenResponse(
         response: TokenResponse,
-         ex: AuthorizationException?
+        ex: AuthorizationException?
     ): AuthState {
         val current = getCurrent()
         if (ex != null) {

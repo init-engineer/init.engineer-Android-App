@@ -7,11 +7,12 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import engineer.kaobei.R
 
-
+/**
+ * Class AnimatedGap.
+ */
 class AnimatedGap : LinearLayout {
 
     private var paint: Paint = Paint()
@@ -55,7 +56,7 @@ class AnimatedGap : LinearLayout {
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if(inito){
+        if (inito) {
             canvas?.drawLine((w / 2).toFloat(), 0F, currentIndexLeft.toFloat(), 0F, paint)
             canvas?.drawLine((w / 2).toFloat(), 0F, currentIndexRight.toFloat(), 0F, paint)
         }
@@ -73,7 +74,7 @@ class AnimatedGap : LinearLayout {
                 invalidate()
             }
         }
-        animator2 = ValueAnimator.ofInt(w , w/2).apply {
+        animator2 = ValueAnimator.ofInt(w, w / 2).apply {
             duration = 200
             interpolator = DecelerateInterpolator()
             addUpdateListener { valueAnimator ->
@@ -93,9 +94,9 @@ class AnimatedGap : LinearLayout {
             duration = 200
             interpolator = DecelerateInterpolator()
             addUpdateListener { valueAnimator ->
-                if(!inito){
+                if (!inito) {
                     inito = true
-                }else{
+                } else {
                     currentIndexLeft = valueAnimator.animatedValue as Int
                     invalidate()
                 }

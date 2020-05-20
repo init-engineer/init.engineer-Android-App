@@ -1,6 +1,5 @@
 package engineer.kaobei.Model.Themes
 
-
 import com.google.gson.annotations.SerializedName
 
 data class Additional(

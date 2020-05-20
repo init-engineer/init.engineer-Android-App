@@ -1,6 +1,5 @@
 package engineer.kaobei.Model.Link
 
-
 import com.google.gson.annotations.SerializedName
 
 data class Data(

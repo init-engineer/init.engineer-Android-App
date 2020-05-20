@@ -16,7 +16,9 @@ import engineer.kaobei.R
 import net.openid.appauth.*
 import net.openid.appauth.AuthorizationService.TokenResponseCallback
 
-
+/**
+ * Class LoginActivity.
+ */
 class LoginActivity : AppCompatActivity() {
 
     private val redirectUrl: String = BuildConfig.OATH2REDIRECTURL
@@ -27,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var authRequestBuilder: AuthorizationRequest.Builder
 
     companion object {
-        private lateinit var service : AuthorizationService
+        private lateinit var service: AuthorizationService
         private lateinit var authStateManager: AuthStateManager
         const val RC_AUTH = 0
         const val AUTH_SUCCESS = 1
@@ -36,15 +38,14 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        val container :ImageView= findViewById(R.id.container)
+        val container: ImageView = findViewById(R.id.container)
         Glide.with(this).load(resources.getDrawable(R.drawable.img_background_star)).into(container)
         service = AuthorizationService(this)
         authStateManager = AuthStateManager.getInstance(this)
-        serviceConfig =
-            AuthorizationServiceConfiguration(
-                Uri.parse("https://kaobei.engineer/oauth/authorize"),  // authorization endpoint
-                Uri.parse("https://kaobei.engineer/oauth/token")
-            )
+        serviceConfig = AuthorizationServiceConfiguration(
+            Uri.parse("https://kaobei.engineer/oauth/authorize"),  // authorization endpoint
+            Uri.parse("https://kaobei.engineer/oauth/token")
+        )
         authRequestBuilder = AuthorizationRequest.Builder(
             serviceConfig,  // the authorization service configuration
             oath2clientid,  // the client ID, typically pre-registered and static
@@ -69,7 +70,6 @@ class LoginActivity : AppCompatActivity() {
         startActivityForResult(authIntent, RC_AUTH)
     }
 
-
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -92,14 +92,14 @@ class LoginActivity : AppCompatActivity() {
                             setResult(AUTH_SUCCESS)
                             finish()
                         } else {
-                            Toast.makeText(this, "resp failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Resp failed.", Toast.LENGTH_SHORT).show()
                         }
                     })
             } else {
-                Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Login failed.", Toast.LENGTH_SHORT).show()
             }
         } else {
-            // ...
+            // Do something ...
         }
     }
 }

@@ -6,7 +6,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import engineer.kaobei.R
 
 object CustomTabUtil {
-    fun createCustomTab(context: Context, url: String){
+    fun createCustomTab(context: Context, url: String) {
         val builder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
         builder.setToolbarColor(context.resources.getColor(R.color.colorPrimary))
         builder.setShowTitle(true)

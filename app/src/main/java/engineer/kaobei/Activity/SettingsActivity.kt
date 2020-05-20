@@ -24,7 +24,9 @@ import engineer.kaobei.Util.ViewUtil
 import engineer.kaobei.View.AnimatedGap
 import kotlin.jvm.internal.Ref
 
-
+/**
+ * Class SettingsActivity.
+ */
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +39,7 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-
     class SettingsFragment : PreferenceFragmentCompat() {
-
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
             val appVersionPreference: Preference? =
@@ -52,15 +52,17 @@ class SettingsActivity : AppCompatActivity() {
                 findPreference(resources.getText(R.string.pref_openSource_key));
             openSourcePreference?.setOnPreferenceClickListener {
                 val bt_sheet = BottomSheetDialog(it.context)
-                val mView = LayoutInflater.from(it.context)
-                    .inflate(R.layout.bottom_sheet_open_source, null)
-                val openSourceManager : OpenSourceManager = OpenSourceManager.getInstance(it.context)
-                val rv_open_source :RecyclerView = mView.findViewById(R.id.rv_open_source)
+                val mView =
+                    LayoutInflater.from(it.context).inflate(R.layout.bottom_sheet_open_source, null)
+                val openSourceManager: OpenSourceManager = OpenSourceManager.getInstance(it.context)
+                val rv_open_source: RecyclerView = mView.findViewById(R.id.rv_open_source)
                 val gap = mView.findViewById<AnimatedGap>(R.id.gap)
                 ViewUtil.addGapController(rv_open_source, gap)
-                val adapter = OpenSourceRecyclerViewAdapter(it.context,openSourceManager.getOpenSource())
+                val adapter =
+                    OpenSourceRecyclerViewAdapter(it.context, openSourceManager.getOpenSource())
                 rv_open_source.layoutManager = LinearLayoutManager(it.context)
-                adapter.setOnItemClickListener(object :OpenSourceRecyclerViewAdapter.OnItemClickListener{
+                adapter.setOnItemClickListener(object :
+                    OpenSourceRecyclerViewAdapter.OnItemClickListener {
                     override fun onItemClick(opensource: OpenSource) {
                         val builder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
                         builder.setToolbarColor(it.context.resources.getColor(R.color.colorPrimary))
@@ -77,10 +79,14 @@ class SettingsActivity : AppCompatActivity() {
                 bt_sheet.show()
                 false
             }
-            val projectonGithubPreference : Preference? =
+
+            val projectonGithubPreference: Preference? =
                 findPreference(resources.getText(R.string.pref_project_on_github));
             projectonGithubPreference?.setOnPreferenceClickListener {
-                CustomTabUtil.createCustomTab(it.context,"https://github.com/init-engineer/init.engineer-Android-App")
+                CustomTabUtil.createCustomTab(
+                    it.context,
+                    "https://github.com/init-engineer/init.engineer-Android-App"
+                )
                 false
             }
         }
@@ -97,21 +103,23 @@ class SettingsActivity : AppCompatActivity() {
     }
 }
 
-class OpenSourceRecyclerViewAdapter(private val context: Context, private val opensource: List<OpenSource>) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class OpenSourceRecyclerViewAdapter(
+    private val context: Context,
+    private val opensource: List<OpenSource>
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var mOnItemClickListener : OnItemClickListener? = null
+    var mOnItemClickListener: OnItemClickListener? = null
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val tv_name :TextView = itemView.findViewById(R.id.tv_name)
-        val tv_author :TextView = itemView.findViewById(R.id.tv_author)
-        val tv_url :TextView = itemView.findViewById(R.id.tv_url)
+        val tv_name: TextView = itemView.findViewById(R.id.tv_name)
+        val tv_author: TextView = itemView.findViewById(R.id.tv_author)
+        val tv_url: TextView = itemView.findViewById(R.id.tv_url)
 
         fun bind(opensource: OpenSource) {
-            tv_name.text=opensource.name
-            tv_author.text=opensource.author
-            tv_url.text=opensource.url
+            tv_name.text = opensource.name
+            tv_author.text = opensource.author
+            tv_url.text = opensource.url
             itemView.setOnClickListener {
                 mOnItemClickListener?.onItemClick(opensource)
             }
@@ -121,7 +129,8 @@ class OpenSourceRecyclerViewAdapter(private val context: Context, private val op
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.cardview_open_source, parent, false)
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.cardview_open_source, parent, false)
         return ItemViewHolder(view)
     }
 
@@ -142,5 +151,4 @@ class OpenSourceRecyclerViewAdapter(private val context: Context, private val op
     interface OnItemClickListener {
         fun onItemClick(opensource: OpenSource)
     }
-
 }

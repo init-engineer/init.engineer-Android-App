@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-open class ListViewModel<T>  : ViewModel() {
+open class ListViewModel<T> : ViewModel() {
 
     protected var mOnReceiveDataListener: OnReceiveDataListener<T>? = null
     private val mList = ArrayList<T>()

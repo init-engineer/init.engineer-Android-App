@@ -1,6 +1,5 @@
 package engineer.kaobei.Model.UserArticles
 
-
 import com.google.gson.annotations.SerializedName
 
 data class Meta(

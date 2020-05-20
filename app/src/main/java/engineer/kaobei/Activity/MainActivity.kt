@@ -19,24 +19,27 @@ import com.google.android.material.transition.MaterialContainerTransform
 import engineer.kaobei.Database.AuthStateManager
 import engineer.kaobei.R
 
-
 /**
+ * Class MainActivity.
+ *
  * This is the base activity of the app
  */
 class MainActivity : AppCompatActivity() {
 
-    //Bottom sheet status
-    private var titleClicked = false
+    /**
+     * Bottom sheet status
+     */
+    private var titleClicked: Boolean = false
 
     private lateinit var title: TextView
     private lateinit var sheet: CardView
     private lateinit var big_card: CardView
-
-    private lateinit var authStateManager:AuthStateManager
+    private lateinit var authStateManager: AuthStateManager
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode==LoginActivity.AUTH_SUCCESS){
+
+        if (resultCode == LoginActivity.AUTH_SUCCESS) {
             val intent = intent
             finish()
             startActivity(intent)
@@ -63,7 +66,6 @@ class MainActivity : AppCompatActivity() {
         title.setOnClickListener {
             enterView()
         }
-
     }
 
     private fun showSplashScreen() {
@@ -72,7 +74,9 @@ class MainActivity : AppCompatActivity() {
         }, 1000)
     }
 
-    //show splash screen and hide sheet
+    /**
+     * show splash screen and hide sheet
+     */
     private fun enterView() {
         val transform = MaterialContainerTransform().apply {
             // Manually tell the container transform which Views to transform between.
@@ -86,16 +90,20 @@ class MainActivity : AppCompatActivity() {
             // remove the transition's scrim.
             scrimColor = Color.TRANSPARENT
         }
+
         TransitionManager.beginDelayedTransition(
             window.decorView.findViewById(android.R.id.content),
             transform
         )
+
         sheet.visibility = View.GONE
         big_card.visibility = View.VISIBLE
         titleClicked = true
     }
 
-    //hide splash screen and show sheet
+    /**
+     * hide splash screen and show sheet
+     */
     private fun exitView() {
         val transform = MaterialContainerTransform().apply {
             // Manually tell the container transform which Views to transform between.
@@ -124,6 +132,5 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
-
     }
 }

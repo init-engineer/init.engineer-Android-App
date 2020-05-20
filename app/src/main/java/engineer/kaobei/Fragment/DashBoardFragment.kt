@@ -57,7 +57,7 @@ class DashBoardFragment : Fragment() {
     companion object {
         const val recyclerviewDelayLoadingTime: Long = 300
         const val visibleThreshold = 10
-        private lateinit var authStateManager : AuthStateManager
+        private lateinit var authStateManager: AuthStateManager
         private var isAuthorized = false
         fun newInstance() = DashBoardFragment()
     }
@@ -71,7 +71,7 @@ class DashBoardFragment : Fragment() {
     private lateinit var mShimmer1: ShimmerFrameLayout
     private lateinit var mShimmer2: ShimmerFrameLayout
     private lateinit var mShimmer3: ShimmerFrameLayout
-    private lateinit var tv_no_post:TextView
+    private lateinit var tv_no_post: TextView
 
 
     override fun onCreateView(
@@ -93,14 +93,14 @@ class DashBoardFragment : Fragment() {
         authStateManager = AuthStateManager.getInstance(view.context)
 
 
-        val view_dashboard:LinearLayout = view.findViewById(R.id.view_dashboard)
-        val view_not_authorized:LinearLayout = view.findViewById(R.id.view_not_authorized)
+        val view_dashboard: LinearLayout = view.findViewById(R.id.view_dashboard)
+        val view_not_authorized: LinearLayout = view.findViewById(R.id.view_not_authorized)
         val login_button: Button = view.findViewById(R.id.login_button)
 
-        if(authStateManager.getCurrent().isAuthorized){
+        if (authStateManager.getCurrent().isAuthorized) {
             view_dashboard.visibility = View.VISIBLE
             view_not_authorized.visibility = View.GONE
-        }else{
+        } else {
             view_dashboard.visibility = View.GONE
             view_not_authorized.visibility = View.VISIBLE
             login_button.setOnClickListener {
@@ -108,19 +108,20 @@ class DashBoardFragment : Fragment() {
             }
         }
 
-        if(authStateManager.getCurrent().isAuthorized){
-            val accessToken : String? = authStateManager.getCurrent().accessToken
-            if(accessToken!=null){
+        if (authStateManager.getCurrent().isAuthorized) {
+            val accessToken: String? = authStateManager.getCurrent().accessToken
+            if (accessToken != null) {
                 isAuthorized = true
                 userviewer.initView(true)
                 userviewer.setOnClickListener {
                     val bt_sheet = BottomSheetDialog(view?.context)
-                    val mView = LayoutInflater.from(view?.context).inflate(R.layout.bottom_sheet_authorized, null)
-                    val cardview_logout : CardView = mView.findViewById(R.id.cardview_logout)
-                    cardview_logout.setOnClickListener{
+                    val mView = LayoutInflater.from(view?.context)
+                        .inflate(R.layout.bottom_sheet_authorized, null)
+                    val cardview_logout: CardView = mView.findViewById(R.id.cardview_logout)
+                    cardview_logout.setOnClickListener {
                         logout()
                     }
-                    val cardview_setting : CardView = mView.findViewById(R.id.cardview_setting)
+                    val cardview_setting: CardView = mView.findViewById(R.id.cardview_setting)
                     cardview_setting.setOnClickListener {
                         val intent = Intent(context, SettingsActivity::class.java)
                         activity?.startActivity(intent)
@@ -128,18 +129,18 @@ class DashBoardFragment : Fragment() {
                     bt_sheet.setContentView(mView)
                     bt_sheet.show()
                 }
-                val rv_dashboard : RecyclerView = view.findViewById(R.id.rv_dashboard)
+                val rv_dashboard: RecyclerView = view.findViewById(R.id.rv_dashboard)
                 rv_dashboard.visibility = View.GONE
                 val mLayoutManager = LinearLayoutManager(context)
                 rv_dashboard.layoutManager = mLayoutManager
 
                 adapter = HistoryLoadMoreRecyclerView(view.context, accessToken, listOf())
-                adapter.setListener(object:RecyclerViewAdapterListener<UserArticle>{
+                adapter.setListener(object : RecyclerViewAdapterListener<UserArticle> {
                     override fun onTheFirstInit(list: List<UserArticle>) {
-                        activity?.runOnUiThread{
-                            if(list.isEmpty()){
+                        activity?.runOnUiThread {
+                            if (list.isEmpty()) {
                                 tv_no_post.visibility = View.VISIBLE
-                            }else{
+                            } else {
                                 tv_no_post.visibility = View.GONE
                             }
                             mShimmer1.visibility = View.GONE
@@ -169,7 +170,7 @@ class DashBoardFragment : Fragment() {
                 mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visibleThreshold)
                 mScrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
                     override fun onLoadMore() {
-                        if(adapter.isInit()){
+                        if (adapter.isInit()) {
                             Handler().postDelayed({
                                 adapter.loadMoreArticle(++page)
                             }, recyclerviewDelayLoadingTime)
@@ -178,12 +179,13 @@ class DashBoardFragment : Fragment() {
                 })
 
                 val profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
-                profileViewModel.getLiveData().observe(viewLifecycleOwner , Observer<KaobeiUser> { user ->
-                    userviewer.setProfile(user)
-                })
+                profileViewModel.getLiveData()
+                    .observe(viewLifecycleOwner, Observer<KaobeiUser> { user ->
+                        userviewer.setProfile(user)
+                    })
                 profileViewModel.loadProfile(accessToken)
             }
-        }else{
+        } else {
             isAuthorized = false
             mShimmer1.visibility = View.GONE
             mShimmer2.visibility = View.GONE
@@ -191,8 +193,9 @@ class DashBoardFragment : Fragment() {
             userviewer.initView(false)
             userviewer.setOnClickListener {
                 val bt_sheet = BottomSheetDialog(view.context)
-                val mView = LayoutInflater.from(view.context).inflate(R.layout.bottom_sheet_not_authorized, null)
-                val cardview_login : CardView = mView.findViewById(R.id.cardview_login)
+                val mView = LayoutInflater.from(view.context)
+                    .inflate(R.layout.bottom_sheet_not_authorized, null)
+                val cardview_login: CardView = mView.findViewById(R.id.cardview_login)
                 cardview_login.setOnClickListener {
                     login()
                 }
@@ -205,9 +208,9 @@ class DashBoardFragment : Fragment() {
     }
 
 
-    fun login(){
+    fun login() {
         val intent = Intent(context, LoginActivity::class.java)
-        activity?.startActivityForResult(intent,LoginActivity.RC_AUTH)
+        activity?.startActivityForResult(intent, LoginActivity.RC_AUTH)
     }
 
     fun logout() {
@@ -228,35 +231,36 @@ class DashBoardFragment : Fragment() {
     }
 
 
-
 }
 
 class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     //for deleting loading view
-    private var mListener : RecyclerViewAdapterListener<UserArticle>? = null
-    private lateinit var mContext : FragmentActivity
-    private lateinit var mViewModel : UserArticleListViewModel
+    private var mListener: RecyclerViewAdapterListener<UserArticle>? = null
+    private lateinit var mContext: FragmentActivity
+    private lateinit var mViewModel: UserArticleListViewModel
 
-    var articleList : List<UserArticle> = listOf()
+    var articleList: List<UserArticle> = listOf()
     private lateinit var accessToken: String
     private var loadingIndex = 0
     private var init = false
 
-    constructor( context: Context,accessToken: String, articleList : List<UserArticle>) : this() {
+    constructor(context: Context, accessToken: String, articleList: List<UserArticle>) : this() {
         this.mContext = context as FragmentActivity
         this.articleList = articleList
         this.accessToken = accessToken
         mViewModel = ViewModelProviders.of(context).get(UserArticleListViewModel::class.java)
-        mViewModel.addOnReceiveDataListener(object :ListViewModel.OnReceiveDataListener<UserArticle>{
+        mViewModel.addOnReceiveDataListener(object :
+            ListViewModel.OnReceiveDataListener<UserArticle> {
             override fun onReceiveData(list: List<UserArticle>) {
                 removeLoadingView()
-                if(!init){
+                if (!init) {
                     init = true
                     mListener?.onTheFirstInit(list)
                 }
                 mListener?.onReceiveData()
             }
+
             override fun onFailureToReceiveData() {
                 removeLoadingView()
                 mListener?.onFailedToReceiveData()
@@ -266,11 +270,11 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
                 mListener?.onNoMoreData()
             }
         })
-        mViewModel.getLiveData().observe(mContext , Observer<List<UserArticle>> { articles ->
+        mViewModel.getLiveData().observe(mContext, Observer<List<UserArticle>> { articles ->
             this.articleList = articles
             notifyDataSetChanged()
         })
-        mViewModel.loadArticles(accessToken,1)
+        mViewModel.loadArticles(accessToken, 1)
     }
 
 
@@ -288,14 +292,16 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
 
         @SuppressLint("SetTextI18n")
         fun bind(userArticle: UserArticle) {
-            if(userArticle.isBanned==1){
+            if (userArticle.isBanned == 1) {
                 banned_layout.visibility = View.VISIBLE
                 style2_banned_mark.text = userArticle.bannedRemarks
-            }else{
+            } else {
                 banned_layout.visibility = View.GONE
             }
             id?.text =
-                "#" + mContext.resources.getString(R.string.app_name_ch) + userArticle.id.toString(36)
+                "#" + mContext.resources.getString(R.string.app_name_ch) + userArticle.id.toString(
+                    36
+                )
             date?.text = userArticle.createdDiff
             Glide
                 .with(mContext)
@@ -303,7 +309,15 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(thumbnail)
             itemView.setOnClickListener {
-                val article = Article(userArticle.content,userArticle.createdAt,userArticle.createdDiff,userArticle.id,userArticle.image,userArticle.updatedAt,userArticle.updatedDiff)
+                val article = Article(
+                    userArticle.content,
+                    userArticle.createdAt,
+                    userArticle.createdDiff,
+                    userArticle.id,
+                    userArticle.image,
+                    userArticle.updatedAt,
+                    userArticle.updatedDiff
+                )
                 val intent = Intent(mContext, ArticleActivity::class.java)
                 intent.putExtra(ArticleActivity.ARTICLE_KEY, article)
                 mContext.startActivity(intent)
@@ -317,8 +331,8 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
         if (viewType == VIEW_TYPE_ITEM) {
             val view =
                 LayoutInflater.from(parent.context).inflate(R.layout.cardview_style2, parent, false)
-            return ItemViewHolder(view)}
-        else {
+            return ItemViewHolder(view)
+        } else {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.progress_loading, parent, false)
             return LoadingViewHolder(view)
@@ -330,7 +344,7 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     override fun getItemViewType(position: Int): Int {
-        return  if (articleList[position].id == 0) {
+        return if (articleList[position].id == 0) {
             VIEW_TYPE_LOADING
         } else {
             VIEW_TYPE_ITEM
@@ -359,18 +373,18 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    fun loadMoreArticle(page : Int){
+    fun loadMoreArticle(page: Int) {
         addLoadingView()
-        mViewModel.loadArticles(accessToken,page)
+        mViewModel.loadArticles(accessToken, page)
     }
 
 
-    fun isInit() : Boolean{
+    fun isInit(): Boolean {
         return init
     }
 
 
-    fun setListener(mArticleListRecyclerViewAdapterListener : RecyclerViewAdapterListener<UserArticle>){
+    fun setListener(mArticleListRecyclerViewAdapterListener: RecyclerViewAdapterListener<UserArticle>) {
         this.mListener = mArticleListRecyclerViewAdapterListener
     }
 

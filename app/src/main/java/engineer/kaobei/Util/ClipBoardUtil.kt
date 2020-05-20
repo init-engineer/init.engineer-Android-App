@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat.getSystemService
 
 object ClipBoardUtil {
 
-    fun copy(context :Context,string:String){
+    fun copy(context: Context, string: String) {
         val myClipboard: ClipboardManager? =
             context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
         val myClip: ClipData? = ClipData.newPlainText("text", string)

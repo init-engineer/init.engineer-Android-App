@@ -1,6 +1,5 @@
 package engineer.kaobei.Activity
 
-
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -40,13 +39,15 @@ import engineer.kaobei.Viewmodel.LinkViewModel
 import engineer.kaobei.Viewmodel.ObjectViewModel
 import kotlinx.android.synthetic.main.activity_article.*
 
-
+/**
+ * Class ArticleActivity.
+ */
 class ArticleActivity : AppCompatActivity() {
 
     companion object {
         const val ARTICLE_KEY: String = "ARTICLE_KEY"
         const val loadingDelayTime: Long = 300
-        const val visbleThreshold = 15
+        const val visbleThreshold: Int = 15
     }
 
     private lateinit var adapter: ArticleRecyclerViewAdapter
@@ -67,7 +68,7 @@ class ArticleActivity : AppCompatActivity() {
         val scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visbleThreshold)
         scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
             override fun onLoadMore() {
-                if(adapter.isInit()){
+                if (adapter.isInit()) {
                     Handler().postDelayed({
                         adapter.loadMoreComment(++page)
                     }, loadingDelayTime)
@@ -76,11 +77,11 @@ class ArticleActivity : AppCompatActivity() {
         })
         comments_recyclerView.layoutManager = mLayoutManager
         ViewUtil.addGapController(comments_recyclerView, gap)
-        adapter = ArticleRecyclerViewAdapter(this,article, KaobeiLink(), listOf())
+        adapter = ArticleRecyclerViewAdapter(this, article, KaobeiLink(), listOf())
         adapter.setHasStableIds(true)
-        adapter.setListener(object : RecyclerViewAdapterListener<Comment>{
+        adapter.setListener(object : RecyclerViewAdapterListener<Comment> {
             override fun onTheFirstInit(list: List<Comment>) {
-
+                // Do something ...
             }
 
             override fun onReceiveData() {
@@ -102,6 +103,7 @@ class ArticleActivity : AppCompatActivity() {
             }
 
         })
+
         comments_recyclerView.adapter = adapter
         comments_recyclerView.addOnScrollListener(scrollListener)
     }
@@ -109,23 +111,24 @@ class ArticleActivity : AppCompatActivity() {
 
 class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private var animalAvatar: AnimalAvatar = animalList.random()
     private var mListener: RecyclerViewAdapterListener<Comment>? = null
-    private var loadingIndex = 0
+    private var loadingIndex: Int = 0
     private var comments: List<Comment> = listOf()
-    private var linksIsLoaded = false
-    private var animalAvatar = animalList.random()
+    private var linksIsLoaded: Boolean = false
+    private var init: Boolean = false
     private lateinit var mViewModel: CommentsViewModel
     private lateinit var mLinksViewModel: LinkViewModel
-    private var init = false
     private lateinit var mArticle: Article
     private lateinit var mLinks: KaobeiLink
     private lateinit var mContext: FragmentActivity
+
     companion object {
-        const val VIEW_TYPE_HEADER = 0
-        const val VIEW_TYPE_LOADING = 1
-        const val VIEW_TYPE_ITEM = 2
-        const val VIEW_TYPE_LINK = 3
-        const val VIEW_TYPE_LASTONE = 4
+        const val VIEW_TYPE_HEADER: Int = 0
+        const val VIEW_TYPE_LOADING: Int = 1
+        const val VIEW_TYPE_ITEM: Int = 2
+        const val VIEW_TYPE_LINK: Int = 3
+        const val VIEW_TYPE_LASTONE: Int = 4
     }
 
     constructor(
@@ -149,6 +152,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 removeLoadingView()
                 mListener?.onReceiveData()
             }
+
             override fun onFailureToReceiveData() {
                 removeLoadingView()
                 mListener?.onFailedToReceiveData()
@@ -159,7 +163,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 addLastOne()
             }
         })
-        mViewModel.getLiveData().observe(context , Observer<List<Comment>> { comments ->
+        mViewModel.getLiveData().observe(context, Observer<List<Comment>> { comments ->
             this.comments = comments
             notifyDataSetChanged()
         })
@@ -170,13 +174,14 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         mLinksViewModel.addOnReceiveDataListener(object :
             ObjectViewModel.OnReceiveDataListener {
             override fun onReceiveData() {
-
+                // Do something ...
             }
 
             override fun onFailureReceiveData() {
                 mLinksViewModel.loadLink(article.id)
             }
-        })
+        }
+        )
         mViewModel.add(0, Comment())
         mViewModel.add(0, Comment())
         mViewModel.loadComments(article.id, 1)
@@ -191,10 +196,12 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         private var content = itemView.findViewById<TextView>(R.id.comment_content)
         private var created_at = itemView.findViewById<TextView>(R.id.comment_created_at)
         private var media = itemView.findViewById<TextView>(R.id.comment_media)
+
         fun bind(comment: Comment) {
             name?.text = comment.name
             content?.text = comment.content
             created_at?.text = comment.created
+
             when (comment.media.type) {
                 "facebook" -> {
                     when (comment.media.connections) {
@@ -217,8 +224,8 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }
             /**
-             *   Hint:可能會Lag
-             * */
+             * Hint:可能會Lag
+             */
             Glide
                 .with(mContext)
                 .load(content.resources.getDrawable(R.drawable.img_animated_rainbow))
@@ -234,10 +241,13 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                     .load(comment.avatar)
                     .into(avatar)
             }
+
             itemView.setOnClickListener {
+                // Do something ...
             }
         }
     }
+
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class LastOneViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -267,11 +277,13 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 .with(mContext)
                 .load(article.image)
                 .into(image)
+
             share.setOnClickListener {
                 setDialog(it, "https://kaobei.engineer/cards/show/" + article.id)
             }
-            itemView.setOnClickListener {
 
+            itemView.setOnClickListener {
+                // Do something ...
             }
         }
 
@@ -282,28 +294,30 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             val cardview1: CardView = mView.findViewById(R.id.cardview_share)
             val cardview2: CardView = mView.findViewById(R.id.cardview_intent)
             val cardview3: CardView = mView.findViewById(R.id.cardview_open)
+
             cardview1.setOnClickListener {
                 val sendIntent = Intent()
                 sendIntent.action = Intent.ACTION_SEND
-                sendIntent.putExtra(
-                    Intent.EXTRA_TEXT,
-                    url
-                )
+                sendIntent.putExtra(Intent.EXTRA_TEXT, url)
                 sendIntent.type = "text/plain"
                 it.context.startActivity(sendIntent)
             }
+
             cardview2.setOnClickListener {
                 ClipBoardUtil.copy(it.context, url)
                 bt_sheet.cancel()
             }
+
             cardview3.setOnClickListener {
                 CustomTabUtil.createCustomTab(it.context, url)
             }
+
             textView.text = url
             bt_sheet.setContentView(mView)
             bt_sheet.show()
         }
     }
+
     inner class LinkViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var btnFb1 = itemView.findViewById<Button>(R.id.btn_link_fb1)
         private var tvFb1Fv = itemView.findViewById<TextView>(R.id.tv_fb1_fv)
@@ -329,6 +343,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             if (links.data.size == 0) {
                 return
             }
+
             if (!linksIsLoaded) {
                 shimmer.visibility = View.VISIBLE
                 view_links.visibility = View.GONE
@@ -352,14 +367,17 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             btnFb1.setOnClickListener { view ->
                 setDialog(view, links.data[0].url)
             }
+
             btnFb2.setOnClickListener { view ->
                 setDialog(view, links.data[1].url)
             }
-            btnPL.setOnClickListener { view ->
-                setDialog(view, links.data[3].url)
-            }
+
             btnTW.setOnClickListener { view ->
                 setDialog(view, links.data[2].url)
+            }
+
+            btnPL.setOnClickListener { view ->
+                setDialog(view, links.data[3].url)
             }
         }
 
@@ -369,13 +387,16 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             val textView: TextView = mView.findViewById(R.id.tv_bs_link)
             val cardview1: CardView = mView.findViewById(R.id.cardview_chrome_intent)
             val cardview2: CardView = mView.findViewById(R.id.cardview_intent)
+
             cardview1.setOnClickListener {
                 CustomTabUtil.createCustomTab(it.context, url)
             }
+
             cardview2.setOnClickListener {
                 ClipBoardUtil.copy(it.context, url)
                 bt_sheet.cancel()
             }
+
             textView.text = url
             bt_sheet.setContentView(mView)
             bt_sheet.show()
@@ -384,26 +405,22 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == VIEW_TYPE_ITEM) {
-            val view =
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.cardview_style_comment, parent, false)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.cardview_style_comment, parent, false)
             return ItemViewHolder(view)
         } else if (viewType == VIEW_TYPE_HEADER) {
-            val view =
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.cardview_header2, parent, false)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.cardview_header2, parent, false)
             return HeaderViewHolder(view)
         } else if (viewType == VIEW_TYPE_LINK) {
-            val view =
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.cardview_style_link, parent, false)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.cardview_style_link, parent, false)
             return LinkViewHolder(view)
-        } else if (viewType == VIEW_TYPE_LASTONE){
+        } else if (viewType == VIEW_TYPE_LASTONE) {
             val view =
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.view_last_one, parent, false)
+                LayoutInflater.from(parent.context).inflate(R.layout.view_last_one, parent, false)
             return LastOneViewHolder(view)
-        } else{
+        } else {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.progress_loading, parent, false)
             return LoadingViewHolder(view)
@@ -423,7 +440,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             VIEW_TYPE_LOADING
         } else if (comments[position].created == "1") {
             VIEW_TYPE_LASTONE
-        }else {
+        } else {
             VIEW_TYPE_ITEM
         }
     }
@@ -462,12 +479,12 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    fun loadMoreComment(page : Int){
+    fun loadMoreComment(page: Int) {
         addLoadingView()
-        mViewModel.loadComments(mArticle.id,page)
+        mViewModel.loadComments(mArticle.id, page)
     }
 
-    fun isInit() : Boolean{
+    fun isInit(): Boolean {
         return init
     }
 
@@ -479,7 +496,6 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
     fun setListener(mListener: RecyclerViewAdapterListener<Comment>) {
         this.mListener = mListener
     }
-
 }
 
 data class AnimalAvatar(val id: Int, val name: String)

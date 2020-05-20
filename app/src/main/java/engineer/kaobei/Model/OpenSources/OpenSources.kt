@@ -1,6 +1,5 @@
 package engineer.kaobei.Model.OpenSources
 
-
 import com.google.gson.annotations.SerializedName
 
 data class OpenSources(

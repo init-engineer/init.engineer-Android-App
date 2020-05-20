@@ -1,6 +1,5 @@
 package engineer.kaobei.Model.Fonts
 
-
 import com.google.gson.annotations.SerializedName
 
 data class Font(

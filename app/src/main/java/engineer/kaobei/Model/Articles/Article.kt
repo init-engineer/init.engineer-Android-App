@@ -1,6 +1,5 @@
 package engineer.kaobei.Model.Articles
 
-
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -20,4 +19,4 @@ data class Article(
     val updatedAt: String = "",
     @SerializedName("updated_diff")
     val updatedDiff: String = ""
-): Serializable
+) : Serializable

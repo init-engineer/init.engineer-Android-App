@@ -42,23 +42,26 @@ class IndexFragment : Fragment() {
             R.layout.fragment_index, container,
             false
         )
-        val card1 :CardView= view.findViewById(R.id.card1)
-        val card2 :CardView= view.findViewById(R.id.card2)
-        val card3 :CardView= view.findViewById(R.id.card3)
-        val card4 :CardView= view.findViewById(R.id.card4)
+        val card1: CardView = view.findViewById(R.id.card1)
+        val card2: CardView = view.findViewById(R.id.card2)
+        val card3: CardView = view.findViewById(R.id.card3)
+        val card4: CardView = view.findViewById(R.id.card4)
         card1.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context,"https://kaobei.engineer/animal/kohlrabi")
+            CustomTabUtil.createCustomTab(view.context, "https://kaobei.engineer/animal/kohlrabi")
         }
         card2.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context,"https://www.facebook.com/init.kobeengineer/")
+            CustomTabUtil.createCustomTab(
+                view.context,
+                "https://www.facebook.com/init.kobeengineer/"
+            )
         }
         card3.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context,"https://plurk.com/kaobei_engineer/")
+            CustomTabUtil.createCustomTab(view.context, "https://plurk.com/kaobei_engineer/")
         }
         card4.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context,"https://twitter.com/kaobei_engineer/")
+            CustomTabUtil.createCustomTab(view.context, "https://twitter.com/kaobei_engineer/")
         }
-        loadNativeAd(view.context,view)
+        loadNativeAd(view.context, view)
         return view
     }
 
@@ -71,14 +74,14 @@ class IndexFragment : Fragment() {
         exitTransition = backward
     }
 
-    fun loadADS(context: Context, view:View){
-        val ads_style1 : UnifiedNativeAdView = view.findViewById(R.id.ads_style1)
+    fun loadADS(context: Context, view: View) {
+        val ads_style1: UnifiedNativeAdView = view.findViewById(R.id.ads_style1)
         ads_style1.visibility = View.GONE
-        val ads_style1_img : ImageView = view.findViewById(R.id.ads_style1_img)
-        val ads_style1_text1 : TextView = view.findViewById(R.id.ads_style1_text1)
-        val ads_style1_text2 : TextView = view.findViewById(R.id.ads_style1_text2)
-        val adLoader = AdLoader.Builder(context,BuildConfig.ADMOB_1)
-            .forUnifiedNativeAd { ad : UnifiedNativeAd ->
+        val ads_style1_img: ImageView = view.findViewById(R.id.ads_style1_img)
+        val ads_style1_text1: TextView = view.findViewById(R.id.ads_style1_text1)
+        val ads_style1_text2: TextView = view.findViewById(R.id.ads_style1_text2)
+        val adLoader = AdLoader.Builder(context, BuildConfig.ADMOB_1)
+            .forUnifiedNativeAd { ad: UnifiedNativeAd ->
                 ads_style1.visibility = View.VISIBLE
                 ads_style1_text1.text = ad.headline
                 ads_style1_text2.text = ad.body
@@ -104,14 +107,15 @@ class IndexFragment : Fragment() {
             })
             .withNativeAdOptions(
                 NativeAdOptions.Builder()
-                // Methods in the NativeAdOptions.Builder class can be
-                // used here to specify individual options settings.
-                .build())
+                    // Methods in the NativeAdOptions.Builder class can be
+                    // used here to specify individual options settings.
+                    .build()
+            )
             .build()
         adLoader.loadAd(AdRequest.Builder().build())
     }
 
-    private fun loadNativeAd(context: Context,view:View) {
+    private fun loadNativeAd(context: Context, view: View) {
         // Instantiate a NativeAd object.
         // NOTE: the placement ID will eventually identify this as your App, you can ignore it for
         // now, while you are testing and replace it later when you have signed up.
@@ -120,7 +124,7 @@ class IndexFragment : Fragment() {
         val nativeAd = NativeAd(context, BuildConfig.AUDIENCE_1)
         val TAG = "TAG"
         val loadAdConfig = nativeAd.buildLoadAdConfig()
-            .withAdListener(object:NativeAdListener{
+            .withAdListener(object : NativeAdListener {
                 override fun onAdClicked(p0: Ad?) {
                     Log.d(TAG, "Native ad clicked!")
                 }
@@ -138,7 +142,7 @@ class IndexFragment : Fragment() {
                     if (p0 == null || nativeAd != p0) {
                         return;
                     }
-                    inflateAd(view,nativeAd)
+                    inflateAd(view, nativeAd)
                 }
 
                 override fun onLoggingImpression(p0: Ad?) {
@@ -151,9 +155,9 @@ class IndexFragment : Fragment() {
         nativeAd.loadAd(loadAdConfig)
     }
 
-    private fun inflateAd(view:View,nativeAd: NativeAd){
+    private fun inflateAd(view: View, nativeAd: NativeAd) {
         nativeAd.unregisterView()
-        val nativeAdLayout : NativeAdLayout = view.findViewById(R.id.native_ad_container);
+        val nativeAdLayout: NativeAdLayout = view.findViewById(R.id.native_ad_container);
         val inflater = LayoutInflater.from(view.context)
         val adView = inflater.inflate(R.layout.ads_style2, nativeAdLayout, false) as LinearLayout?
         nativeAdLayout.addView(adView)

@@ -47,9 +47,10 @@ import java.io.File
 import java.io.IOException
 import kotlin.jvm.internal.Ref
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+/**
+ * TODO: Rename parameter arguments, choose names that match
+ * the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+ */
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
@@ -89,14 +90,14 @@ class CreateArticleFragment : Fragment() {
         )
         authStateManager = AuthStateManager.getInstance(view.context)
 
-        val view_create_article:CoordinatorLayout = view.findViewById(R.id.view_create_article)
-        val view_not_authorized:LinearLayout = view.findViewById(R.id.view_not_authorized)
+        val view_create_article: CoordinatorLayout = view.findViewById(R.id.view_create_article)
+        val view_not_authorized: LinearLayout = view.findViewById(R.id.view_not_authorized)
         val login_button: Button = view.findViewById(R.id.login_button)
 
-        if(authStateManager.getCurrent().isAuthorized){
+        if (authStateManager.getCurrent().isAuthorized) {
             view_create_article.visibility = View.VISIBLE
             view_not_authorized.visibility = View.GONE
-        }else{
+        } else {
             view_create_article.visibility = View.GONE
             view_not_authorized.visibility = View.VISIBLE
             login_button.setOnClickListener {
@@ -194,21 +195,21 @@ class CreateArticleFragment : Fragment() {
 
         val cardview_submit = view.findViewById<CardView>(R.id.cardview_submit)
         cardview_submit.setOnClickListener {
-            if(content.length<10){
-                SnackbarUtil.makeAnchorSnackbar(mCoorView,"字數少於10 AAAAAAAAAAAA",R.id.gap)
-            }else{
+            if (content.length < 10) {
+                SnackbarUtil.makeAnchorSnackbar(mCoorView, "字數少於10 AAAAAAAAAAAA", R.id.gap)
+            } else {
                 val bt_sheet = BottomSheetDialog(view.context)
                 val mView = LayoutInflater.from(view.context)
                     .inflate(R.layout.bottom_sheet_submit_article, null)
-                val layout_confirm : LinearLayout = mView.findViewById(R.id.layout_confirm)
-                val layout_transmission :LinearLayout =mView.findViewById(R.id.layout_transmission)
+                val layout_confirm: LinearLayout = mView.findViewById(R.id.layout_confirm)
+                val layout_transmission: LinearLayout = mView.findViewById(R.id.layout_transmission)
                 val cardview_submit: CardView = mView.findViewById(R.id.cardview_submit)
                 val cardview_cancel: CardView = mView.findViewById(R.id.cardview_cancel)
                 val cardview_cancel_2: CardView = mView.findViewById(R.id.cardview_cancel_2)
-                val tv_bs_title_2 : TextView = mView.findViewById(R.id.tv_bs_title_2)
-                val progressbar : ProgressBar = mView.findViewById(R.id.progressbar)
-                val img_success : ImageView = mView.findViewById(R.id.img_success)
-                val img_failed : ImageView = mView.findViewById(R.id.img_failed)
+                val tv_bs_title_2: TextView = mView.findViewById(R.id.tv_bs_title_2)
+                val progressbar: ProgressBar = mView.findViewById(R.id.progressbar)
+                val img_success: ImageView = mView.findViewById(R.id.img_success)
+                val img_failed: ImageView = mView.findViewById(R.id.img_failed)
                 bt_sheet.setCancelable(false)
                 cardview_submit.setOnClickListener {
                     layout_transmission.visibility = View.VISIBLE
@@ -227,35 +228,36 @@ class CreateArticleFragment : Fragment() {
                         .build()
                     val service = retrofit.create(KaobeiEngineerService::class.java)
 
-                    if(request!=null){
-                        service.publishArticle(authStateManager.getCurrent().accessToken!!,request).enqueue(object :retrofit2.Callback<ResponseBody>{
-                            override fun onFailure(
-                                call: retrofit2.Call<ResponseBody>,
-                                t: Throwable
-                            ) {
-                                tv_bs_title_2.text="發送失敗。原因:"+t.toString()
-                                progressbar.visibility = View.GONE
-                                img_failed.visibility = View.VISIBLE
-                                cardview_cancel_2.visibility = View.VISIBLE
-                            }
-
-                            override fun onResponse(
-                                call: retrofit2.Call<ResponseBody>,
-                                response: retrofit2.Response<ResponseBody>
-                            ) {
-                                progressbar.visibility = View.GONE
-                                if (!response.isSuccessful) {
-                                    tv_bs_title_2.text="發送失敗。原因:"+response.code()
+                    if (request != null) {
+                        service.publishArticle(authStateManager.getCurrent().accessToken!!, request)
+                            .enqueue(object : retrofit2.Callback<ResponseBody> {
+                                override fun onFailure(
+                                    call: retrofit2.Call<ResponseBody>,
+                                    t: Throwable
+                                ) {
+                                    tv_bs_title_2.text = "發送失敗。原因:" + t.toString()
+                                    progressbar.visibility = View.GONE
                                     img_failed.visibility = View.VISIBLE
-                                    return
+                                    cardview_cancel_2.visibility = View.VISIBLE
                                 }
-                                tv_bs_title_2.text="發送成功!"
-                                img_success.visibility = View.VISIBLE
-                                cardview_cancel_2.visibility = View.VISIBLE
-                            }
 
-                        })
-                    }else{
+                                override fun onResponse(
+                                    call: retrofit2.Call<ResponseBody>,
+                                    response: retrofit2.Response<ResponseBody>
+                                ) {
+                                    progressbar.visibility = View.GONE
+                                    if (!response.isSuccessful) {
+                                        tv_bs_title_2.text = "發送失敗。原因:" + response.code()
+                                        img_failed.visibility = View.VISIBLE
+                                        return
+                                    }
+                                    tv_bs_title_2.text = "發送成功!"
+                                    img_success.visibility = View.VISIBLE
+                                    cardview_cancel_2.visibility = View.VISIBLE
+                                }
+
+                            })
+                    } else {
                         Toast.makeText(
                             context,
                             "尚未登入",
@@ -282,7 +284,13 @@ class CreateArticleFragment : Fragment() {
         exitTransition = backward
     }
 
-    fun createRequestBody(content: String, theme: Theme, font: Font, img: Uri, accessToken: String?):RequestBody? {
+    fun createRequestBody(
+        content: String,
+        theme: Theme,
+        font: Font,
+        img: Uri,
+        accessToken: String?
+    ): RequestBody? {
         if (accessToken == null || accessToken.isEmpty()) {
             return null
         }
@@ -292,7 +300,7 @@ class CreateArticleFragment : Fragment() {
             .addFormDataPart("content", content)
             .addFormDataPart("themeStyle", theme.value)
             .addFormDataPart("fontStyle", font.value)
-        if (img!=Uri.EMPTY) {
+        if (img != Uri.EMPTY) {
             val path = context?.let { getRealPathFromUri(it, img) }
             val mFile = File(path)
             val fileRequestBody = mFile.asRequestBody("image/jpeg".toMediaType())
@@ -300,12 +308,12 @@ class CreateArticleFragment : Fragment() {
                 .addFormDataPart("avatar", "img.jpg", fileRequestBody)
         }
 
-     /*   val request: Request = Request.Builder()
-            .url("https://kaobei.engineer/api/frontend/social/cards/api/publish")
-            .addHeader("Authorization", "Bearer " + accessToken)
-            .addHeader("Accept","*application/json")
-            .post(requestBody.build())
-            .build()*/
+        /*   val request: Request = Request.Builder()
+               .url("https://kaobei.engineer/api/frontend/social/cards/api/publish")
+               .addHeader("Authorization", "Bearer " + accessToken)
+               .addHeader("Accept","*application/json")
+               .post(requestBody.build())
+               .build()*/
 
         return requestBody.build()
     }

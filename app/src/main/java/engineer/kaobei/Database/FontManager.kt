@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 class FontManager(context: Context) {
 
-    private var fonts : List<Font>
+    private var fonts: List<Font>
 
     init {
         val fileInString: String =
@@ -18,11 +18,12 @@ class FontManager(context: Context) {
         fonts = bean.options
     }
 
-    companion object{
+    companion object {
         private val INSTANCE_REF =
             AtomicReference(
                 WeakReference<FontManager>(null)
             )
+
         fun getInstance(context: Context): FontManager {
             var manager = INSTANCE_REF.get().get()
             if (manager == null) {
@@ -33,7 +34,7 @@ class FontManager(context: Context) {
         }
     }
 
-    fun getFonts() : List<Font>{
+    fun getFonts(): List<Font> {
         return fonts
     }
 

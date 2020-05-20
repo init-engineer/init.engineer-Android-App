@@ -7,9 +7,9 @@ import engineer.kaobei.Model.OpenSources.OpenSources
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicReference
 
-class OpenSourceManager (context: Context){
+class OpenSourceManager(context: Context) {
 
-    private var openSourceList : List<OpenSource>
+    private var openSourceList: List<OpenSource>
 
     init {
         val fileInString: String =
@@ -18,11 +18,12 @@ class OpenSourceManager (context: Context){
         openSourceList = bean.data
     }
 
-    companion object{
+    companion object {
         private val INSTANCE_REF =
             AtomicReference(
                 WeakReference<OpenSourceManager>(null)
             )
+
         fun getInstance(context: Context): OpenSourceManager {
             var manager = INSTANCE_REF.get().get()
             if (manager == null) {
@@ -33,7 +34,7 @@ class OpenSourceManager (context: Context){
         }
     }
 
-    fun getOpenSource() : List<OpenSource>{
+    fun getOpenSource(): List<OpenSource> {
         return openSourceList
     }
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 class ThemeManager(context: Context) {
 
-    private var themes : List<Theme>
+    private var themes: List<Theme>
 
     init {
         val fileInString: String =
@@ -19,11 +19,12 @@ class ThemeManager(context: Context) {
         themes = bean.themes
     }
 
-    companion object{
+    companion object {
         private val INSTANCE_REF =
             AtomicReference(
                 WeakReference<ThemeManager>(null)
             )
+
         fun getInstance(context: Context): ThemeManager {
             var manager = INSTANCE_REF.get().get()
             if (manager == null) {
@@ -34,7 +35,7 @@ class ThemeManager(context: Context) {
         }
     }
 
-    fun getThemes() : List<Theme>{
+    fun getThemes(): List<Theme> {
         return themes
     }
 
