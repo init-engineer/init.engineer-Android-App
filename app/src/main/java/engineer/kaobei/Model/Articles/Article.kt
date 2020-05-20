@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class Article(
-
     @SerializedName("content")
     val content: String = "",
     @SerializedName("created_at")

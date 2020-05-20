@@ -20,7 +20,7 @@ class ProfileViewModel : ObjectViewModel<KaobeiUser>() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val service = retrofit.create(KaobeiEngineerService::class.java)
-        service.profile("Bearer " + accessToken)
+        service.profile("Bearer $accessToken")
             .enqueue(object : retrofit2.Callback<BeanKaobeiUser> {
                 override fun onFailure(call: Call<BeanKaobeiUser>, t: Throwable) {
                     mOnReceiveDataListener?.onFailureReceiveData()
@@ -40,5 +40,6 @@ class ProfileViewModel : ObjectViewModel<KaobeiUser>() {
 
             })
     }
+    
 }
 

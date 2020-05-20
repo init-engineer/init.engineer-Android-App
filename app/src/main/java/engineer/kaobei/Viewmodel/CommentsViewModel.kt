@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  *
  * A ViewModel used for the {@link ArticleListFragment}.
  */
-class CommentsViewModel() : ListViewModel<Comment>() {
+class CommentsViewModel : ListViewModel<Comment>() {
 
     fun loadComments(id: Int, page: Int) {
         val retrofit = Retrofit.Builder()
@@ -42,4 +42,5 @@ class CommentsViewModel() : ListViewModel<Comment>() {
                 }
             })
     }
+
 }

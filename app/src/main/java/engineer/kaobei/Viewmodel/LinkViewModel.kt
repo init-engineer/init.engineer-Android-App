@@ -35,4 +35,5 @@ class LinkViewModel : ObjectViewModel<KaobeiLink>() {
             }
         })
     }
+
 }

@@ -25,7 +25,7 @@ class UserArticleListViewModel : ListViewModel<UserArticle>() {
             .build()
         val service = retrofit.create(KaobeiEngineerService::class.java)
 
-        service.userArticleList("Bearer " + accessToken, page.toString())
+        service.userArticleList("Bearer $accessToken", page.toString())
             .enqueue(object : retrofit2.Callback<UserArticles> {
                 override fun onFailure(call: retrofit2.Call<UserArticles>, t: Throwable) {
                     mOnReceiveDataListener?.onFailureToReceiveData()
@@ -44,4 +44,5 @@ class UserArticleListViewModel : ListViewModel<UserArticle>() {
                 }
             })
     }
+
 }

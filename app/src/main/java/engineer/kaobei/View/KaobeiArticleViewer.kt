@@ -25,7 +25,7 @@ class KaobeiArticleViewer(context: Context?, attrs: AttributeSet?) : LinearLayou
     private lateinit var mContentTv: TextView
     private lateinit var mContentBg: ImageView
 
-    val limitedIndex = 14
+    private val limitedIndex: Int = 14
 
     var header: Int = 0
     var footer: Int = 0
@@ -34,29 +34,17 @@ class KaobeiArticleViewer(context: Context?, attrs: AttributeSet?) : LinearLayou
     var content: String = ""
 
     init {
-        initWidget()
-    }
-
-    fun initWidget() {
-        View.inflate(context, R.layout.widget_kaobei_article_viewer, this)
-        mHeaderView = findViewById(R.id.header)
-        mFooter1View = findViewById(R.id.footer1)
-        mTv1Footer1 = findViewById(R.id.tv1_footer1)
-        mTv2Footer1 = findViewById(R.id.tv2_footer1)
-        mFooter2View = findViewById(R.id.footer2)
-        mContentView = findViewById(R.id.content_view)
-        mContentTv = findViewById(R.id.content_text)
-        mContentBg = findViewById(R.id.content_background)
+        this.initWidget()
     }
 
     fun setTheme(context: Context, theme: Theme) {
         when (theme.additional.header) {
             "0" -> {
-                mHeaderView.visibility = View.GONE
+                this.mHeaderView.visibility = View.GONE
             }
             else -> {
-                mHeaderView.visibility = View.VISIBLE
-                mHeaderView.setImageResource(
+                this.mHeaderView.visibility = View.VISIBLE
+                this.mHeaderView.setImageResource(
                     this.resources.getIdentifier(
                         theme.additional.header.substringAfter('.'),
                         theme.additional.header.substringBefore('.'),
@@ -67,20 +55,20 @@ class KaobeiArticleViewer(context: Context?, attrs: AttributeSet?) : LinearLayou
         }
         when (theme.additional.footer) {
             "0" -> {
-                mFooter1View.visibility = View.GONE
-                mFooter2View.visibility = View.GONE
+                this.mFooter1View.visibility = View.GONE
+                this.mFooter2View.visibility = View.GONE
             }
             "1" -> {
-                mFooter1View.visibility = View.VISIBLE
-                mFooter2View.visibility = View.GONE
-                mFooter1View.setBackgroundColor(Color.parseColor(theme.backgroundColor))
-                mTv1Footer1.setTextColor(Color.parseColor(theme.textColor))
-                mTv2Footer1.setTextColor(Color.parseColor(theme.textColor))
+                this.mFooter1View.visibility = View.VISIBLE
+                this.mFooter2View.visibility = View.GONE
+                this.mFooter1View.setBackgroundColor(Color.parseColor(theme.backgroundColor))
+                this.mTv1Footer1.setTextColor(Color.parseColor(theme.textColor))
+                this.mTv2Footer1.setTextColor(Color.parseColor(theme.textColor))
             }
             else -> {
-                mFooter1View.visibility = View.GONE
-                mFooter2View.visibility = View.VISIBLE
-                mFooter2View.setImageResource(
+                this.mFooter1View.visibility = View.GONE
+                this.mFooter2View.visibility = View.VISIBLE
+                this.mFooter2View.setImageResource(
                     this.resources.getIdentifier(
                         theme.additional.footer.substringAfter('.'),
                         theme.additional.footer.substringBefore('.'),
@@ -91,10 +79,10 @@ class KaobeiArticleViewer(context: Context?, attrs: AttributeSet?) : LinearLayou
         }
         when (theme.additional.backgroundImage) {
             "0" -> {
-                mContentBg.setImageResource(0)
+                this.mContentBg.setImageResource(0)
             }
             else -> {
-                mContentBg.setImageResource(
+                this.mContentBg.setImageResource(
                     this.resources.getIdentifier(
                         theme.additional.backgroundImage.substringAfter('.'),
                         theme.additional.backgroundImage.substringBefore('.'),
@@ -103,16 +91,28 @@ class KaobeiArticleViewer(context: Context?, attrs: AttributeSet?) : LinearLayou
                 )
             }
         }
-        mContentTv.setTextColor(Color.parseColor(theme.textColor))
-        mContentView.setBackgroundColor(Color.parseColor(theme.backgroundColor))
+        this.mContentTv.setTextColor(Color.parseColor(theme.textColor))
+        this.mContentView.setBackgroundColor(Color.parseColor(theme.backgroundColor))
     }
 
     fun setTextContent(content: String) {
-        mContentTv.text = limitedText(content)
+        this.mContentTv.text = this.limitedText(content)
     }
 
-    fun limitedText(text: String): String {
-        var copy = text
+    private fun initWidget() {
+        View.inflate(this.context, R.layout.widget_kaobei_article_viewer, this)
+        this.mHeaderView = findViewById(R.id.header)
+        this.mFooter1View = findViewById(R.id.footer1)
+        this.mTv1Footer1 = findViewById(R.id.tv1_footer1)
+        this.mTv2Footer1 = findViewById(R.id.tv2_footer1)
+        this.mFooter2View = findViewById(R.id.footer2)
+        this.mContentView = findViewById(R.id.content_view)
+        this.mContentTv = findViewById(R.id.content_text)
+        this.mContentBg = findViewById(R.id.content_background)
+    }
+
+    private fun limitedText(text: String): String {
+        var copy: String = text
         var result = ""
         while (copy.length > limitedIndex) {
             val buffer = copy.substring(0, limitedIndex)
@@ -122,5 +122,4 @@ class KaobeiArticleViewer(context: Context?, attrs: AttributeSet?) : LinearLayou
         result += copy
         return result
     }
-
 }

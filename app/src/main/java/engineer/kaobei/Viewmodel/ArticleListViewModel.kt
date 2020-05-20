@@ -39,4 +39,5 @@ class ArticleListViewModel : ListViewModel<Article>() {
                 }
             })
     }
+
 }

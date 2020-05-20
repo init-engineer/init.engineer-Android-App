@@ -8,12 +8,15 @@ import engineer.kaobei.Model.KaobelUser.KaobeiUser
 import okhttp3.*
 import java.io.IOException
 
+/**
+ * Class ObjectViewModel.
+ */
 open class ObjectViewModel<T> : ViewModel() {
 
     protected var mOnReceiveDataListener: OnReceiveDataListener? = null
     private val mLiveData: MutableLiveData<T> by lazy {
         MutableLiveData<T>().also {
-
+            // Do something ...
         }
     }
 

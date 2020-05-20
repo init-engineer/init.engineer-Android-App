@@ -24,7 +24,7 @@ class AnimatedGap : LinearLayout {
 
     private var w = 0
     private var h = 0
-    var inito = false
+    private var init = false
 
     constructor(context: Context) : super(context) {
         initial(context, null)
@@ -44,8 +44,8 @@ class AnimatedGap : LinearLayout {
 
     private fun initial(context: Context, attrs: AttributeSet?) {
         setWillNotDraw(false)
-        paint.color = context.resources.getColor(R.color.FxWhite)
-        paint.strokeWidth = 15F
+        this.paint.color = context.resources.getColor(R.color.FxWhite)
+        this.paint.strokeWidth = 15F
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -56,64 +56,62 @@ class AnimatedGap : LinearLayout {
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if (inito) {
-            canvas?.drawLine((w / 2).toFloat(), 0F, currentIndexLeft.toFloat(), 0F, paint)
-            canvas?.drawLine((w / 2).toFloat(), 0F, currentIndexRight.toFloat(), 0F, paint)
+        if (this.init) {
+            canvas?.drawLine((this.w / 2).toFloat(), 0F, this.currentIndexLeft.toFloat(), 0F, this.paint)
+            canvas?.drawLine((this.w / 2).toFloat(), 0F, this.currentIndexRight.toFloat(), 0F, this.paint)
         }
-
     }
 
     fun hide() {
-        animator?.cancel()
-        animator2?.cancel()
-        animator = ValueAnimator.ofInt(0, w / 2).apply {
-            duration = 200
-            interpolator = DecelerateInterpolator()
+        this.animator?.cancel()
+        this.animator2?.cancel()
+        this.animator = ValueAnimator.ofInt(0, w / 2).apply {
+            this.duration = 200
+            this.interpolator = DecelerateInterpolator()
             addUpdateListener { valueAnimator ->
                 currentIndexLeft = valueAnimator.animatedValue as Int
                 invalidate()
             }
         }
-        animator2 = ValueAnimator.ofInt(w, w / 2).apply {
-            duration = 200
-            interpolator = DecelerateInterpolator()
+        this.animator2 = ValueAnimator.ofInt(w, w / 2).apply {
+            this.duration = 200
+            this.interpolator = DecelerateInterpolator()
             addUpdateListener { valueAnimator ->
                 currentIndexRight = valueAnimator.animatedValue as Int
                 Log.d("qijian", "curValue:" + valueAnimator.animatedValue);
                 invalidate()
             }
         }
-        animator?.start()
-        animator2?.start()
+        this.animator?.start()
+        this.animator2?.start()
     }
 
     fun show() {
-        animator?.cancel()
-        animator2?.cancel()
-        animator = ValueAnimator.ofInt(w / 2, 0).apply {
-            duration = 200
-            interpolator = DecelerateInterpolator()
+        this.animator?.cancel()
+        this.animator2?.cancel()
+        this.animator = ValueAnimator.ofInt(this.w / 2, 0).apply {
+            this.duration = 200
+            this.interpolator = DecelerateInterpolator()
             addUpdateListener { valueAnimator ->
-                if (!inito) {
-                    inito = true
+                if (!init) {
+                    init = true
                 } else {
                     currentIndexLeft = valueAnimator.animatedValue as Int
                     invalidate()
                 }
-
             }
         }
-        animator2 = ValueAnimator.ofInt(w / 2, w).apply {
-            duration = 200
-            interpolator = DecelerateInterpolator()
+        this.animator2 = ValueAnimator.ofInt(this.w / 2, this.w).apply {
+            this.duration = 200
+            this.interpolator = DecelerateInterpolator()
             addUpdateListener { valueAnimator ->
                 currentIndexRight = valueAnimator.animatedValue as Int
                 Log.d("qijian", "curValue:" + valueAnimator.animatedValue);
                 invalidate()
             }
         }
-        animator?.start()
-        animator2?.start()
+        this.animator?.start()
+        this.animator2?.start()
     }
 
 }

@@ -4,13 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
+/**
+ * Class ListViewModel.
+ */
 open class ListViewModel<T> : ViewModel() {
 
     protected var mOnReceiveDataListener: OnReceiveDataListener<T>? = null
     private val mList = ArrayList<T>()
     private val mLiveData: MutableLiveData<ArrayList<T>> by lazy {
         MutableLiveData<ArrayList<T>>().also {
-
+            // Do something ...
         }
     }
 
