@@ -26,14 +26,12 @@ android {
         buildConfigField("String", "OATH2CLIENTID", "\""+apikeyProperties['oath2clientid']+"\"")
         buildConfigField("String", "OATH2CLIENTSECRET", "\""+apikeyProperties['oath2clientsecret']+"\"")
         buildConfigField("String", "OATH2REDIRECTURL", "\"" + apikeyProperties['oath2scheme'] + "://" + apikeyProperties['oath2host'] + apikeyProperties['oath2path'] + "\"")
-        buildConfigField("String", "ADMOB_1", "\""+apikeyProperties['admob1']+"\"")
         buildConfigField("String", "AUDIENCE_1", "\""+apikeyProperties['audience1']+"\"")
 
         manifestPlaceholders = [
                 schemeName: apikeyProperties['oath2scheme'],
                 hostName  : apikeyProperties['oath2host'],
                 pathName  : apikeyProperties['oath2path'],
-                admobID  : apikeyProperties['admobID'],
         ]
     }
 
@@ -85,7 +83,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
 
     //ads
-    implementation 'com.google.android.gms:play-services-ads:19.1.0'
     implementation 'com.facebook.android:audience-network-sdk:5.9.0'
 
     //shimmer

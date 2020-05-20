@@ -1,12 +1,14 @@
 package engineer.kaobei.Activity
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
@@ -15,6 +17,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.textfield.TextInputEditText
 import engineer.kaobei.BuildConfig
 import engineer.kaobei.Database.OpenSourceManager
 import engineer.kaobei.Model.OpenSources.OpenSource
@@ -43,13 +46,31 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
             val appVersionPreference: Preference? =
-                findPreference(resources.getText(R.string.pref_app_version));
+                findPreference(resources.getText(R.string.pref_app_version))
             appVersionPreference?.summary = BuildConfig.VERSION_NAME
             val appVersionCodePreference: Preference? =
-                findPreference(resources.getText(R.string.pref_app_versionCode));
+                findPreference(resources.getText(R.string.pref_app_versionCode))
             appVersionCodePreference?.summary = BuildConfig.VERSION_CODE.toString()
+
+
+            val articleIDSearcherPreference:Preference? = findPreference(resources.getText(R.string.pref_app_id_search))
+            articleIDSearcherPreference?.setOnPreferenceClickListener {
+                val bt_sheet = BottomSheetDialog(it.context)
+                val mView = LayoutInflater.from(it.context).inflate(R.layout.bottom_sheet_id_selecter, null)
+                val textInputEditText : TextInputEditText = mView.findViewById(R.id.text_input)
+                val confirm_button : Button = mView.findViewById(R.id.confirm_button)
+                confirm_button.setOnClickListener {
+                    val intent = Intent(context,ArticleActivity::class.java)
+                    intent.putExtra(ArticleActivity.ID_KEY,textInputEditText.text.toString().toInt())
+                    startActivity(intent)
+                }
+                bt_sheet.setContentView(mView)
+                bt_sheet.show()
+                false
+            }
+
             val openSourcePreference: Preference? =
-                findPreference(resources.getText(R.string.pref_openSource_key));
+                findPreference(resources.getText(R.string.pref_openSource_key))
             openSourcePreference?.setOnPreferenceClickListener {
                 val bt_sheet = BottomSheetDialog(it.context)
                 val mView =
@@ -81,7 +102,7 @@ class SettingsActivity : AppCompatActivity() {
             }
 
             val projectonGithubPreference: Preference? =
-                findPreference(resources.getText(R.string.pref_project_on_github));
+                findPreference(resources.getText(R.string.pref_project_on_github))
             projectonGithubPreference?.setOnPreferenceClickListener {
                 CustomTabUtil.createCustomTab(
                     it.context,

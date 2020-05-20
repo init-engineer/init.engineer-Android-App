@@ -8,14 +8,12 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import engineer.kaobei.Model.Articles.Article
 import engineer.kaobei.Model.Comments.Comment
 import engineer.kaobei.Model.Link.KaobeiLink
@@ -33,10 +32,7 @@ import engineer.kaobei.RecyclerViewLoadMoreScroll
 import engineer.kaobei.Util.ClipBoardUtil
 import engineer.kaobei.Util.CustomTabUtil
 import engineer.kaobei.Util.ViewUtil
-import engineer.kaobei.Viewmodel.CommentsViewModel
-import engineer.kaobei.Viewmodel.ListViewModel
-import engineer.kaobei.Viewmodel.LinkViewModel
-import engineer.kaobei.Viewmodel.ObjectViewModel
+import engineer.kaobei.Viewmodel.*
 import kotlinx.android.synthetic.main.activity_article.*
 
 /**
@@ -46,24 +42,63 @@ class ArticleActivity : AppCompatActivity() {
 
     companion object {
         const val ARTICLE_KEY: String = "ARTICLE_KEY"
+        const val ID_KEY: String = "ID_KEY"
         const val loadingDelayTime: Long = 300
         const val visbleThreshold: Int = 15
     }
 
     private lateinit var adapter: ArticleRecyclerViewAdapter
     private var page: Int = 1
+    private var article : Article? = null
+    private var id : Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_article)
 
-        val article = intent.extras?.get(ARTICLE_KEY) as Article
+        article  = intent.extras?.get(ARTICLE_KEY) as Article?
+        id = intent.extras?.get(ID_KEY) as Int?
+
+        if(article==null){
+            if (id !=null){
+                val articleInfoViewModel = ViewModelProvider(this).get(ArticleInfoViewModel::class.java)
+                articleInfoViewModel.getLiveData().observe(this, Observer { info ->
+                    article = Article(
+                        content = info.articleInfo.content,
+                        createdAt = info.articleInfo.createdAt,
+                        updatedAt = info.articleInfo.updatedAt,
+                        createdDiff = info.articleInfo.createdDiff,
+                        updatedDiff = info.articleInfo.updatedDiff,
+                        id = info.articleInfo.id,
+                        image = info.articleInfo.image
+                    )
+                    loadArticle(article)
+                })
+                articleInfoViewModel.addOnReceiveDataListener(object :ObjectViewModel.OnReceiveDataListener{
+                    override fun onReceiveData() {
+
+                    }
+
+                    override fun onFailureReceiveData() {
+                        val tv_article_not_found = findViewById<TextView>(R.id.tv_article_not_found)
+                        tv_article_not_found.visibility = View.VISIBLE
+                        Snackbar.make(findViewById(android.R.id.content),"文章不存在",Snackbar.LENGTH_SHORT).show()
+                    }
+                })
+                articleInfoViewModel.loadArticleInfo(id!!)
+            }
+        }else{
+            loadArticle(article)
+        }
 
         //BackPress button
         tv_backpress.setOnClickListener {
             onBackPressed()
         }
 
+    }
+
+    private fun loadArticle(article: Article?){
         val mLayoutManager = LinearLayoutManager(this)
         val scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visbleThreshold)
         scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
@@ -77,7 +112,7 @@ class ArticleActivity : AppCompatActivity() {
         })
         comments_recyclerView.layoutManager = mLayoutManager
         ViewUtil.addGapController(comments_recyclerView, gap)
-        adapter = ArticleRecyclerViewAdapter(this, article, KaobeiLink(), listOf())
+        adapter = ArticleRecyclerViewAdapter(this, article!!, KaobeiLink(), listOf())
         adapter.setHasStableIds(true)
         adapter.setListener(object : RecyclerViewAdapterListener<Comment> {
             override fun onTheFirstInit(list: List<Comment>) {
@@ -91,11 +126,6 @@ class ArticleActivity : AppCompatActivity() {
             override fun onFailedToReceiveData() {
                 page--
                 scrollListener.setLoaded()
-                Toast.makeText(
-                    this@ArticleActivity,
-                    this@ArticleActivity.resources.getText(R.string.loading_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
             }
 
             override fun onNoMoreData() {
@@ -107,6 +137,7 @@ class ArticleActivity : AppCompatActivity() {
         comments_recyclerView.adapter = adapter
         comments_recyclerView.addOnScrollListener(scrollListener)
     }
+
 }
 
 class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -168,7 +199,8 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             notifyDataSetChanged()
         })
         mLinksViewModel.getLiveData().observe(mContext, Observer { links ->
-            setLinks(links)
+            linksIsLoaded = true
+            this.mLinks = links
             notifyItemChanged(1)
         })
         mLinksViewModel.addOnReceiveDataListener(object :
@@ -183,7 +215,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         )
         mViewModel.add(0, Comment())
-        mViewModel.add(0, Comment())
+        mViewModel.add(1, Comment())
         mViewModel.loadComments(article.id, 1)
         mLinksViewModel.loadLink(article.id)
     }
@@ -222,6 +254,10 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                     media?.text = content.resources.getText(R.string.media_twitter)
                     media?.background = ColorDrawable(content.resources.getColor(R.color.FXTW))
                 }
+                "platform" -> {
+                    media?.text = content.resources.getText(R.string.media_platform)
+                    media?.background = ColorDrawable(content.resources.getColor(R.color.FXPF))
+                }
             }
             /**
              * Hint:可能會Lag
@@ -247,7 +283,6 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
     }
-
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class LastOneViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -335,50 +370,82 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         private var tvTwFv = itemView.findViewById<TextView>(R.id.tv_tw_fv)
         private var tvTwRy = itemView.findViewById<TextView>(R.id.tv_tw_ry)
 
+
+        private var layout_fb1 : LinearLayout = itemView.findViewById(R.id.layout_fb1)
+        private var layout_fb2 : LinearLayout = itemView.findViewById(R.id.layout_fb2)
+        private var layout_tw : LinearLayout = itemView.findViewById(R.id.layout_tw)
+        private var layout_pl : LinearLayout = itemView.findViewById(R.id.layout_pl)
+
         private var shimmer =
             itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container1)
         private var view_links = itemView.findViewById<View>(R.id.view_links)
 
         fun bind(links: KaobeiLink) {
-            if (links.data.size == 0) {
-                return
-            }
+
+            var fb1 = false
+            var fb2 = false
+            var tw = false
+            var pl = false
 
             if (!linksIsLoaded) {
                 shimmer.visibility = View.VISIBLE
                 view_links.visibility = View.GONE
+                return
             } else {
                 view_links.visibility = View.VISIBLE
                 shimmer.visibility = View.GONE
             }
 
-            tvFb1Fv.text = links.data[0].like.toString()
-            tvFb1Ry.text = links.data[0].share.toString()
+            for(i in links.data.indices){
+                if(links.data[i].type == "facebook"){
+                    if(links.data[i].connections=="primary"){
+                        fb1 = true
+                        tvFb1Fv.text = links.data[i].like.toString()
+                        tvFb1Ry.text = links.data[i].share.toString()
+                        btnFb1.setOnClickListener { view ->
+                            setDialog(view, links.data[i].url)
+                        }
+                    }else{
+                        fb2 = true
+                        tvFb2Fv.text = links.data[i].like.toString()
+                        tvFb2Ry.text = links.data[i].share.toString()
+                        btnFb2.setOnClickListener { view ->
+                            setDialog(view, links.data[i].url)
+                        }
 
-            tvFb2Fv.text = links.data[1].like.toString()
-            tvFb2Ry.text = links.data[1].share.toString()
-
-            tvPlFv.text = links.data[3].like.toString()
-            tvPlRy.text = links.data[3].share.toString()
-
-            tvTwFv.text = links.data[2].like.toString()
-            tvTwRy.text = links.data[2].share.toString()
-
-            btnFb1.setOnClickListener { view ->
-                setDialog(view, links.data[0].url)
+                    }
+                }
+                if(links.data[i].type == "twitter"){
+                    tw = true
+                    tvTwFv.text = links.data[i].like.toString()
+                    tvTwRy.text = links.data[i].share.toString()
+                    btnTW.setOnClickListener { view ->
+                        setDialog(view, links.data[i].url)
+                    }
+                }
+                if(links.data[i].type == "plurk"){
+                    pl = true
+                    tvPlFv.text = links.data[i].like.toString()
+                    tvPlRy.text = links.data[i].share.toString()
+                    btnPL.setOnClickListener { view ->
+                        setDialog(view, links.data[i].url)
+                    }
+                }
             }
 
-            btnFb2.setOnClickListener { view ->
-                setDialog(view, links.data[1].url)
+            if(!fb1){
+                layout_fb1.visibility=View.GONE
+            }
+            if(!fb2){
+                layout_fb2.visibility=View.GONE
+            }
+            if(!tw){
+                layout_tw.visibility=View.GONE
+            }
+            if(!pl){
+                layout_pl.visibility=View.GONE
             }
 
-            btnTW.setOnClickListener { view ->
-                setDialog(view, links.data[2].url)
-            }
-
-            btnPL.setOnClickListener { view ->
-                setDialog(view, links.data[3].url)
-            }
         }
 
         fun setDialog(view: View, url: String) {
@@ -486,11 +553,6 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
 
     fun isInit(): Boolean {
         return init
-    }
-
-    fun setLinks(links: KaobeiLink) {
-        linksIsLoaded = true
-        this.mLinks = links
     }
 
     fun setListener(mListener: RecyclerViewAdapterListener<Comment>) {

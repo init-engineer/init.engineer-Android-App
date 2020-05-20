@@ -28,6 +28,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/layout_fb1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -92,6 +93,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout_fb2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -157,6 +159,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout_tw"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -222,6 +226,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout_pl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"

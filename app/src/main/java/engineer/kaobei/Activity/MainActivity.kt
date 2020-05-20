@@ -12,7 +12,6 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.facebook.ads.AudienceNetworkAds
-import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
@@ -50,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        MobileAds.initialize(this)
         AudienceNetworkAds.initialize(this)
 
         showSplashScreen()

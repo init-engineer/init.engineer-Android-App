@@ -62,7 +62,18 @@
 
         </RelativeLayout>
 
-
+        <TextView
+            android:visibility="gone"
+            android:layout_marginTop="200dp"
+            android:textColor="@color/FxWhite"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:id="@+id/tv_article_not_found"
+            android:fontFamily="@font/dos"
+            android:textSize="25sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="404 Not Found"/>
 
     </LinearLayout>
 

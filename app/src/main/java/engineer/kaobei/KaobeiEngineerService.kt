@@ -1,5 +1,6 @@
 package engineer.kaobei
 
+import engineer.kaobei.Model.ArticleInfo.KaobeiArticleInfo
 import engineer.kaobei.Model.Articles.Article
 import engineer.kaobei.Model.Articles.KaobeiArticleList
 import engineer.kaobei.Model.Comments.Comment
@@ -33,6 +34,11 @@ interface KaobeiEngineerService {
     fun articleList(
         @Query("page") page: String? = null
     ): Call<KaobeiArticleList>
+
+    @GET("api/frontend/social/cards/{id}/show")
+    fun show(
+        @Path("id") id: String
+    ): Call<KaobeiArticleInfo>
 
     @GET("api/frontend/social/cards/{id}/links")
     fun links(

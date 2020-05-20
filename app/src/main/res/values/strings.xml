@@ -39,6 +39,7 @@
     <string name="media_fb2">Facebook 次站</string>
     <string name="media_plurk">Plurk 主站</string>
     <string name="media_twitter">Twitter 主站</string>
+    <string name="media_platform">Platform 主站</string>
 
     <string name="bottom_sheet_share">分享</string>
     <string name="bottom_sheet_font">選擇字體</string>
@@ -47,6 +48,9 @@
 
     <string name="pref_app_version">pref_app_version</string>
     <string name="pref_app_versionCode">pref_app_versionCode</string>
+
+    <string name="pref_app_id_search">pref_app_id_search</string>
+
     <string name="pref_openSource_key" translatable="false">openSource_key</string>
     <string name="pref_project_on_github" translatable="false">project_on_github_key</string>
 

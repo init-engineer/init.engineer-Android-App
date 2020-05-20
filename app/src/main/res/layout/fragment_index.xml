@@ -352,10 +352,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <include
-            android:visibility="gone"
-            layout="@layout/ads_style1"/>
-
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

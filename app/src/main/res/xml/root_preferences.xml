@@ -15,6 +15,12 @@
             app:selectable="true"
             app:title="版本號" />
 
+        <Preference
+            app:key="@string/pref_app_id_search"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="文章ID直達器" />
+
     </PreferenceCategory>
 
 <!--    <PreferenceCategory app:title="@string/messages_header">

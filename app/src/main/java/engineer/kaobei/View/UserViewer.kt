@@ -40,7 +40,7 @@ class UserViewer : LinearLayout {
             .load(kaobeiUser.avatar)
             .into(this.imageViewAvatar)
         Glide.with(this)
-            .load(this.cardViewAvatar.getDrawable(R.drawable.img_animated_rainbow))
+            .load(context.getDrawable(R.drawable.img_animated_rainbow))
             .into(this.imageViewAvatarBackground)
         this.textViewName.text = kaobeiUser.fullName
         this.textViewEmail.text = kaobeiUser.email
