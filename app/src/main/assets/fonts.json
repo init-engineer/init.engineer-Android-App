@@ -1,0 +1,54 @@
+{
+  "options": [
+    {
+      "name": "AURAKA 點陣宋字型",
+      "font": "Auraka",
+      "value": "ea98dde8987df3cd8aef75479019b688"
+    },
+    {
+      "name": "國喬點陣字型",
+      "font": "KC24M",
+      "value": "813ca6cbbd95d7e08fa2af59bc12072d"
+    },
+    {
+      "name": "ZPIX 點陣字型",
+      "font": "Zfull",
+      "value": "1b23b3cd9223930ac694b7f29f38ff21"
+    },
+    {
+      "name": "張海山銳諧體",
+      "font": "Harmonic",
+      "value": "68068fcf50e7cae709cb8ed0b7b9b0f3"
+    },
+    {
+      "name": "蒙納繁圓點陣",
+      "font": "MBitmapRoundHK",
+      "value": "f762e3a99692b40e5929ab3668606a4a"
+    },
+    {
+      "name": "微軟正黑體",
+      "font": "Microsoft JhengHei",
+      "value": "13f5333afe00f8c7e8da7e0b13ec2c94"
+    },
+    {
+      "name": "新細明體",
+      "font": "Mingliu",
+      "value": "c0b5dd764ede0ca105be22cf13ebadff"
+    },
+    {
+      "name": "標楷體",
+      "font": "Kaiu",
+      "value": "21881fc6a87aca0dd1afc685cb6ee891"
+    },
+    {
+      "name": "極粗明朝體",
+      "font": "MatissePro EB",
+      "value": "ozke4ri3gkpy7e9c312u5l0w5vr9jdqq"
+    },
+    {
+      "name": "台北黑體",
+      "font": "Taipei Sans TC Beta",
+      "value": "yc45sgsfbss490dqgs2g23a7z24slhoj"
+    }
+  ]
+}

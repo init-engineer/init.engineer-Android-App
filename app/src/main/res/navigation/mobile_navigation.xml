@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="engineer.kaobei.Fragment.IndexFragment"
+        android:label="@string/menu_1A"
+        android:transitionName="axisTran"
+        tools:layout="@layout/fragment_index">
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_article_list"
+            app:destination="@id/navigation_article_list" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_article_list"
+        android:name="engineer.kaobei.Fragment.ArticleListFragment"
+        android:label="@string/menu_2A"
+        android:transitionName="axisTran"
+        tools:layout="@layout/fragment_article_list">
+        <action
+            android:id="@+id/action_navigation_article_list_to_navigation_create_article"
+            app:destination="@id/navigation_create_article" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_create_article"
+        android:name="engineer.kaobei.Fragment.CreateArticleFragment"
+        android:label="@string/menu_4A"
+        android:transitionName="axisTran"
+        tools:layout="@layout/fragment_create_article">
+        <action
+            android:id="@+id/action_navigation_create_article_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="engineer.kaobei.Fragment.DashBoardFragment"
+        android:label="@string/menu_3A"
+        android:transitionName="axisTran"
+        tools:layout="@layout/fragment_dashboard"/>
+</navigation>

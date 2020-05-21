@@ -1,18 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_coordinator"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+    tools:context=".Activity.MainActivity">
 
-    <TextView
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/mobile_navigation" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="bottom|left"
+        android:layout_margin="@dimen/fab_margin"
+        android:elevation="0dp"
+        android:text="選單"
+        android:visibility="gone"
+        app:backgroundTint="@color/colorAccent"
+        app:icon="@drawable/ic_menu_white_24dp"
+        app:layout_behavior="@string/fab_transformation_scrim_behavior"
+        app:shapeAppearance="@style/MainMenuFabShapeOverlay" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/gap"
+            android:layout_width="match_parent"
+            android:layout_height="1dp">
+        </View>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/sheet"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:elevation="5dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/FxBlackT"
+            app:cardCornerRadius="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:fontFamily="@font/dos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="Init.Engineer"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/nav_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:backgroundTint="@color/FxBlackT"
+                    app:itemIconTint="@color/bnv_color"
+                    app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+                    app:labelVisibilityMode="unlabeled"
+                    android:layout_gravity="bottom"
+                    app:menu="@menu/navigation">
+
+                </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+            </LinearLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/big_card"
+        android:layout_margin="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:elevation="5dp"
+        android:visibility="visible"
+        app:cardBackgroundColor="@color/FxBlackT"
+        app:cardCornerRadius="10dp">
+
+        <LinearLayout
+            android:gravity="center"
+            android:background="@color/FxBlackT"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:src="@drawable/img_kb" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_title_splash"
+                android:fontFamily="@font/dos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Init.Engineer"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

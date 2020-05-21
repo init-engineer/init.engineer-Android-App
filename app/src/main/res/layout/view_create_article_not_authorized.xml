@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="left|center"
+    android:orientation="vertical">
+
+    <TextView
+        android:paddingTop="20dp"
+        android:paddingLeft="50dp"
+        android:textColor="@color/FxWhite"
+        android:textSize="40sp"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:text="純靠北工程師"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp"
+        android:id="@+id/login_button"
+        android:backgroundTint="@color/FxBlackT"
+        android:text="登入"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"/>
+
+
+</LinearLayout>

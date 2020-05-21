@@ -1,0 +1,75 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:title="@string/app_name">
+
+        <Preference
+            app:key="@string/pref_app_version"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="版本" />
+
+        <Preference
+            app:key="@string/pref_app_versionCode"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="版本號" />
+
+        <Preference
+            app:key="@string/pref_app_id_search"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="文章ID直達器" />
+
+    </PreferenceCategory>
+
+<!--    <PreferenceCategory app:title="@string/messages_header">
+
+        <EditTextPreference
+            app:key="signature"
+            app:title="@string/signature_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="reply"
+            app:entries="@array/reply_entries"
+            app:entryValues="@array/reply_values"
+            app:key="reply"
+            app:title="@string/reply_title"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/sync_header">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="@string/sync_title" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="@string/attachment_summary_off"
+            app:summaryOn="@string/attachment_summary_on"
+            app:title="@string/attachment_title" />
+
+    </PreferenceCategory>-->
+
+    <PreferenceCategory
+        app:title="關於">
+
+        <Preference
+            app:key="@string/pref_openSource_key"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="Open Source Licence" />
+
+        <Preference
+            app:key="@string/pref_project_on_github"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="Project on Github" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:id="@+id/view_dashboard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/header_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10sp"
+            android:fontFamily="@font/dos"
+            android:paddingTop="?attr/actionBarSize"
+            android:text="@string/menu_3A"
+            android:textColor="@color/FxWhite"
+            android:textSize="24sp" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:id="@+id/toolbar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:contentScrim="?attr/colorPrimary"
+                    app:layout_scrollFlags="scroll"
+                    app:toolbarId="@+id/toolbar">
+
+
+                        <engineer.kaobei.View.UserViewer
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:layout_collapseMode="parallax"
+                            android:id="@+id/userviewer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:context=".ScrollingActivity">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/tv_no_post"
+                        android:layout_margin="20dp"
+                        android:gravity="center"
+                        android:fontFamily="@font/dos"
+                        android:textColor="@color/FxWhite"
+                        android:layout_width="match_parent"
+                        android:textSize="16sp"
+                        android:text="還沒有發過文章:("
+                        android:layout_height="wrap_content"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/rv_dashboard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:layout_marginTop="20dp"
+                        android:id="@+id/shimmer_view_container1"
+                        android:layout_width="match_parent"
+                        android:layout_height="323dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginBottom="20dp"
+                        app:shimmer_highlight_color="@color/FxBlackT"
+                        app:shimmer_base_color="@color/FxBlackT"
+                        app:shimmer_clip_to_children="false"
+                        app:shimmer_colored="true">
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer_view_container2"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/card1_height"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginBottom="20dp"
+                        app:shimmer_highlight_color="@color/FxBlackT"
+                        app:shimmer_base_color="@color/FxBlackT"
+                        app:shimmer_clip_to_children="false"
+                        app:shimmer_colored="true"></com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer_view_container3"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/card1_height"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginBottom="20dp"
+                        app:shimmer_highlight_color="@color/FxBlackT"
+                        app:shimmer_base_color="@color/FxBlackT"
+                        app:shimmer_clip_to_children="false"
+                        app:shimmer_colored="true"></com.facebook.shimmer.ShimmerFrameLayout>
+
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    </LinearLayout>
+
+    <include
+        android:layout_marginTop="20dp"
+        android:id="@+id/view_not_authorized"
+        android:visibility="gone"
+        layout="@layout/view_create_article_not_authorized"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

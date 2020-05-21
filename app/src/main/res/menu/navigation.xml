@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/navigation_home"
+        android:title="@string/menu_1A"
+        android:icon="@drawable/ic_home_white_24dp" />
+    <item android:id="@+id/navigation_article_list"
+        android:title="@string/menu_2A"
+        android:icon="@drawable/ic_dashboard_white_24dp" />
+    <item android:id="@+id/navigation_create_article"
+        android:title="@string/menu_4A"
+        android:icon="@drawable/ic_mode_edit_white_24dp" />
+    <item android:id="@+id/navigation_dashboard"
+        android:title="@string/menu_3A"
+        android:icon="@drawable/ic_person_white_24dp" />
+</menu>
