@@ -3,21 +3,19 @@ package engineer.kaobei.Viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import engineer.kaobei.Model.Comments.Comment
 
 /**
  * Class ListViewModel.
  */
 open class ListViewModel<T> : ViewModel() {
 
+    protected var mListViewModelController: ListViewModelController? = null
     protected var mOnReceiveDataListener: OnReceiveDataListener<T>? = null
-    private val mList = ArrayList<T>()
-    private val mLiveData: MutableLiveData<ArrayList<T>> by lazy {
-        MutableLiveData<ArrayList<T>>().also {
-            // Do something ...
-        }
-    }
+    protected var mList = ArrayList<T>()
+    protected  var mLiveData: MutableLiveData<ArrayList<T>> = MutableLiveData<ArrayList<T>>()
 
-    fun getLiveData(): LiveData<ArrayList<T>> {
+    open fun getLiveData(): LiveData<ArrayList<T>> {
         return mLiveData
     }
 
@@ -45,10 +43,19 @@ open class ListViewModel<T> : ViewModel() {
         this.mOnReceiveDataListener = mOnReceiveDataListener
     }
 
+    fun addListViewModelController(mListViewModelController:ListViewModelController){
+        this.mListViewModelController = mListViewModelController
+    }
+
     interface OnReceiveDataListener<T> {
         fun onReceiveData(list: List<T>)
         fun onFailureToReceiveData()
         fun onNoMoreData()
     }
+
+    interface ListViewModelController {
+        fun initLiveData()
+    }
+
 
 }

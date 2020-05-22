@@ -1,5 +1,7 @@
 package engineer.kaobei.Viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import engineer.kaobei.BASE_URL
 import engineer.kaobei.KaobeiEngineerService
 import engineer.kaobei.Model.Comments.Comment
@@ -13,6 +15,43 @@ import retrofit2.converter.gson.GsonConverterFactory
  * A ViewModel used for the {@link ArticleListFragment}.
  */
 class CommentsViewModel : ListViewModel<Comment>() {
+
+    protected var mPage : MutableLiveData<Int> = MutableLiveData<Int>(1)
+    protected var id :Int = 0
+    protected var mInit : MutableLiveData<Int> = MutableLiveData<Int>(0)
+
+    init {
+        mList = arrayListOf(Comment(),Comment())
+        mLiveData = MutableLiveData<ArrayList<Comment>>(arrayListOf(Comment(),Comment())).also {
+        }
+    }
+
+    fun getPage(): LiveData<Int> {
+        return mPage
+    }
+
+    fun addPage(){
+        if(mPage.value!=null){
+            var index :Int= mPage.value!!
+            index++
+            mPage.postValue(index)
+            mPage.value = index
+        }
+    }
+
+    fun changePage(page:Int){
+        mPage.postValue(page)
+    }
+
+    fun getLivaDataValue(id:Int):LiveData<ArrayList<Comment>>{
+        this.id = id
+        val value:Int = mInit.value!!
+        if(value==0){
+            mInit.postValue(1)
+            mPage.value?.let { loadComments(id, it) }
+        }
+        return mLiveData
+    }
 
     fun loadComments(id: Int, page: Int) {
         val retrofit = Retrofit.Builder()

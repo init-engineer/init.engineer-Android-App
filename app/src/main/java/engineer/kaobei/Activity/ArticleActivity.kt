@@ -22,6 +22,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
+import engineer.kaobei.Fragment.ArticleListFragment.Companion.page
 import engineer.kaobei.Model.Articles.Article
 import engineer.kaobei.Model.Comments.Comment
 import engineer.kaobei.Model.Link.KaobeiLink
@@ -45,12 +46,10 @@ class ArticleActivity : AppCompatActivity() {
         const val ID_KEY: String = "ID_KEY"
         const val loadingDelayTime: Long = 300
         const val visbleThreshold: Int = 15
+        private lateinit var adapter: ArticleRecyclerViewAdapter
+        private var article : Article? = null
+        private var id : Int? = null
     }
-
-    private lateinit var adapter: ArticleRecyclerViewAdapter
-    private var page: Int = 1
-    private var article : Article? = null
-    private var id : Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,7 +104,7 @@ class ArticleActivity : AppCompatActivity() {
             override fun onLoadMore() {
                 if (adapter.isInit()) {
                     Handler().postDelayed({
-                        adapter.loadMoreComment(++page)
+                        adapter.loadMoreComment()
                     }, loadingDelayTime)
                 }
             }
@@ -124,7 +123,6 @@ class ArticleActivity : AppCompatActivity() {
             }
 
             override fun onFailedToReceiveData() {
-                page--
                 scrollListener.setLoaded()
             }
 
@@ -148,7 +146,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
     private var comments: List<Comment> = listOf()
     private var linksIsLoaded: Boolean = false
     private var init: Boolean = false
-    private lateinit var mViewModel: CommentsViewModel
+    public lateinit var mViewModel: CommentsViewModel
     private lateinit var mLinksViewModel: LinkViewModel
     private lateinit var mArticle: Article
     private lateinit var mLinks: KaobeiLink
@@ -179,8 +177,9 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 if (!init) {
                     init = true
                     mListener?.onTheFirstInit(list)
+                }else{
+                    removeLoadingView()
                 }
-                removeLoadingView()
                 mListener?.onReceiveData()
             }
 
@@ -194,6 +193,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 addLastOne()
             }
         })
+        this.comments = mViewModel.getLivaDataValue(article.id).value!!
         mViewModel.getLiveData().observe(context, Observer<List<Comment>> { comments ->
             this.comments = comments
             notifyDataSetChanged()
@@ -214,9 +214,9 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
         )
-        mViewModel.add(0, Comment())
-        mViewModel.add(1, Comment())
-        mViewModel.loadComments(article.id, 1)
+        //mViewModel.add(0, Comment())
+        //mViewModel.add(1, Comment())
+        //mViewModel.loadComments(article.id, 1)
         mLinksViewModel.loadLink(article.id)
     }
 
@@ -546,9 +546,11 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    fun loadMoreComment(page: Int) {
+    fun loadMoreComment() {
         addLoadingView()
-        mViewModel.loadComments(mArticle.id, page)
+        mViewModel.addPage()
+        val index : Int = mViewModel.getPage().value!!
+        mViewModel.loadComments(mArticle.id, index)
     }
 
     fun isInit(): Boolean {
