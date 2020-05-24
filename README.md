@@ -11,6 +11,15 @@
 </p>
 
 ---
+# 預覽
+<div align="center">
+	<img src="https://i.imgur.com/wZSez7t.png" alt="Google Play" width="24%">
+	<img src="https://i.imgur.com/iG0nKWg.png" alt="Google Play" width="24%">
+	<img src="https://i.imgur.com/T0ZnWA2.png" alt="Google Play" width="24%">
+	<img src="https://i.imgur.com/XLWr3oQ.png" alt="Google Play" width="24%">
+</div>
+
+---
 # 貢獻
 如果有問題麻煩在 GitHub 當中發 issues 給我們，感謝！
 
