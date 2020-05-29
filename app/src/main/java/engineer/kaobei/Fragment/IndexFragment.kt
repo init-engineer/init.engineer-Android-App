@@ -50,10 +50,10 @@ class IndexFragment : Fragment() {
             )
         }
         card3.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context, "https://plurk.com/kaobei_engineer/")
+            CustomTabUtil.createCustomTab(view.context, "https://twitter.com/kaobei_engineer/")
         }
         card4.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context, "https://twitter.com/kaobei_engineer/")
+            CustomTabUtil.createCustomTab(view.context, "https://plurk.com/kaobei_engineer/")
         }
         loadNativeAd(view.context, view)
         return view
