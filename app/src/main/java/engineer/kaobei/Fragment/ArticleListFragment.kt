@@ -17,8 +17,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.Activity.ArticleActivity
@@ -28,6 +26,7 @@ import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
 import engineer.kaobei.Util.SnackbarUtil
+import engineer.kaobei.Util.ext.viewLoadingWithTransition
 import engineer.kaobei.Viewmodel.ArticleListViewModel
 import engineer.kaobei.Viewmodel.ListViewModel
 
@@ -183,11 +182,7 @@ class ArticleListRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewH
             id?.text =
                 "#" + mContext.resources.getString(R.string.app_name_ch) + article.id.toString(36)
             date?.text = article.createdDiff
-            Glide
-                .with(mContext)
-                .load(article.image)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(thumbnail)
+            thumbnail.viewLoadingWithTransition(article.image)
             itemView.setOnClickListener {
                 val intent = Intent(mContext, ArticleActivity::class.java)
                 intent.putExtra(ArticleActivity.ARTICLE_KEY, article)

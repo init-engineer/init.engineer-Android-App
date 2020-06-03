@@ -7,9 +7,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import com.bumptech.glide.Glide
+import androidx.core.content.ContextCompat
 import engineer.kaobei.Model.KaobelUser.KaobeiUser
 import engineer.kaobei.R
+import engineer.kaobei.Util.ext.viewLoading
 
 /**
  * Class UserViewer.
@@ -31,17 +32,17 @@ class UserViewer : LinearLayout {
         initWidget(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    ) {
         initWidget(context, attrs)
     }
 
     fun setProfile(kaobeiUser: KaobeiUser) {
-        Glide.with(this)
-            .load(kaobeiUser.avatar)
-            .into(this.imageViewAvatar)
-        Glide.with(this)
-            .load(context.getDrawable(R.drawable.img_animated_rainbow))
-            .into(this.imageViewAvatarBackground)
+        this.imageViewAvatar.viewLoading(kaobeiUser.avatar)
+        this.imageViewAvatarBackground.viewLoading(context.getDrawable(R.drawable.img_animated_rainbow))
         this.textViewName.text = kaobeiUser.fullName
         this.textViewEmail.text = kaobeiUser.email
     }
@@ -55,9 +56,7 @@ class UserViewer : LinearLayout {
             this.authorized = false
             this.textViewName.text = "點擊登入"
             this.textViewEmail.visibility = View.GONE
-            Glide.with(this)
-                .load(resources.getDrawable(R.drawable.img_kb))
-                .into(imageViewAvatar)
+            imageViewAvatar.viewLoading(ContextCompat.getDrawable(imageViewAvatar.context, R.drawable.img_kb))
         }
     }
 
