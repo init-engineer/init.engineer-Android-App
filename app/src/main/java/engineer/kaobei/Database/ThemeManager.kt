@@ -2,6 +2,7 @@ package engineer.kaobei.Database
 
 import android.content.Context
 import android.content.res.AssetManager
+import android.util.Log
 import com.google.gson.Gson
 import engineer.kaobei.Model.Themes.KaobeiThemes
 import engineer.kaobei.Model.Themes.Theme
@@ -20,18 +21,13 @@ class ThemeManager(context: Context) {
     }
 
     companion object {
-        private val INSTANCE_REF =
-            AtomicReference(
-                WeakReference<ThemeManager>(null)
-            )
+
+        private var INSTANCE: ThemeManager? = null
 
         fun getInstance(context: Context): ThemeManager {
-            var manager = INSTANCE_REF.get().get()
-            if (manager == null) {
-                manager = ThemeManager(context.applicationContext)
-                INSTANCE_REF.set(WeakReference(manager))
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: ThemeManager(context).also { INSTANCE = it }
             }
-            return manager
         }
     }
 
