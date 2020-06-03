@@ -4,8 +4,6 @@ import android.content.Context
 import com.google.gson.Gson
 import engineer.kaobei.Model.OpenSources.OpenSource
 import engineer.kaobei.Model.OpenSources.OpenSources
-import java.lang.ref.WeakReference
-import java.util.concurrent.atomic.AtomicReference
 
 class OpenSourceManager(context: Context) {
 
@@ -19,18 +17,14 @@ class OpenSourceManager(context: Context) {
     }
 
     companion object {
-        private val INSTANCE_REF =
-            AtomicReference(
-                WeakReference<OpenSourceManager>(null)
-            )
+
+        @Volatile
+        private var INSTANCE: OpenSourceManager? = null
 
         fun getInstance(context: Context): OpenSourceManager {
-            var manager = INSTANCE_REF.get().get()
-            if (manager == null) {
-                manager = OpenSourceManager(context.applicationContext)
-                INSTANCE_REF.set(WeakReference(manager))
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: OpenSourceManager(context).also { INSTANCE = it }
             }
-            return manager
         }
     }
 
