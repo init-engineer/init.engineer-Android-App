@@ -23,7 +23,10 @@ import engineer.kaobei.R
 class IndexFragment : Fragment() {
 
     companion object {
-        fun newInstance() = IndexFragment()
+        val URL_KOBEENGINEER_ANIMAL_KOHLRABI = "https://kaobei.engineer/animal/kohlrabi"
+        val URL_KOBEENGINEER_FACEBOOK = "https://www.facebook.com/init.kobeengineer/"
+        val URL_KOBEENGINEER_PLURK = "https://plurk.com/kaobei_engineer/"
+        val URL_KOBEENGINEER_TWITTER = "https://twitter.com/kaobei_engineer/"
     }
 
     private lateinit var viewModel: IndexViewModel
@@ -41,20 +44,21 @@ class IndexFragment : Fragment() {
         val card3: CardView = view.findViewById(R.id.card3)
         val card4: CardView = view.findViewById(R.id.card4)
         card1.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context, "https://kaobei.engineer/animal/kohlrabi")
+            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_ANIMAL_KOHLRABI)
         }
+
         card2.setOnClickListener {
-            CustomTabUtil.createCustomTab(
-                view.context,
-                "https://www.facebook.com/init.kobeengineer/"
-            )
+            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_FACEBOOK)
         }
+
         card3.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context, "https://plurk.com/kaobei_engineer/")
+            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_PLURK)
         }
+
         card4.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context, "https://twitter.com/kaobei_engineer/")
+            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_TWITTER)
         }
+
         loadNativeAd(view.context, view)
         return view
     }
@@ -111,8 +115,7 @@ class IndexFragment : Fragment() {
     private fun inflateAd(view: View, nativeAd: NativeAd) {
         nativeAd.unregisterView()
         val nativeAdLayout: NativeAdLayout = view.findViewById(R.id.native_ad_container);
-        val inflater = LayoutInflater.from(view.context)
-        val adView = inflater.inflate(R.layout.ads_style2, nativeAdLayout, false) as LinearLayout?
+        val adView = LayoutInflater.from(context).inflate(R.layout.ads_style2, nativeAdLayout, false) as LinearLayout?
         nativeAdLayout.addView(adView)
 
         // Add the AdOptionsView
