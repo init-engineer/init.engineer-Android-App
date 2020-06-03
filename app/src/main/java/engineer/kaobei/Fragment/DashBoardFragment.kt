@@ -20,8 +20,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.transition.MaterialSharedAxis
@@ -38,6 +36,7 @@ import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
 import engineer.kaobei.Util.SnackbarUtil
+import engineer.kaobei.Util.ext.viewLoadingWithTransition
 import engineer.kaobei.View.UserViewer
 import engineer.kaobei.Viewmodel.ListViewModel
 import engineer.kaobei.Viewmodel.ProfileViewModel
@@ -127,7 +126,12 @@ class DashBoardFragment : Fragment() {
                 val mLayoutManager = LinearLayoutManager(context)
                 rv_dashboard.layoutManager = mLayoutManager
 
-                adapter = HistoryLoadMoreRecyclerView(view.context, accessToken, listOf())
+                adapter =
+                    HistoryLoadMoreRecyclerView(
+                        view.context,
+                        accessToken,
+                        listOf()
+                    )
                 adapter.setListener(object : RecyclerViewAdapterListener<UserArticle> {
                     override fun onTheFirstInit(list: List<UserArticle>) {
                         activity?.runOnUiThread {
@@ -160,13 +164,17 @@ class DashBoardFragment : Fragment() {
                 })
                 rv_dashboard.adapter = adapter
 
-                mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visibleThreshold)
+                mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager,
+                    visibleThreshold
+                )
                 mScrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
                     override fun onLoadMore() {
                         if (adapter.isInit()) {
                             Handler().postDelayed({
                                 adapter.loadMoreArticle(++page)
-                            }, recyclerviewDelayLoadingTime)
+                            },
+                                recyclerviewDelayLoadingTime
+                            )
                         }
                     }
                 })
@@ -296,11 +304,8 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
                     36
                 )
             date?.text = userArticle.createdDiff
-            Glide
-                .with(mContext)
-                .load(userArticle.image)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(thumbnail)
+            thumbnail.viewLoadingWithTransition(userArticle.image)
+
             itemView.setOnClickListener {
                 val article = Article(
                     userArticle.content,
