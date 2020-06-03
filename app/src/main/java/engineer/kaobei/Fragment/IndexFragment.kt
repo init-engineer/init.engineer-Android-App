@@ -7,18 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.facebook.ads.*
 import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.BuildConfig
+import engineer.kaobei.R
 import engineer.kaobei.Util.CustomTabUtil
 import engineer.kaobei.Viewmodel.IndexViewModel
-import engineer.kaobei.R
 
 class IndexFragment : Fragment() {
 
@@ -61,7 +60,7 @@ class IndexFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(IndexViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(IndexViewModel::class.java)
         val forward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, true)
         val backward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, false)
         enterTransition = forward
