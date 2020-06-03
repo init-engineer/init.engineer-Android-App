@@ -4,17 +4,18 @@ import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -172,8 +173,8 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         this.comments = comments
         this.mArticle = article
         this.mLinks = links
-        mViewModel = ViewModelProviders.of(context).get(CommentsViewModel::class.java)
-        mLinksViewModel = ViewModelProviders.of(context).get(LinkViewModel::class.java)
+        mViewModel = ViewModelProvider(context).get(CommentsViewModel::class.java)
+        mLinksViewModel = ViewModelProvider(context).get(LinkViewModel::class.java)
         mViewModel.addOnReceiveDataListener(object : ListViewModel.OnReceiveDataListener<Comment> {
             override fun onReceiveData(list: List<Comment>) {
                 if (!init) {

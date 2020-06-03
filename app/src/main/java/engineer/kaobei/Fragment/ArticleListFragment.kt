@@ -14,7 +14,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -144,7 +144,7 @@ class ArticleListRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewH
     constructor(context: Context, articleList: List<Article>) : this() {
         mContext = context as FragmentActivity
         this.articleList = articleList
-        mViewModel = ViewModelProviders.of(context).get(ArticleListViewModel::class.java)
+        mViewModel = ViewModelProvider(context).get(ArticleListViewModel::class.java)
         mViewModel.addOnReceiveDataListener(object : ListViewModel.OnReceiveDataListener<Article> {
             override fun onReceiveData(list: List<Article>) {
                 removeLoadingView()
