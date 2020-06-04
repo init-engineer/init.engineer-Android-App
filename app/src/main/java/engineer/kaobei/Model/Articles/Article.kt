@@ -1,8 +1,10 @@
 package engineer.kaobei.Model.Articles
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Article(
     @SerializedName("content")
     val content: String = "",
@@ -18,4 +20,4 @@ data class Article(
     val updatedAt: String = "",
     @SerializedName("updated_diff")
     val updatedDiff: String = ""
-) : Serializable
+) : Parcelable
