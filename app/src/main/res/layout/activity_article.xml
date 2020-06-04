@@ -55,7 +55,7 @@
 
             </androidx.recyclerview.widget.RecyclerView>
 
-            <engineer.kaobei.View.AnimatedGap
+            <engineer.kaobei.view.AnimatedGap
                 android:id="@+id/gap"
                 android:layout_width="match_parent"
                 android:layout_height="25dp"/>

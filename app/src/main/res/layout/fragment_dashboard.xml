@@ -45,7 +45,7 @@
                     app:toolbarId="@+id/toolbar">
 
 
-                        <engineer.kaobei.View.UserViewer
+                        <engineer.kaobei.view.UserViewer
                             android:clickable="true"
                             android:focusable="true"
                             app:layout_collapseMode="parallax"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.CreateArticleFragment">
+    tools:context=".fragment.CreateArticleFragment">
 
     <LinearLayout
         android:layout_marginTop="20dp"
@@ -51,7 +51,7 @@
                             android:textColor="@color/FxWhite"
                             android:textSize="24sp" />
 
-                        <engineer.kaobei.View.KaobeiArticleViewer
+                        <engineer.kaobei.view.KaobeiArticleViewer
                             android:id="@+id/viewer"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

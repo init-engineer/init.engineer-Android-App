@@ -1,15 +1,11 @@
 package engineer.kaobei
 
-import engineer.kaobei.Model.ArticleInfo.KaobeiArticleInfo
-import engineer.kaobei.Model.Articles.Article
-import engineer.kaobei.Model.Articles.KaobeiArticleList
-import engineer.kaobei.Model.Comments.Comment
-import engineer.kaobei.Model.Comments.KaobeiComments
-import engineer.kaobei.Model.KaobelUser.BeanKaobeiUser
-import engineer.kaobei.Model.KaobelUser.KaobeiUser
-import engineer.kaobei.Model.Link.KaobeiLink
-import engineer.kaobei.Model.UserArticles.UserArticles
-import okhttp3.Request
+import engineer.kaobei.model.articleInfo.KaobeiArticleInfo
+import engineer.kaobei.model.articles.KaobeiArticleList
+import engineer.kaobei.model.comments.KaobeiComments
+import engineer.kaobei.model.kaobeluser.BeanKaobeiUser
+import engineer.kaobei.model.link.KaobeiLink
+import engineer.kaobei.model.userarticles.UserArticles
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call

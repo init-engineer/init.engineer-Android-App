@@ -15,12 +15,12 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".Activity.SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/SettingTheme"></activity>
-        <activity android:name=".Activity.LoginActivity" />
-        <activity android:name=".Activity.ArticleActivity" />
-        <activity android:name=".Activity.MainActivity">
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.ArticleActivity" />
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
