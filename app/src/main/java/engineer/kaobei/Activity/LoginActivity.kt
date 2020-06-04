@@ -1,18 +1,17 @@
 package engineer.kaobei.Activity
 
-import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
+import androidx.core.content.ContextCompat
 import engineer.kaobei.BuildConfig
 import engineer.kaobei.Database.AuthStateManager
 import engineer.kaobei.R
+import engineer.kaobei.Util.ext.viewLoading
 import net.openid.appauth.*
 import net.openid.appauth.AuthorizationService.TokenResponseCallback
 
@@ -39,7 +38,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         val container: ImageView = findViewById(R.id.container)
-        Glide.with(this).load(resources.getDrawable(R.drawable.img_background_star)).into(container)
+        container.viewLoading(ContextCompat.getDrawable(this, R.drawable.img_background_star))
+
         service = AuthorizationService(this)
         authStateManager = AuthStateManager.getInstance(this)
         serviceConfig = AuthorizationServiceConfiguration(

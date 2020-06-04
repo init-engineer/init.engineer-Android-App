@@ -17,39 +17,31 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.transition.MaterialSharedAxis
-import com.google.gson.Gson
 import engineer.kaobei.Activity.ArticleActivity
 import engineer.kaobei.Activity.LoginActivity
 import engineer.kaobei.Activity.MainActivity
 import engineer.kaobei.Activity.SettingsActivity
 import engineer.kaobei.Database.AuthStateManager
 import engineer.kaobei.Model.Articles.Article
-import engineer.kaobei.Model.KaobelUser.BeanKaobeiUser
 import engineer.kaobei.Model.KaobelUser.KaobeiUser
 import engineer.kaobei.Model.UserArticles.UserArticle
-import engineer.kaobei.Model.UserArticles.UserArticles
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
 import engineer.kaobei.Util.SnackbarUtil
+import engineer.kaobei.Util.ext.viewLoadingWithTransition
 import engineer.kaobei.View.UserViewer
-import engineer.kaobei.Viewmodel.UserArticleListViewModel
 import engineer.kaobei.Viewmodel.ListViewModel
 import engineer.kaobei.Viewmodel.ProfileViewModel
-import kotlinx.android.synthetic.main.fragment_dashboard.*
+import engineer.kaobei.Viewmodel.UserArticleListViewModel
 import net.openid.appauth.AuthState
-import okhttp3.*
-import java.io.IOException
-import java.net.UnknownServiceException
 
 
 class DashBoardFragment : Fragment() {
@@ -134,7 +126,12 @@ class DashBoardFragment : Fragment() {
                 val mLayoutManager = LinearLayoutManager(context)
                 rv_dashboard.layoutManager = mLayoutManager
 
-                adapter = HistoryLoadMoreRecyclerView(view.context, accessToken, listOf())
+                adapter =
+                    HistoryLoadMoreRecyclerView(
+                        view.context,
+                        accessToken,
+                        listOf()
+                    )
                 adapter.setListener(object : RecyclerViewAdapterListener<UserArticle> {
                     override fun onTheFirstInit(list: List<UserArticle>) {
                         activity?.runOnUiThread {
@@ -167,18 +164,22 @@ class DashBoardFragment : Fragment() {
                 })
                 rv_dashboard.adapter = adapter
 
-                mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visibleThreshold)
+                mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager,
+                    visibleThreshold
+                )
                 mScrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
                     override fun onLoadMore() {
                         if (adapter.isInit()) {
                             Handler().postDelayed({
                                 adapter.loadMoreArticle(++page)
-                            }, recyclerviewDelayLoadingTime)
+                            },
+                                recyclerviewDelayLoadingTime
+                            )
                         }
                     }
                 })
 
-                val profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
+                val profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
                 profileViewModel.getLiveData()
                     .observe(viewLifecycleOwner, Observer<KaobeiUser> { user ->
                         userviewer.setProfile(user)
@@ -249,7 +250,7 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
         this.mContext = context as FragmentActivity
         this.articleList = articleList
         this.accessToken = accessToken
-        mViewModel = ViewModelProviders.of(context).get(UserArticleListViewModel::class.java)
+        mViewModel = ViewModelProvider(context).get(UserArticleListViewModel::class.java)
         mViewModel.addOnReceiveDataListener(object :
             ListViewModel.OnReceiveDataListener<UserArticle> {
             override fun onReceiveData(list: List<UserArticle>) {
@@ -303,11 +304,8 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
                     36
                 )
             date?.text = userArticle.createdDiff
-            Glide
-                .with(mContext)
-                .load(userArticle.image)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(thumbnail)
+            thumbnail.viewLoadingWithTransition(userArticle.image)
+
             itemView.setOnClickListener {
                 val article = Article(
                     userArticle.content,

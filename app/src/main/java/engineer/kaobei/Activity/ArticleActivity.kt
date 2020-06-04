@@ -4,21 +4,22 @@ import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
@@ -30,10 +31,10 @@ import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
-import engineer.kaobei.Util.ClipBoardUtil
-import engineer.kaobei.Util.CustomTabUtil
-import engineer.kaobei.Util.ViewUtil
+import engineer.kaobei.Util.*
 import engineer.kaobei.Viewmodel.*
+import engineer.kaobei.Util.ext.viewLoading
+import engineer.kaobei.Util.ext.viewLoadingWithTransition
 import kotlinx.android.synthetic.main.activity_article.*
 
 /**
@@ -51,16 +52,22 @@ class ArticleActivity : AppCompatActivity() {
         private var id : Int? = null
     }
 
+    private lateinit var adapter: ArticleRecyclerViewAdapter
+    private var page: Int = 1
+    private var article: Article? = null
+    private var id: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_article)
 
-        article  = intent.extras?.get(ARTICLE_KEY) as Article?
+        article = intent.extras?.get(ARTICLE_KEY) as Article?
         id = intent.extras?.get(ID_KEY) as Int?
 
-        if(article==null){
-            if (id !=null){
-                val articleInfoViewModel = ViewModelProvider(this).get(ArticleInfoViewModel::class.java)
+        if (article == null) {
+            if (id != null) {
+                val articleInfoViewModel =
+                    ViewModelProvider(this).get(ArticleInfoViewModel::class.java)
                 articleInfoViewModel.getLiveData().observe(this, Observer { info ->
                     article = Article(
                         content = info.articleInfo.content,
@@ -73,7 +80,8 @@ class ArticleActivity : AppCompatActivity() {
                     )
                     loadArticle(article)
                 })
-                articleInfoViewModel.addOnReceiveDataListener(object :ObjectViewModel.OnReceiveDataListener{
+                articleInfoViewModel.addOnReceiveDataListener(object :
+                    ObjectViewModel.OnReceiveDataListener {
                     override fun onReceiveData() {
 
                     }
@@ -81,12 +89,16 @@ class ArticleActivity : AppCompatActivity() {
                     override fun onFailureReceiveData() {
                         val tv_article_not_found = findViewById<TextView>(R.id.tv_article_not_found)
                         tv_article_not_found.visibility = View.VISIBLE
-                        Snackbar.make(findViewById(android.R.id.content),"文章不存在",Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(
+                            findViewById(android.R.id.content),
+                            "文章不存在",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
                     }
                 })
                 articleInfoViewModel.loadArticleInfo(id!!)
             }
-        }else{
+        } else {
             loadArticle(article)
         }
 
@@ -97,7 +109,7 @@ class ArticleActivity : AppCompatActivity() {
 
     }
 
-    private fun loadArticle(article: Article?){
+    private fun loadArticle(article: Article?) {
         val mLayoutManager = LinearLayoutManager(this)
         val scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visbleThreshold)
         scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
@@ -170,8 +182,8 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         this.comments = comments
         this.mArticle = article
         this.mLinks = links
-        mViewModel = ViewModelProviders.of(context).get(CommentsViewModel::class.java)
-        mLinksViewModel = ViewModelProviders.of(context).get(LinkViewModel::class.java)
+        mViewModel = ViewModelProvider(context).get(CommentsViewModel::class.java)
+        mLinksViewModel = ViewModelProvider(context).get(LinkViewModel::class.java)
         mViewModel.addOnReceiveDataListener(object : ListViewModel.OnReceiveDataListener<Comment> {
             override fun onReceiveData(list: List<Comment>) {
                 if (!init) {
@@ -262,20 +274,18 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             /**
              * Hint:可能會Lag
              */
-            Glide
-                .with(mContext)
-                .load(content.resources.getDrawable(R.drawable.img_animated_rainbow))
-                .into(avatar_background)
-            if (comment.avatar == "/img/frontend/user/nopic_192.gif") {
-                Glide
-                    .with(mContext)
-                    .load(content.resources.getDrawable(R.drawable.img_nopic_192))
-                    .into(avatar)
+
+            avatar_background.viewLoading(
+                ContextCompat.getDrawable(
+                    mContext,
+                    R.drawable.img_animated_rainbow
+                )
+            )
+
+            if (TextUtils.equals(comment.avatar, "/img/frontend/user/nopic_192.gif")) {
+                avatar.viewLoading(ContextCompat.getDrawable(mContext, R.drawable.img_nopic_192))
             } else {
-                Glide
-                    .with(mContext)
-                    .load(comment.avatar)
-                    .into(avatar)
+                avatar.viewLoading(comment.avatar)
             }
 
             itemView.setOnClickListener {
@@ -283,6 +293,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
     }
+
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class LastOneViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -294,24 +305,16 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         private var created_at = itemView.findViewById<TextView>(R.id.header2_created_at)
         private var image = itemView.findViewById<ImageView>(R.id.header2_image)
         private var share = itemView.findViewById<CardView>(R.id.cardview_share)
+
         fun bind(article: Article) {
             name?.text = animalAvatar.name
             content?.text = article.content
             created_at?.text = article.createdDiff
-            Glide
-                .with(mContext)
-                .load(content.resources.getDrawable(R.drawable.img_animated_rainbow))
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(avatar_background)
-            Glide
-                .with(mContext)
-                .load(content.resources.getDrawable(animalAvatar.id))
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(avatar)
-            Glide
-                .with(mContext)
-                .load(article.image)
-                .into(image)
+
+            avatar_background.viewLoadingWithTransition(ContextCompat.getDrawable(mContext, R.drawable.img_animated_rainbow))
+            avatar.viewLoadingWithTransition(ContextCompat.getDrawable(mContext, animalAvatar.id))
+            image.viewLoading(article.image)
+
 
             share.setOnClickListener {
                 setDialog(it, "https://kaobei.engineer/cards/show/" + article.id)
@@ -371,10 +374,10 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
         private var tvTwRy = itemView.findViewById<TextView>(R.id.tv_tw_ry)
 
 
-        private var layout_fb1 : LinearLayout = itemView.findViewById(R.id.layout_fb1)
-        private var layout_fb2 : LinearLayout = itemView.findViewById(R.id.layout_fb2)
-        private var layout_tw : LinearLayout = itemView.findViewById(R.id.layout_tw)
-        private var layout_pl : LinearLayout = itemView.findViewById(R.id.layout_pl)
+        private var layout_fb1: LinearLayout = itemView.findViewById(R.id.layout_fb1)
+        private var layout_fb2: LinearLayout = itemView.findViewById(R.id.layout_fb2)
+        private var layout_tw: LinearLayout = itemView.findViewById(R.id.layout_tw)
+        private var layout_pl: LinearLayout = itemView.findViewById(R.id.layout_pl)
 
         private var shimmer =
             itemView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container1)
@@ -396,16 +399,16 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 shimmer.visibility = View.GONE
             }
 
-            for(i in links.data.indices){
-                if(links.data[i].type == "facebook"){
-                    if(links.data[i].connections=="primary"){
+            for (i in links.data.indices) {
+                if (links.data[i].type == "facebook") {
+                    if (links.data[i].connections == "primary") {
                         fb1 = true
                         tvFb1Fv.text = links.data[i].like.toString()
                         tvFb1Ry.text = links.data[i].share.toString()
                         btnFb1.setOnClickListener { view ->
                             setDialog(view, links.data[i].url)
                         }
-                    }else{
+                    } else {
                         fb2 = true
                         tvFb2Fv.text = links.data[i].like.toString()
                         tvFb2Ry.text = links.data[i].share.toString()
@@ -415,7 +418,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
 
                     }
                 }
-                if(links.data[i].type == "twitter"){
+                if (links.data[i].type == "twitter") {
                     tw = true
                     tvTwFv.text = links.data[i].like.toString()
                     tvTwRy.text = links.data[i].share.toString()
@@ -423,7 +426,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                         setDialog(view, links.data[i].url)
                     }
                 }
-                if(links.data[i].type == "plurk"){
+                if (links.data[i].type == "plurk") {
                     pl = true
                     tvPlFv.text = links.data[i].like.toString()
                     tvPlRy.text = links.data[i].share.toString()
@@ -433,17 +436,17 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }
 
-            if(!fb1){
-                layout_fb1.visibility=View.GONE
+            if (!fb1) {
+                layout_fb1.visibility = View.GONE
             }
-            if(!fb2){
-                layout_fb2.visibility=View.GONE
+            if (!fb2) {
+                layout_fb2.visibility = View.GONE
             }
-            if(!tw){
-                layout_tw.visibility=View.GONE
+            if (!tw) {
+                layout_tw.visibility = View.GONE
             }
-            if(!pl){
-                layout_pl.visibility=View.GONE
+            if (!pl) {
+                layout_pl.visibility = View.GONE
             }
 
         }
