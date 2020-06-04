@@ -4,8 +4,6 @@ import android.content.Context
 import com.google.gson.Gson
 import engineer.kaobei.Model.Fonts.Font
 import engineer.kaobei.Model.Fonts.KaobeiFonts
-import java.lang.ref.WeakReference
-import java.util.concurrent.atomic.AtomicReference
 
 class FontManager(context: Context) {
 
@@ -19,18 +17,14 @@ class FontManager(context: Context) {
     }
 
     companion object {
-        private val INSTANCE_REF =
-            AtomicReference(
-                WeakReference<FontManager>(null)
-            )
+        @Volatile
+        private var INSTANCE: FontManager? = null
 
         fun getInstance(context: Context): FontManager {
-            var manager = INSTANCE_REF.get().get()
-            if (manager == null) {
-                manager = FontManager(context.applicationContext)
-                INSTANCE_REF.set(WeakReference(manager))
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: FontManager(context).also { INSTANCE = it }
             }
-            return manager
+
         }
     }
 
