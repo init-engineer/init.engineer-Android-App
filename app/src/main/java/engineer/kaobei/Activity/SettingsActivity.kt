@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -86,7 +87,7 @@ class SettingsActivity : AppCompatActivity() {
                     OpenSourceRecyclerViewAdapter.OnItemClickListener {
                     override fun onItemClick(opensource: OpenSource) {
                         val builder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
-                        builder.setToolbarColor(it.context.resources.getColor(R.color.colorPrimary))
+                        builder.setToolbarColor(ContextCompat.getColor(it.context, R.color.colorPrimary))
                         builder.setShowTitle(true)
                         val customTabsIntent: CustomTabsIntent = builder.build()
                         customTabsIntent.launchUrl(

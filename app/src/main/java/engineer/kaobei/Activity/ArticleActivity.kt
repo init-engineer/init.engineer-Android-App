@@ -256,19 +256,19 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
                             media?.text = content.resources.getText(R.string.media_fb2)
                         }
                     }
-                    media?.background = ColorDrawable(content.resources.getColor(R.color.FxFB))
+                    media?.background = ColorDrawable(ContextCompat.getColor(itemView.context, R.color.FxFB))
                 }
                 "plurk" -> {
                     media?.text = content.resources.getText(R.string.media_plurk)
-                    media?.background = ColorDrawable(content.resources.getColor(R.color.FxPL))
+                    media?.background = ColorDrawable(ContextCompat.getColor(itemView.context, R.color.FxPL))
                 }
                 "twitter" -> {
                     media?.text = content.resources.getText(R.string.media_twitter)
-                    media?.background = ColorDrawable(content.resources.getColor(R.color.FXTW))
+                    media?.background = ColorDrawable(ContextCompat.getColor(itemView.context, R.color.FXTW))
                 }
                 "platform" -> {
                     media?.text = content.resources.getText(R.string.media_platform)
-                    media?.background = ColorDrawable(content.resources.getColor(R.color.FXPF))
+                    media?.background = ColorDrawable(ContextCompat.getColor(itemView.context, R.color.FXPF))
                 }
             }
             /**
