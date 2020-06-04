@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
-def apikeyPropertiesFile = rootProject.file("apikey.properties")
-def apikeyProperties = new Properties()
-apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+def apiKeyPropertiesFile = rootProject.file("apikey.properties")
+def apiKeyProperties = new Properties()
+apiKeyProperties.load(new FileInputStream(apiKeyPropertiesFile))
 
 android {
     compileSdkVersion 28
@@ -23,15 +23,15 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "OATH2CLIENTID", "\""+apikeyProperties['oath2clientid']+"\"")
-        buildConfigField("String", "OATH2CLIENTSECRET", "\""+apikeyProperties['oath2clientsecret']+"\"")
-        buildConfigField("String", "OATH2REDIRECTURL", "\"" + apikeyProperties['oath2scheme'] + "://" + apikeyProperties['oath2host'] + apikeyProperties['oath2path'] + "\"")
-        buildConfigField("String", "AUDIENCE_1", "\""+apikeyProperties['audience1']+"\"")
+        buildConfigField("String", "OATH2CLIENTID", "\""+apiKeyProperties['oath2clientid']+"\"")
+        buildConfigField("String", "OATH2CLIENTSECRET", "\""+apiKeyProperties['oath2clientsecret']+"\"")
+        buildConfigField("String", "OATH2REDIRECTURL", "\"" + apiKeyProperties['oath2scheme'] + "://" + apiKeyProperties['oath2host'] + apiKeyProperties['oath2path'] + "\"")
+        buildConfigField("String", "AUDIENCE_1", "\""+apiKeyProperties['audience1']+"\"")
 
         manifestPlaceholders = [
-                schemeName: apikeyProperties['oath2scheme'],
-                hostName  : apikeyProperties['oath2host'],
-                pathName  : apikeyProperties['oath2path'],
+                schemeName: apiKeyProperties['oath2scheme'],
+                hostName  : apiKeyProperties['oath2host'],
+                pathName  : apiKeyProperties['oath2path'],
         ]
     }
 
