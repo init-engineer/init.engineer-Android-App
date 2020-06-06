@@ -45,7 +45,7 @@ import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-
+import kotlin.jvm.internal.Ref
 
 /**
  * TODO: Rename parameter arguments, choose names that match
@@ -71,7 +71,7 @@ class CreateArticleFragment : Fragment() {
     private lateinit var authStateManager: AuthStateManager
     private lateinit var mCoorView: CoordinatorLayout //Mainactivity view
 
-    lateinit var reInTop: kotlin.jvm.internal.Ref.BooleanRef
+    lateinit var reInTop: Ref.BooleanRef
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,7 +150,7 @@ class CreateArticleFragment : Fragment() {
             val mLayoutManager = LinearLayoutManager(mView.context)
             val adapter = SelectThemeAdapter(mView.context, themeManager.getThemes())
             val gap = mView.findViewById<AnimatedGap>(R.id.gap)
-            reInTop = kotlin.jvm.internal.Ref.BooleanRef()
+            reInTop = Ref.BooleanRef()
             reInTop.element = false
             addGapController(rv_theme, gap)
             adapter.setOnItemClickListener(object : SelectThemeAdapter.OnItemClickListener {
@@ -179,7 +179,7 @@ class CreateArticleFragment : Fragment() {
             val mLayoutManager = LinearLayoutManager(mView.context)
             val adapter = SelectFontAdapter(mView.context, fontManager.getFonts())
             val gap = mView.findViewById<AnimatedGap>(R.id.gap)
-            reInTop = kotlin.jvm.internal.Ref.BooleanRef()
+            reInTop = Ref.BooleanRef()
             reInTop.element = false
             addGapController(rv_font, gap)
             adapter.setOnItemClickListener(object : SelectFontAdapter.OnItemClickListener {
