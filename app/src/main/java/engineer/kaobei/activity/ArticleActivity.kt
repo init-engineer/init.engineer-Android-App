@@ -23,17 +23,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
-import engineer.kaobei.model.articles.Article
-import engineer.kaobei.model.comments.Comment
-import engineer.kaobei.model.link.KaobeiLink
+import engineer.kaobei.Model.Articles.Article
+import engineer.kaobei.Model.Comments.Comment
+import engineer.kaobei.Model.Link.KaobeiLink
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
-import engineer.kaobei.util.*
-import engineer.kaobei.viewmodel.*
-import engineer.kaobei.util.ext.viewLoading
-import engineer.kaobei.util.ext.viewLoadingWithTransition
+import engineer.kaobei.Util.ClipBoardUtil
+import engineer.kaobei.Util.CustomTabUtil
+import engineer.kaobei.Util.ViewUtil
+import engineer.kaobei.Util.ext.viewLoading
+import engineer.kaobei.Util.ext.viewLoadingWithTransition
+import engineer.kaobei.Viewmodel.*
 import kotlinx.android.synthetic.main.activity_article.*
 
 /**
@@ -45,23 +47,19 @@ class ArticleActivity : AppCompatActivity() {
         const val ARTICLE_KEY: String = "ARTICLE_KEY"
         const val ID_KEY: String = "ID_KEY"
         const val loadingDelayTime: Long = 300
-        const val visbleThreshold: Int = 15
-        private lateinit var adapter: ArticleRecyclerViewAdapter
-        private var article : Article? = null
-        private var id : Int? = null
+        const val visibleThreshold: Int = 15
     }
 
     private lateinit var adapter: ArticleRecyclerViewAdapter
-    private var page: Int = 1
     private var article: Article? = null
     private var id: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_article)
-
-        article = intent.extras?.get(ARTICLE_KEY) as Article?
-        id = intent.extras?.get(ID_KEY) as Int?
+        
+        article = intent.getParcelableExtra(ARTICLE_KEY)
+        id = intent.getIntExtra(ID_KEY, 0)
 
         if (article == null) {
             if (id != null) {
@@ -110,7 +108,7 @@ class ArticleActivity : AppCompatActivity() {
 
     private fun loadArticle(article: Article?) {
         val mLayoutManager = LinearLayoutManager(this)
-        val scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visbleThreshold)
+        val scrollListener = RecyclerViewLoadMoreScroll(mLayoutManager, visibleThreshold)
         scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
             override fun onLoadMore() {
                 if (adapter.isInit()) {
