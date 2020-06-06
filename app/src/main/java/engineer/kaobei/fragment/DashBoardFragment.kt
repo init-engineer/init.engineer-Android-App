@@ -35,8 +35,8 @@ import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
-import engineer.kaobei.util.SnackbarUtil
 import engineer.kaobei.util.ext.viewLoadingWithTransition
+import engineer.kaobei.util.SnackbarUtil
 import engineer.kaobei.view.UserViewer
 import engineer.kaobei.viewmodel.ListViewModel
 import engineer.kaobei.viewmodel.ProfileViewModel

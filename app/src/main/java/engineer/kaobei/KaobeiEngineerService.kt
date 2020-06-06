@@ -6,6 +6,7 @@ import engineer.kaobei.model.comments.KaobeiComments
 import engineer.kaobei.model.kaobeluser.BeanKaobeiUser
 import engineer.kaobei.model.link.KaobeiLink
 import engineer.kaobei.model.userarticles.UserArticles
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -52,7 +53,19 @@ interface KaobeiEngineerService {
     @POST("api/frontend/social/cards/api/publish")
     fun publishArticle(
         @Header("Authorization") accessToken: String,
-        @Part requestBody: RequestBody
+        @Part content: MultipartBody.Part,
+        @Part themeStyle: MultipartBody.Part,
+        @Part fontStyle: MultipartBody.Part,
+        @Part avatar: MultipartBody.Part
     ): Call<ResponseBody>
 
+    @Headers("Accept: application/json")
+    @Multipart
+    @POST("api/frontend/social/cards/api/publish")
+    fun publishArticleNoImg(
+        @Header("Authorization") accessToken: String,
+        @Part content: MultipartBody.Part,
+        @Part themeStyle: MultipartBody.Part,
+        @Part fontStyle: MultipartBody.Part
+    ): Call<ResponseBody>
 }

@@ -1,4 +1,4 @@
-package engineer.kaobei.Util.ext
+package engineer.kaobei.util.ext
 
 import android.graphics.drawable.Drawable
 import android.widget.ImageView

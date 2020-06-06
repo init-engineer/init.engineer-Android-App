@@ -69,7 +69,6 @@ class IndexFragment : Fragment() {
         card5.setOnClickListener {
             CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_REVIEW)
         }
-        
         loadADS(view.context, view)
         return view
     }

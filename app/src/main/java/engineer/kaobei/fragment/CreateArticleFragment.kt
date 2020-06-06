@@ -24,27 +24,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.transition.MaterialSharedAxis
-import engineer.kaobei.activity.LoginActivity
 import engineer.kaobei.BASE_URL
+import engineer.kaobei.KaobeiEngineerService
+import engineer.kaobei.R
+import engineer.kaobei.activity.LoginActivity
 import engineer.kaobei.database.AuthStateManager
 import engineer.kaobei.database.FontManager
 import engineer.kaobei.database.ThemeManager
-import engineer.kaobei.KaobeiEngineerService
 import engineer.kaobei.model.fonts.Font
 import engineer.kaobei.model.themes.Theme
-import engineer.kaobei.R
 import engineer.kaobei.util.SnackbarUtil
 import engineer.kaobei.util.ViewUtil.addGapController
 import engineer.kaobei.view.AnimatedGap
 import engineer.kaobei.view.KaobeiArticleViewer
 import kotlinx.android.synthetic.main.fragment_create_article.*
-import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import kotlin.jvm.internal.Ref
+
 
 /**
  * TODO: Rename parameter arguments, choose names that match
@@ -70,13 +71,21 @@ class CreateArticleFragment : Fragment() {
     private lateinit var authStateManager: AuthStateManager
     private lateinit var mCoorView: CoordinatorLayout //Mainactivity view
 
-    lateinit var reInTop: Ref.BooleanRef
+    lateinit var reInTop: kotlin.jvm.internal.Ref.BooleanRef
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
 
         }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val forward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, true)
+        val backward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, false)
+        enterTransition = forward
+        exitTransition = backward
     }
 
     override fun onCreateView(
@@ -141,7 +150,7 @@ class CreateArticleFragment : Fragment() {
             val mLayoutManager = LinearLayoutManager(mView.context)
             val adapter = SelectThemeAdapter(mView.context, themeManager.getThemes())
             val gap = mView.findViewById<AnimatedGap>(R.id.gap)
-            reInTop = Ref.BooleanRef()
+            reInTop = kotlin.jvm.internal.Ref.BooleanRef()
             reInTop.element = false
             addGapController(rv_theme, gap)
             adapter.setOnItemClickListener(object : SelectThemeAdapter.OnItemClickListener {
@@ -170,7 +179,7 @@ class CreateArticleFragment : Fragment() {
             val mLayoutManager = LinearLayoutManager(mView.context)
             val adapter = SelectFontAdapter(mView.context, fontManager.getFonts())
             val gap = mView.findViewById<AnimatedGap>(R.id.gap)
-            reInTop = Ref.BooleanRef()
+            reInTop = kotlin.jvm.internal.Ref.BooleanRef()
             reInTop.element = false
             addGapController(rv_font, gap)
             adapter.setOnItemClickListener(object : SelectFontAdapter.OnItemClickListener {
@@ -213,13 +222,18 @@ class CreateArticleFragment : Fragment() {
                 cardview_submit.setOnClickListener {
                     layout_transmission.visibility = View.VISIBLE
                     layout_confirm.visibility = View.GONE
-                    val request = createRequestBody(
-                        content,
-                        currentTheme,
-                        currentFont,
-                        imageUri,
-                        authStateManager.getCurrent().accessToken
-                    )
+
+                    val formContent = MultipartBody.Part.createFormData("content", content)
+                    val formThemeStyle = MultipartBody.Part.createFormData("themeStyle", currentTheme.value)
+                    val formFontStyle = MultipartBody.Part.createFormData("fontStyle", currentFont.value)
+                    var formImg : MultipartBody.Part? = null
+
+                    if (imageUri != Uri.EMPTY) {
+                        val path = context?.let { getRealPathFromUri(it, imageUri) }
+                        val mFile = File(path)
+                        val fileRequestBody = mFile.asRequestBody("image/jpeg".toMediaType())
+                        formImg = MultipartBody.Part.createFormData("avatar", "img.jpg", fileRequestBody)
+                    }
 
                     val retrofit = Retrofit.Builder()
                         .baseUrl(BASE_URL)
@@ -227,35 +241,87 @@ class CreateArticleFragment : Fragment() {
                         .build()
                     val service = retrofit.create(KaobeiEngineerService::class.java)
 
-                    if (request != null) {
-                        service.publishArticle(authStateManager.getCurrent().accessToken!!, request)
-                            .enqueue(object : retrofit2.Callback<ResponseBody> {
-                                override fun onFailure(
-                                    call: retrofit2.Call<ResponseBody>,
-                                    t: Throwable
-                                ) {
-                                    tv_bs_title_2.text = "發送失敗。原因:" + t.toString()
-                                    progressbar.visibility = View.GONE
-                                    img_failed.visibility = View.VISIBLE
-                                    cardview_cancel_2.visibility = View.VISIBLE
-                                }
 
-                                override fun onResponse(
-                                    call: retrofit2.Call<ResponseBody>,
-                                    response: retrofit2.Response<ResponseBody>
-                                ) {
-                                    progressbar.visibility = View.GONE
-                                    if (!response.isSuccessful) {
-                                        tv_bs_title_2.text = "發送失敗。原因:" + response.code()
+                    if (authStateManager.getCurrent().accessToken != null) {
+                        if(formImg!=null){
+                            service.publishArticle("Bearer "+authStateManager.getCurrent().accessToken!!,formContent,formThemeStyle,formFontStyle,formImg)
+                                .enqueue(object : retrofit2.Callback<ResponseBody> {
+                                    override fun onFailure(
+                                        call: retrofit2.Call<ResponseBody>,
+                                        t: Throwable
+                                    ) {
+                                        tv_bs_title_2.text = "發送失敗。原因:" + t.toString()
+                                        progressbar.visibility = View.GONE
                                         img_failed.visibility = View.VISIBLE
-                                        return
+                                        cardview_cancel_2.visibility = View.VISIBLE
+                                        cardview_cancel_2.setOnClickListener {
+                                            bt_sheet.dismiss()
+                                        }
                                     }
-                                    tv_bs_title_2.text = "發送成功!"
-                                    img_success.visibility = View.VISIBLE
-                                    cardview_cancel_2.visibility = View.VISIBLE
-                                }
 
-                            })
+                                    override fun onResponse(
+                                        call: retrofit2.Call<ResponseBody>,
+                                        response: retrofit2.Response<ResponseBody>
+                                    ) {
+                                        progressbar.visibility = View.GONE
+                                        if (!response.isSuccessful) {
+                                            tv_bs_title_2.text = "發送失敗。原因:" + response.code()
+                                            img_failed.visibility = View.VISIBLE
+                                            cardview_cancel_2.visibility = View.VISIBLE
+                                            cardview_cancel_2.setOnClickListener {
+                                                bt_sheet.dismiss()
+                                            }
+                                            return
+                                        }
+                                        tv_bs_title_2.text = "發送成功!"
+                                        img_success.visibility = View.VISIBLE
+                                        cardview_cancel_2.visibility = View.VISIBLE
+                                        cardview_cancel_2.setOnClickListener {
+                                            bt_sheet.dismiss()
+                                        }
+                                    }
+
+                                })
+                        }else{
+                            service.publishArticleNoImg(authStateManager.getCurrent().accessToken!!,formContent,formThemeStyle,formFontStyle)
+                                .enqueue(object : retrofit2.Callback<ResponseBody> {
+                                    override fun onFailure(
+                                        call: retrofit2.Call<ResponseBody>,
+                                        t: Throwable
+                                    ) {
+                                        tv_bs_title_2.text = "發送失敗。原因:" + t.toString()
+                                        progressbar.visibility = View.GONE
+                                        img_failed.visibility = View.VISIBLE
+                                        cardview_cancel_2.visibility = View.VISIBLE
+                                        cardview_cancel_2.setOnClickListener {
+                                            bt_sheet.dismiss()
+                                        }
+                                    }
+
+                                    override fun onResponse(
+                                        call: retrofit2.Call<ResponseBody>,
+                                        response: retrofit2.Response<ResponseBody>
+                                    ) {
+                                        progressbar.visibility = View.GONE
+                                        if (!response.isSuccessful) {
+                                            tv_bs_title_2.text = "發送失敗。原因:" + response.code()
+                                            img_failed.visibility = View.VISIBLE
+                                            cardview_cancel_2.visibility = View.VISIBLE
+                                            cardview_cancel_2.setOnClickListener {
+                                                bt_sheet.dismiss()
+                                            }
+                                            return
+                                        }
+                                        tv_bs_title_2.text = "發送成功!"
+                                        img_success.visibility = View.VISIBLE
+                                        cardview_cancel_2.visibility = View.VISIBLE
+                                        cardview_cancel_2.setOnClickListener {
+                                            bt_sheet.dismiss()
+                                        }
+                                    }
+
+                                })
+                        }
                     } else {
                         Toast.makeText(
                             context,
@@ -275,47 +341,6 @@ class CreateArticleFragment : Fragment() {
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        val forward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, true)
-        val backward: MaterialSharedAxis = MaterialSharedAxis.create(MaterialSharedAxis.X, false)
-        enterTransition = forward
-        exitTransition = backward
-    }
-
-    fun createRequestBody(
-        content: String,
-        theme: Theme,
-        font: Font,
-        img: Uri,
-        accessToken: String?
-    ): RequestBody? {
-        if (accessToken == null || accessToken.isEmpty()) {
-            return null
-        }
-
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("content", content)
-            .addFormDataPart("themeStyle", theme.value)
-            .addFormDataPart("fontStyle", font.value)
-        if (img != Uri.EMPTY) {
-            val path = context?.let { getRealPathFromUri(it, img) }
-            val mFile = File(path)
-            val fileRequestBody = mFile.asRequestBody("image/jpeg".toMediaType())
-            requestBody
-                .addFormDataPart("avatar", "img.jpg", fileRequestBody)
-        }
-
-        /*   val request: Request = Request.Builder()
-               .url("https://kaobei.engineer/api/frontend/social/cards/api/publish")
-               .addHeader("Authorization", "Bearer " + accessToken)
-               .addHeader("Accept","*application/json")
-               .post(requestBody.build())
-               .build()*/
-
-        return requestBody.build()
-    }
 
     fun checkPermission(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

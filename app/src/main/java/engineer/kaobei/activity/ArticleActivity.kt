@@ -23,19 +23,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
-import engineer.kaobei.Model.Articles.Article
-import engineer.kaobei.Model.Comments.Comment
-import engineer.kaobei.Model.Link.KaobeiLink
+import engineer.kaobei.model.articles.Article
+import engineer.kaobei.model.comments.Comment
+import engineer.kaobei.model.link.KaobeiLink
 import engineer.kaobei.OnLoadMoreListener
 import engineer.kaobei.R
 import engineer.kaobei.RecyclerViewAdapterListener
 import engineer.kaobei.RecyclerViewLoadMoreScroll
-import engineer.kaobei.Util.ClipBoardUtil
-import engineer.kaobei.Util.CustomTabUtil
-import engineer.kaobei.Util.ViewUtil
-import engineer.kaobei.Util.ext.viewLoading
-import engineer.kaobei.Util.ext.viewLoadingWithTransition
-import engineer.kaobei.Viewmodel.*
+import engineer.kaobei.util.ClipBoardUtil
+import engineer.kaobei.util.CustomTabUtil
+import engineer.kaobei.util.ext.viewLoading
+import engineer.kaobei.util.ext.viewLoadingWithTransition
+import engineer.kaobei.util.ViewUtil
+import engineer.kaobei.viewmodel.*
 import kotlinx.android.synthetic.main.activity_article.*
 
 /**
@@ -57,7 +57,7 @@ class ArticleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_article)
-        
+
         article = intent.getParcelableExtra(ARTICLE_KEY)
         id = intent.getIntExtra(ID_KEY, 0)
 
