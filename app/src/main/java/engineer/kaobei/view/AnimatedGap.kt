@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import engineer.kaobei.R
 
 /**
@@ -44,7 +45,7 @@ class AnimatedGap : LinearLayout {
 
     private fun initial(context: Context, attrs: AttributeSet?) {
         setWillNotDraw(false)
-        this.paint.color = context.resources.getColor(R.color.FxWhite)
+        this.paint.color = ContextCompat.getColor(context, R.color.FxWhite)
         this.paint.strokeWidth = 15F
     }
 
