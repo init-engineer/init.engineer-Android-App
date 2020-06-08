@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.BASE_URL
@@ -69,7 +70,6 @@ class CreateArticleFragment : Fragment() {
     private lateinit var imageUri: Uri
     private lateinit var img_ArticleImg: ImageView
     private lateinit var authStateManager: AuthStateManager
-    private lateinit var mCoorView: CoordinatorLayout //Mainactivity view
 
     lateinit var reInTop: Ref.BooleanRef
 
@@ -96,6 +96,13 @@ class CreateArticleFragment : Fragment() {
             R.layout.fragment_create_article, container,
             false
         )
+
+
+        val tv_backpress = view.findViewById<TextView>(R.id.tv_backpress)
+        tv_backpress.setOnClickListener {
+            activity?.onBackPressed()
+        }
+
         authStateManager = AuthStateManager.getInstance(view.context)
 
         val view_create_article: CoordinatorLayout = view.findViewById(R.id.view_create_article)
@@ -118,7 +125,6 @@ class CreateArticleFragment : Fragment() {
         currentTheme = themeManager.getThemes()[0]
         currentFont = fontManager.getFonts()[0]
         imageUri = Uri.EMPTY
-        mCoorView = activity?.findViewById(R.id.main_coordinator)!!
 
         val kaobeiArticleViewer = view.findViewById<KaobeiArticleViewer>(R.id.viewer)
         kaobeiArticleViewer.setTextContent(content)
@@ -204,7 +210,7 @@ class CreateArticleFragment : Fragment() {
         val cardview_submit = view.findViewById<CardView>(R.id.cardview_submit)
         cardview_submit.setOnClickListener {
             if (content.length < 10) {
-                SnackbarUtil.makeAnchorSnackbar(mCoorView, "字數少於10 AAAAAAAAAAAA", R.id.gap)
+                Snackbar.make(view,"字數少於10 AAAAAAAAAAAA",Snackbar.LENGTH_SHORT).show()
             } else {
                 val bt_sheet = BottomSheetDialog(view.context)
                 val mView = LayoutInflater.from(view.context)

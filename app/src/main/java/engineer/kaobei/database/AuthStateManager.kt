@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.annotation.AnyThread
+import com.google.gson.Gson
+import engineer.kaobei.model.kaobeluser.KaobeiUser
 import net.openid.appauth.*
 import org.json.JSONException
 import java.lang.ref.WeakReference
@@ -17,6 +19,7 @@ class AuthStateManager() {
 
     private val STORE_NAME = "AuthState"
     private val KEY_STATE = "state"
+    private val USER_KEY_STATE = "userstate"
 
     private lateinit var mPrefs: SharedPreferences
     private lateinit var mPrefsLock: ReentrantLock
@@ -138,5 +141,30 @@ class AuthStateManager() {
             mPrefsLock.unlock()
         }
     }
+
+    @AnyThread
+    public fun readUserData(): KaobeiUser {
+        mPrefsLock.lock()
+        try {
+            val data =  mPrefs.getString(USER_KEY_STATE, null) ?: return KaobeiUser()
+            return Gson().fromJson(data,KaobeiUser::class.java)
+        } finally {
+            mPrefsLock.unlock()
+        }
+    }
+
+    @AnyThread
+    public fun writeUserData(user: KaobeiUser) {
+        mPrefsLock.lock()
+        try {
+            val editor = mPrefs.edit()
+            val data  = Gson().toJson(user)
+            editor.putString(USER_KEY_STATE, data)
+            check(editor.commit()) { "Failed to write state to shared prefs" }
+        } finally {
+            mPrefsLock.unlock()
+        }
+    }
+
 
 }

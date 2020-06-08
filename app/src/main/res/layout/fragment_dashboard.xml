@@ -21,7 +21,7 @@
             android:layout_marginBottom="10sp"
             android:fontFamily="@font/dos"
             android:paddingTop="?attr/actionBarSize"
-            android:text="@string/menu_3A"
+            android:text="@string/menu_4A"
             android:textColor="@color/FxWhite"
             android:textSize="24sp" />
 

@@ -23,16 +23,16 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "OATH2CLIENTID", "\""+apiKeyProperties['oath2clientid']+"\"")
-        buildConfigField("String", "OATH2CLIENTSECRET", "\""+apiKeyProperties['oath2clientsecret']+"\"")
+        buildConfigField("String", "OATH2CLIENTID", "\"" + apiKeyProperties['oath2clientid'] + "\"")
+        buildConfigField("String", "OATH2CLIENTSECRET", "\"" + apiKeyProperties['oath2clientsecret'] + "\"")
         buildConfigField("String", "OATH2REDIRECTURL", "\"" + apiKeyProperties['oath2scheme'] + "://" + apiKeyProperties['oath2host'] + apiKeyProperties['oath2path'] + "\"")
-        buildConfigField("String", "ADMOB_1", "\""+apiKeyProperties['admob1']+"\"")
+        buildConfigField("String", "ADMOB_1", "\"" + apiKeyProperties['admob1'] + "\"")
 
         manifestPlaceholders = [
                 schemeName: apiKeyProperties['oath2scheme'],
                 hostName  : apiKeyProperties['oath2host'],
                 pathName  : apiKeyProperties['oath2path'],
-                admobID  : apiKeyProperties['admobID'],
+                admobID   : apiKeyProperties['admobID'],
         ]
     }
 
@@ -103,4 +103,7 @@ dependencies {
 
     //oath2
     implementation 'net.openid:appauth:0.7.1'
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:2.2.5"
 }

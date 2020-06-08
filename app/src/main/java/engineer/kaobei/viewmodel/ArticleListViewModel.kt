@@ -26,6 +26,21 @@ class ArticleListViewModel : ListViewModel<Article>() {
         }
     }
 
+    fun refreshData(){
+        mInit.value = 0
+        mPage.value = 1
+        mList = arrayListOf(Article())
+        mLiveData.value = arrayListOf(Article())
+    }
+
+    fun setInit(value : Boolean){
+        if(value){
+            mInit.value = 1
+        }else{
+            mInit.value = 0
+        }
+    }
+
     fun isInit() : Boolean{
         val value:Int = mInit.value!!
         return value != 0
@@ -39,18 +54,16 @@ class ArticleListViewModel : ListViewModel<Article>() {
         if(mPage.value!=null){
             var index :Int= mPage.value!!
             index++
-            mPage.postValue(index)
             mPage.value = index
         }
     }
 
-    fun initValue():LiveData<ArrayList<Article>>{
-        val value:Int = mInit.value!!
-        if(value==0){
-            mInit.postValue(1)
-            mPage.value?.let { loadMoreArticles(it) }
+    fun minusPage(){
+        if(mPage.value!=null){
+            var index :Int= mPage.value!!
+            index--
+            mPage.value = index
         }
-        return mLiveData
     }
 
     fun loadMoreArticles(page: Int) {

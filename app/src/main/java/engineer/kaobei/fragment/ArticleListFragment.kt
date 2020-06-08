@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.activity.ArticleActivity
@@ -29,27 +31,25 @@ import engineer.kaobei.util.ext.viewLoadingWithTransition
 import engineer.kaobei.util.SnackbarUtil
 import engineer.kaobei.viewmodel.ArticleListViewModel
 import engineer.kaobei.viewmodel.ListViewModel
+import kotlinx.android.synthetic.main.fragment_article_list.*
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.internal.synchronized
 
 class ArticleListFragment : Fragment() {
 
     companion object {
         const val visibleThreshold = 10
         const val recyclerviewDelayLoadingTime: Long = 300    //limited recyclerview loading time
-        var page: Int = 1    //Paging
         fun newInstance() = ArticleListFragment()
     }
 
     private lateinit var mCoorView: CoordinatorLayout //Mainactivity view
-    private lateinit var mHeaderView: TextView
     private lateinit var mRecyclerView: RecyclerView
-    private lateinit var mShimmer1: ShimmerFrameLayout
-    private lateinit var mShimmer2: ShimmerFrameLayout
-    private lateinit var mShimmer3: ShimmerFrameLayout
     private lateinit var mScrollListener: RecyclerViewLoadMoreScroll
+    private lateinit var view_loading: View
+    private lateinit var view_refresh_layout : SwipeRefreshLayout
 
-    private lateinit var mViewModel: ArticleListViewModel
     private lateinit var adapter: ArticleListRecyclerViewAdapter
-    private var articles: List<Article> = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,31 +64,22 @@ class ArticleListFragment : Fragment() {
         enterTransition = forward
         exitTransition = backward
         mCoorView = activity?.findViewById(R.id.main_coordinator)!!
-        mHeaderView = view.findViewById(R.id.header_view)
-        mShimmer1 = view.findViewById(R.id.shimmer_view_container1)
-        mShimmer2 = view.findViewById(R.id.shimmer_view_container2)
-        mShimmer3 = view.findViewById(R.id.shimmer_view_container3)
+        view_loading = view.findViewById(R.id.view_loading)
+        view_refresh_layout = view.findViewById(R.id.view_refresh_layout)
         mRecyclerView = view.findViewById(R.id.articleList_recyclerView)
         initRecyclerview(view)
         return view
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
     }
 
     private fun initRecyclerview(view: View) {
         mRecyclerView.visibility = View.GONE
         mRecyclerView.isNestedScrollingEnabled = false
         val mLayoutManager = LinearLayoutManager(context)
-        adapter = ArticleListRecyclerViewAdapter(view.context, articles)
+        adapter = ArticleListRecyclerViewAdapter(view.context)
         adapter.setListener(object : RecyclerViewAdapterListener<Article> {
             override fun onTheFirstInit(list: List<Article>) {
                 activity?.runOnUiThread {
-                    mHeaderView.visibility = View.GONE
-                    mShimmer1.visibility = View.GONE
-                    mShimmer2.visibility = View.GONE
-                    mShimmer3.visibility = View.GONE
+                    view_loading.visibility = View.GONE
                     mRecyclerView.visibility = View.VISIBLE
                 }
             }
@@ -99,7 +90,7 @@ class ArticleListFragment : Fragment() {
 
             override fun onFailedToReceiveData() {
                 mScrollListener.setLoaded()
-                page--
+                adapter.pageBack()
                 SnackbarUtil.makeAnchorSnackbar(mCoorView, "讀取資料失敗，請稍後再試", R.id.gap)
             }
 
@@ -113,7 +104,7 @@ class ArticleListFragment : Fragment() {
             override fun onLoadMore() {
                 if (adapter.isInit()) {
                     Handler().postDelayed({
-                        adapter.loadMoreArticle(++page)
+                        adapter.loadMoreArticle()
                     }, recyclerviewDelayLoadingTime)
                 }
             }
@@ -121,6 +112,21 @@ class ArticleListFragment : Fragment() {
         mRecyclerView.layoutManager = mLayoutManager
         mRecyclerView.addOnScrollListener(mScrollListener)
         mRecyclerView.adapter = adapter
+
+
+        view_refresh_layout.setOnRefreshListener {
+            view_loading.visibility = View.VISIBLE
+            adapter.refresh()
+            view_refresh_layout.isRefreshing = false
+        }
+
+        //讓swipeRefreshLayout偵測RecyclerView是否在頂端
+        view_refresh_layout.setOnChildScrollUpCallback(object:SwipeRefreshLayout.OnChildScrollUpCallback{
+            override fun canChildScrollUp(parent: SwipeRefreshLayout, child: View?): Boolean {
+                return articleList_recyclerView.computeVerticalScrollOffset() >0
+            }
+
+        })
     }
 }
 
@@ -131,8 +137,6 @@ class ArticleListRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewH
     private lateinit var mViewModel: ArticleListViewModel
 
     private var articleList: List<Article> = listOf()
-    private var loadingIndex = 0 //for deleting loading view
-    private var init = false
 
     companion object {
         const val VIEW_TYPE_HEADER = 0
@@ -140,36 +144,32 @@ class ArticleListRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewH
         const val VIEW_TYPE_ITEM = 2
     }
 
-    constructor(context: Context, articleList: List<Article>) : this() {
+    constructor(context: Context) : this() {
         mContext = context as FragmentActivity
-        this.articleList = articleList
         mViewModel = ViewModelProvider(context).get(ArticleListViewModel::class.java)
         mViewModel.addOnReceiveDataListener(object : ListViewModel.OnReceiveDataListener<Article> {
             override fun onReceiveData(list: List<Article>) {
                 removeLoadingView()
                 mListener?.onReceiveData()
-                if (!init) {
-                    init = true
+                if (!mViewModel.isInit()) {
+                    mViewModel.setInit(true)
                     mListener?.onTheFirstInit(list)
                 }
             }
-
             override fun onFailureToReceiveData() {
                 removeLoadingView()
                 mListener?.onFailedToReceiveData()
             }
 
             override fun onNoMoreData() {
-
+                mListener?.onNoMoreData()
             }
         })
         mViewModel.getLiveData().observe(mContext, Observer<List<Article>> { articles ->
             this.articleList = articles
             notifyDataSetChanged()
         })
-        // add header
-        mViewModel.add(0, Article())
-        mViewModel.loadMoreArticles(1)
+        refresh()
     }
 
     inner class ArticleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -237,27 +237,48 @@ class ArticleListRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewH
 
     fun addLoadingView() {
         //Add loading item
-        mViewModel.add(Article())
-        loadingIndex = articleList.size - 1
+        mViewModel.add(Article(id = -1))
     }
 
     fun removeLoadingView() {
         //Remove loading item
-        if (articleList.isNotEmpty()) {
-            if (loadingIndex >= 0) {
-                mViewModel.remove(loadingIndex)
-                loadingIndex = 0
+        if (mViewModel.isInit()) {
+            for(i in mViewModel.getLiveData().value?.lastIndex?.downTo(0)!!){
+                if(mViewModel.getLiveData().value!![i].id==-1){
+                    mViewModel.remove(i)
+                }
             }
         }
     }
 
-    fun loadMoreArticle(page: Int) {
+    fun loadMoreArticle() {
+        mViewModel.addPage()
         addLoadingView()
-        mViewModel.loadMoreArticles(page)
+        if(getPage()!=null){
+            getPage()?.let { mViewModel.loadMoreArticles(it) }
+        }
     }
 
     fun isInit(): Boolean {
-        return init
+        return mViewModel.isInit()
+    }
+
+    fun pageBack(){
+        mViewModel.minusPage()
+    }
+
+    fun pageUp(){
+        mViewModel.addPage()
+    }
+
+    fun getPage() : Int? {
+        return mViewModel.getPage().value
+    }
+
+    fun refresh(){
+        mViewModel.refreshData()
+        this.articleList = mViewModel.getLiveData().value!!
+        mViewModel.getPage().value?.let { mViewModel.loadMoreArticles(it) }
     }
 
     fun setListener(mArticleListRecyclerViewAdapterListener: RecyclerViewAdapterListener<Article>) {

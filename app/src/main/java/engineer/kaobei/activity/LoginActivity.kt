@@ -1,5 +1,6 @@
 package engineer.kaobei.activity
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,12 +9,24 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.google.gson.Gson
+import engineer.kaobei.BASE_URL
 import engineer.kaobei.BuildConfig
+import engineer.kaobei.KaobeiEngineerService
 import engineer.kaobei.database.AuthStateManager
 import engineer.kaobei.R
+import engineer.kaobei.model.kaobeluser.BeanKaobeiUser
+import engineer.kaobei.model.kaobeluser.KaobeiUser
 import engineer.kaobei.util.ext.viewLoading
+import engineer.kaobei.viewmodel.ProfileViewModel
 import net.openid.appauth.*
 import net.openid.appauth.AuthorizationService.TokenResponseCallback
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 /**
  * Class LoginActivity.
@@ -88,9 +101,7 @@ class LoginActivity : AppCompatActivity() {
                     TokenResponseCallback { r, e ->
                         if (r != null) {
                             val state2 = authStateManager.updateAfterTokenResponse(r, e)
-                            Toast.makeText(this, "Welcome!", Toast.LENGTH_SHORT).show()
-                            setResult(AUTH_SUCCESS)
-                            finish()
+                            state2.accessToken?.let { loadProfile(this,it) }
                         } else {
                             Toast.makeText(this, "Resp failed.", Toast.LENGTH_SHORT).show()
                         }
@@ -101,5 +112,34 @@ class LoginActivity : AppCompatActivity() {
         } else {
             // Do something ...
         }
+    }
+
+    fun loadProfile(context: Context,accessToken: String) {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val service = retrofit.create(KaobeiEngineerService::class.java)
+        service.profile("Bearer $accessToken")
+            .enqueue(object : retrofit2.Callback<BeanKaobeiUser> {
+                override fun onFailure(call: Call<BeanKaobeiUser>, t: Throwable) {
+
+                }
+                override fun onResponse(
+                    call: Call<BeanKaobeiUser>,
+                    response: Response<BeanKaobeiUser>
+                ) {
+                    if (response.isSuccessful) {
+                        val data = response.body()?.data
+                        if (data != null) {
+                            Toast.makeText(context, "歡迎回來!" + data.fullName, Toast.LENGTH_SHORT).show()
+                            authStateManager.writeUserData(data)
+                            setResult(AUTH_SUCCESS)
+                            finish()
+                        }
+                    }
+                }
+
+            })
     }
 }

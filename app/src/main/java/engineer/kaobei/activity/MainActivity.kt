@@ -9,14 +9,21 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
 import engineer.kaobei.database.AuthStateManager
 import engineer.kaobei.R
+import engineer.kaobei.fragment.ArticleListFragment
+import engineer.kaobei.fragment.DashBoardFragment
+import engineer.kaobei.fragment.IndexFragment
+import engineer.kaobei.fragment.ReviewFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * Class MainActivity.
@@ -29,11 +36,19 @@ class MainActivity : AppCompatActivity() {
      * Bottom sheet status
      */
     private var titleClicked: Boolean = false
+    private lateinit var authStateManager: AuthStateManager
 
     private lateinit var title: TextView
     private lateinit var sheet: CardView
     private lateinit var big_card: CardView
-    private lateinit var authStateManager: AuthStateManager
+    private lateinit var fab_main : ExtendedFloatingActionButton
+
+
+    private var indexFragment: Fragment =  IndexFragment()
+    private var articleListFragment : Fragment = ArticleListFragment()
+    private var reviewFragment : Fragment = ReviewFragment()
+    private var dashBoardFragment : Fragment = DashBoardFragment()
+    private var currentFragment : Fragment = Fragment()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -46,6 +61,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        savedInstanceState?.remove("android:support:fragments")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -54,15 +70,72 @@ class MainActivity : AppCompatActivity() {
         showSplashScreen()
         authStateManager = AuthStateManager.getInstance(this)
 
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
-        navView.setupWithNavController(navController)
         title = findViewById(R.id.tv_title)
         sheet = findViewById(R.id.sheet)
         big_card = findViewById(R.id.big_card)
         title.setOnClickListener {
             enterView()
         }
+        fab_main = findViewById(R.id.fab_main)
+        fab_main.hide()
+        fab_main.setOnClickListener{
+            when(nav_view.selectedItemId){
+                R.id.navigation_home ->{
+
+                }
+                R.id.navigation_article_list ->{
+                   val intent = Intent(this,CreateArticleActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.navigation_review ->{
+
+                }
+                R.id.navigation_dashboard ->{
+                }
+            }
+        }
+
+        currentFragment = indexFragment
+        supportFragmentManager.beginTransaction().apply {
+            add(R.id.nav_host_fragment, articleListFragment, getString(R.string.menu_2A)).hide(articleListFragment)
+            add(R.id.nav_host_fragment, reviewFragment, getString(R.string.menu_3A)).hide(reviewFragment)
+            add(R.id.nav_host_fragment, dashBoardFragment, getString(R.string.menu_4A)).hide(dashBoardFragment)
+            add(R.id.nav_host_fragment, indexFragment, getString(R.string.menu_1A))
+        }.commit()
+
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        navView.setOnNavigationItemSelectedListener  {
+            when(it.itemId){
+                R.id.navigation_home ->{
+                    fab_main.hide()
+                    supportFragmentManager.beginTransaction().hide(currentFragment).show(indexFragment).commit()
+                    currentFragment = indexFragment
+                    true
+                }
+                R.id.navigation_article_list ->{
+                    if(authStateManager.getCurrent().isAuthorized){
+                        fab_main.show()
+                    }
+                    supportFragmentManager.beginTransaction().hide(currentFragment).show(articleListFragment).commit()
+                    currentFragment = articleListFragment
+                    true
+                }
+                R.id.navigation_review ->{
+                    fab_main.hide()
+                    supportFragmentManager.beginTransaction().hide(currentFragment).show(reviewFragment).commit()
+                    currentFragment = reviewFragment
+                    true
+                }
+                R.id.navigation_dashboard ->{
+                    fab_main.hide()
+                    supportFragmentManager.beginTransaction().hide(currentFragment).show(dashBoardFragment).commit()
+                    currentFragment = dashBoardFragment
+                    true
+                }else -> false
+            }
+        }
+
+
     }
 
     private fun showSplashScreen() {

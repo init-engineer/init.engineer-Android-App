@@ -8,29 +8,26 @@
     app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
     tools:context=".activity.MainActivity">
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="80dp"
+        android:elevation="0dp"
+        android:text="發表文章"
+        app:icon="@drawable/ic_mode_edit_white_24dp" />
+
     <fragment
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/mobile_navigation" />
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
-        android:layout_margin="@dimen/fab_margin"
-        android:elevation="0dp"
-        android:text="選單"
-        android:visibility="gone"
-        app:backgroundTint="@color/colorAccent"
-        app:icon="@drawable/ic_menu_white_24dp"
-        app:layout_behavior="@string/fab_transformation_scrim_behavior"
-        app:shapeAppearance="@style/MainMenuFabShapeOverlay" />
+        android:layout_height="match_parent" />
 
     <LinearLayout
+        android:id="@+id/nav_layout"
         android:layout_gravity="bottom"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -73,7 +70,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:text="Init.Engineer"
+                        android:text="純靠北工程師"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="16sp" />
 
@@ -121,16 +118,6 @@
                 android:layout_height="200dp"
                 android:layout_gravity="center"
                 android:src="@drawable/img_kb" />
-
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/tv_title_splash"
-                android:fontFamily="@font/dos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Init.Engineer"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="16sp" />
 
         </LinearLayout>
 

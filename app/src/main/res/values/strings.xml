@@ -32,8 +32,9 @@
 
     <string name="menu_1A">首頁 Index</string>
     <string name="menu_2A">文章列表 ArticleList</string>
-    <string name="menu_3A">儀錶板 Dashboard</string>
-    <string name="menu_4A">發表文章 NewArticle</string>
+    <string name="menu_3A">群眾審核 Review</string>
+    <string name="menu_4A">儀錶板 Dashboard</string>
+    <string name="menu_5A">發表文章 PublishArticle</string>
 
     <string name="media_fb1">Facebook 主站</string>
     <string name="media_fb2">Facebook 次站</string>

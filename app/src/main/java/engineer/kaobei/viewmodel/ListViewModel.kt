@@ -1,5 +1,6 @@
 package engineer.kaobei.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,22 +21,22 @@ open class ListViewModel<T> : ViewModel() {
 
     fun add(list: List<T>) {
         mList.addAll(list)
-        mLiveData.postValue(mList)
+        mLiveData.value = mList
     }
 
     fun add(t: T) {
         mList.add(t)
-        mLiveData.postValue(mList)
+        mLiveData.value = mList
     }
 
     fun add(index: Int, t: T) {
         mList.add(index, t)
-        mLiveData.postValue(mList)
+        mLiveData.value = mList
     }
 
     fun remove(index: Int) {
         mList.removeAt(index)
-        mLiveData.postValue(mList)
+        mLiveData.value = mList
     }
 
     fun addOnReceiveDataListener(mOnReceiveDataListener: OnReceiveDataListener<T>) {

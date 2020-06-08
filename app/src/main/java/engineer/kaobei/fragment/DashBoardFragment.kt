@@ -23,6 +23,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.transition.MaterialSharedAxis
+import engineer.kaobei.OnLoadMoreListener
+import engineer.kaobei.R
+import engineer.kaobei.RecyclerViewAdapterListener
+import engineer.kaobei.RecyclerViewLoadMoreScroll
 import engineer.kaobei.activity.ArticleActivity
 import engineer.kaobei.activity.LoginActivity
 import engineer.kaobei.activity.MainActivity
@@ -31,12 +35,8 @@ import engineer.kaobei.database.AuthStateManager
 import engineer.kaobei.model.articles.Article
 import engineer.kaobei.model.kaobeluser.KaobeiUser
 import engineer.kaobei.model.userarticles.UserArticle
-import engineer.kaobei.OnLoadMoreListener
-import engineer.kaobei.R
-import engineer.kaobei.RecyclerViewAdapterListener
-import engineer.kaobei.RecyclerViewLoadMoreScroll
-import engineer.kaobei.util.ext.viewLoadingWithTransition
 import engineer.kaobei.util.SnackbarUtil
+import engineer.kaobei.util.ext.viewLoadingWithTransition
 import engineer.kaobei.view.UserViewer
 import engineer.kaobei.viewmodel.ListViewModel
 import engineer.kaobei.viewmodel.ProfileViewModel
@@ -164,27 +164,23 @@ class DashBoardFragment : Fragment() {
                 })
                 rv_dashboard.adapter = adapter
 
-                mScrollListener = RecyclerViewLoadMoreScroll(mLayoutManager,
+                mScrollListener = RecyclerViewLoadMoreScroll(
+                    mLayoutManager,
                     visibleThreshold
                 )
                 mScrollListener.setOnLoadMoreListener(object : OnLoadMoreListener {
                     override fun onLoadMore() {
                         if (adapter.isInit()) {
-                            Handler().postDelayed({
-                                adapter.loadMoreArticle(++page)
-                            },
+                            Handler().postDelayed(
+                                {
+                                    adapter.loadMoreArticle(++page)
+                                },
                                 recyclerviewDelayLoadingTime
                             )
                         }
                     }
                 })
-
-                val profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
-                profileViewModel.getLiveData()
-                    .observe(viewLifecycleOwner, Observer<KaobeiUser> { user ->
-                        userviewer.setProfile(user)
-                    })
-                profileViewModel.loadProfile(accessToken)
+                userviewer.setProfile(authStateManager.readUserData())
             }
         } else {
             isAuthorized = false
@@ -243,8 +239,6 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
 
     var articleList: List<UserArticle> = listOf()
     private lateinit var accessToken: String
-    private var loadingIndex = 0
-    private var init = false
 
     constructor(context: Context, accessToken: String, articleList: List<UserArticle>) : this() {
         this.mContext = context as FragmentActivity
@@ -255,8 +249,8 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
             ListViewModel.OnReceiveDataListener<UserArticle> {
             override fun onReceiveData(list: List<UserArticle>) {
                 removeLoadingView()
-                if (!init) {
-                    init = true
+                if (!isInit()) {
+                    mViewModel.setInit(true)
                     mListener?.onTheFirstInit(list)
                 }
                 mListener?.onReceiveData()
@@ -275,7 +269,7 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
             this.articleList = articles
             notifyDataSetChanged()
         })
-        mViewModel.loadArticles(accessToken, 1)
+        refresh()
     }
 
 
@@ -357,28 +351,33 @@ class HistoryLoadMoreRecyclerView() : RecyclerView.Adapter<RecyclerView.ViewHold
 
     fun addLoadingView() {
         //Add loading item
-        mViewModel.add(UserArticle())
-        loadingIndex = articleList.size - 1
+        mViewModel.add(UserArticle(id = -1))
     }
 
     fun removeLoadingView() {
         //Remove loading item
-        if (articleList.isNotEmpty()) {
-            if (loadingIndex >= 0) {
-                mViewModel.remove(loadingIndex)
-                loadingIndex = 0
+        if (mViewModel.isInit()) {
+            for (i in mViewModel.getLiveData().value?.lastIndex?.downTo(0)!!) {
+                if (mViewModel.getLiveData().value!![i].id == -1) {
+                    mViewModel.remove(i)
+                }
             }
         }
     }
 
     fun loadMoreArticle(page: Int) {
         addLoadingView()
-        mViewModel.loadArticles(accessToken, page)
+        mViewModel.loadMoreArticles(accessToken, page)
     }
 
+    fun refresh(){
+        mViewModel.refreshData()
+        this.articleList = mViewModel.getLiveData().value!!
+        mViewModel.getPage().value?.let { mViewModel.loadMoreArticles(accessToken,it) }
+    }
 
     fun isInit(): Boolean {
-        return init
+        return mViewModel.isInit()
     }
 
 
