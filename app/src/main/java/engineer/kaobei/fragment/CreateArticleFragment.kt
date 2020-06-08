@@ -28,9 +28,9 @@ import engineer.kaobei.BASE_URL
 import engineer.kaobei.KaobeiEngineerService
 import engineer.kaobei.R
 import engineer.kaobei.activity.LoginActivity
-import engineer.kaobei.database.AuthStateManager
-import engineer.kaobei.database.FontManager
-import engineer.kaobei.database.ThemeManager
+import engineer.kaobei.manager.AuthStateManager
+import engineer.kaobei.manager.FontManager
+import engineer.kaobei.manager.ThemeManager
 import engineer.kaobei.model.fonts.Font
 import engineer.kaobei.model.themes.Theme
 import engineer.kaobei.util.SnackbarUtil

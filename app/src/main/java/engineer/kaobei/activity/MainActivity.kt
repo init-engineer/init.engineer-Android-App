@@ -15,7 +15,7 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
-import engineer.kaobei.database.AuthStateManager
+import engineer.kaobei.manager.AuthStateManager
 import engineer.kaobei.R
 
 /**

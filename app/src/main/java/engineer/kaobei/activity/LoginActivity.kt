@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import engineer.kaobei.BuildConfig
-import engineer.kaobei.database.AuthStateManager
+import engineer.kaobei.manager.AuthStateManager
 import engineer.kaobei.R
 import engineer.kaobei.util.ext.viewLoading
 import net.openid.appauth.*

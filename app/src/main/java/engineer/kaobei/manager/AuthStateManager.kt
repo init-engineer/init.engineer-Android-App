@@ -1,4 +1,4 @@
-package engineer.kaobei.database
+package engineer.kaobei.manager
 
 import android.content.Context
 import android.content.SharedPreferences

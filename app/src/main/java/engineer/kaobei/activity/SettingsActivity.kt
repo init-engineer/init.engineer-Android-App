@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
 import engineer.kaobei.BuildConfig
-import engineer.kaobei.database.OpenSourceManager
+import engineer.kaobei.manager.OpenSourceManager
 import engineer.kaobei.model.opensources.OpenSource
 import engineer.kaobei.R
 import engineer.kaobei.util.CustomTabUtil
