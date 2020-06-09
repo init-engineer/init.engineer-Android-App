@@ -26,7 +26,7 @@ import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.activity.ArticleActivity
 import engineer.kaobei.activity.LoginActivity
 import engineer.kaobei.activity.MainActivity
-import engineer.kaobei.activity.SettingsActivity
+import engineer.kaobei.activity.settings.SettingsActivity
 import engineer.kaobei.database.AuthStateManager
 import engineer.kaobei.model.articles.Article
 import engineer.kaobei.model.kaobeluser.KaobeiUser

@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name=".activity.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/SettingTheme"></activity>
         <activity android:name=".activity.LoginActivity" />
