@@ -12,6 +12,7 @@ open class ListViewModel<T> : ViewModel() {
 
     protected var mListViewModelController: ListViewModelController? = null
     protected var mOnReceiveDataListener: OnReceiveDataListener<T>? = null
+    protected var mReviewOnReceiveDataListener: OnReviewOnReceiveDataListener<T>? = null
     protected var mList = ArrayList<T>()
     protected  var mLiveData: MutableLiveData<ArrayList<T>> = MutableLiveData<ArrayList<T>>()
 
@@ -34,6 +35,11 @@ open class ListViewModel<T> : ViewModel() {
         mLiveData.value = mList
     }
 
+    fun change(index: Int, t: T){
+        mList[index] = t
+        mLiveData.value = mList
+    }
+
     fun remove(index: Int) {
         mList.removeAt(index)
         mLiveData.value = mList
@@ -43,12 +49,22 @@ open class ListViewModel<T> : ViewModel() {
         this.mOnReceiveDataListener = mOnReceiveDataListener
     }
 
+    fun addOnReviewReceiveDataListener(mOnReceiveDataListener: OnReviewOnReceiveDataListener<T>) {
+        this.mReviewOnReceiveDataListener = mOnReceiveDataListener
+    }
+
     fun addListViewModelController(mListViewModelController:ListViewModelController){
         this.mListViewModelController = mListViewModelController
     }
 
     interface OnReceiveDataListener<T> {
         fun onReceiveData(list: List<T>)
+        fun onFailureToReceiveData()
+        fun onNoMoreData()
+    }
+
+    interface OnReviewOnReceiveDataListener<T> {
+        fun onReceiveData(list: List<T>,totalPage : Int)
         fun onFailureToReceiveData()
         fun onNoMoreData()
     }

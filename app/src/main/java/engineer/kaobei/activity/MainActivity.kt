@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         MobileAds.initialize(this) {}
 
-        showSplashScreen()
+
         authStateManager = AuthStateManager.getInstance(this)
 
         title = findViewById(R.id.tv_title)
@@ -76,6 +76,13 @@ class MainActivity : AppCompatActivity() {
         title.setOnClickListener {
             enterView()
         }
+
+        if(savedInstanceState!=null){
+            exitView()
+        }else{
+            showSplashScreen()
+        }
+
         fab_main = findViewById(R.id.fab_main)
         fab_main.hide()
         fab_main.setOnClickListener{
@@ -104,6 +111,7 @@ class MainActivity : AppCompatActivity() {
         }.commit()
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        navView.selectedItemId = R.id.navigation_home
         navView.setOnNavigationItemSelectedListener  {
             when(it.itemId){
                 R.id.navigation_home ->{

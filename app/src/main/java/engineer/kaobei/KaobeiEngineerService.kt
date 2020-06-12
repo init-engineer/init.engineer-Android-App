@@ -1,5 +1,7 @@
 package engineer.kaobei
 
+import engineer.kaobei.model.ReviewArticle.SingleReviewArticle
+import engineer.kaobei.model.ReviewArticles.ReviewArticles
 import engineer.kaobei.model.articleInfo.KaobeiArticleInfo
 import engineer.kaobei.model.articles.KaobeiArticleList
 import engineer.kaobei.model.comments.KaobeiComments
@@ -7,7 +9,6 @@ import engineer.kaobei.model.kaobeluser.BeanKaobeiUser
 import engineer.kaobei.model.link.KaobeiLink
 import engineer.kaobei.model.userarticles.UserArticles
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -68,4 +69,23 @@ interface KaobeiEngineerService {
         @Part themeStyle: MultipartBody.Part,
         @Part fontStyle: MultipartBody.Part
     ): Call<ResponseBody>
+
+    @GET("api/frontend/social/cards/api/review")
+    fun reviewArticleList(
+        @Header("Authorization") accessToken: String,
+        @Query("page") page: String? = null
+    ): Call<ReviewArticles>
+
+    @GET("api/frontend/social/cards/api/review/{id}/succeeded")
+    fun approveArticle(
+        @Header("Authorization") accessToken: String,
+        @Path("id") id: String
+    ): Call<SingleReviewArticle>
+
+    @GET("api/frontend/social/cards/api/review/{id}/failed")
+    fun denyArticle(
+        @Header("Authorization") accessToken: String,
+        @Path("id") id: String
+    ): Call<SingleReviewArticle>
+
 }

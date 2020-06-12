@@ -1,29 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragment.ReviewFragment">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="80dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/header_view"
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:id="@+id/view_review"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/dos"
-            android:paddingTop="?attr/actionBarSize"
-            android:text="@string/menu_3A"
-            android:textColor="@color/FxWhite"
-            android:textSize="24sp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
 
-</androidx.core.widget.NestedScrollView>
+                android:id="@+id/header_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10sp"
+                android:fontFamily="@font/dos"
+                android:paddingTop="?attr/actionBarSize"
+                android:text="@string/menu_3A"
+                android:textColor="@color/FxWhite"
+                android:textSize="24sp" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:layout_weight="1"
+                android:layout_marginTop="10dp"
+                android:id="@+id/vp2_review"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"/>
+
+            <RelativeLayout
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="@drawable/custom_ripple"
+                    android:id="@+id/tv_tothefirst"
+                    android:layout_alignParentLeft="true"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite"
+                    android:text="跳前十個"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:id="@+id/tv_page"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:text="14/20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="@drawable/custom_ripple"
+                    android:id="@+id/tv_tothelast"
+                    android:layout_alignParentRight="true"
+                    android:fontFamily="@font/dos"
+                    android:textColor="@color/FxWhite"
+                    android:text="跳後十個"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:layout_marginTop="20dp"
+        android:id="@+id/view_not_authorized"
+        android:visibility="gone"
+        layout="@layout/view_create_article_not_authorized"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -41,6 +41,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var authRequestBuilder: AuthorizationRequest.Builder
 
     companion object {
+        private const val AUTHORIZE_ENDPOINT = "https://kaobei.engineer/oauth/authorize"
+        private const val TOKEN_ENDPOINT = "https://kaobei.engineer/oauth/token"
         private lateinit var service: AuthorizationService
         private lateinit var authStateManager: AuthStateManager
         const val RC_AUTH = 0
@@ -52,12 +54,11 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         val container: ImageView = findViewById(R.id.container)
         container.viewLoading(ContextCompat.getDrawable(this, R.drawable.img_background_star))
-
         service = AuthorizationService(this)
         authStateManager = AuthStateManager.getInstance(this)
         serviceConfig = AuthorizationServiceConfiguration(
-            Uri.parse("https://kaobei.engineer/oauth/authorize"),  // authorization endpoint
-            Uri.parse("https://kaobei.engineer/oauth/token")
+            Uri.parse(AUTHORIZE_ENDPOINT),  // authorization endpoint
+            Uri.parse(TOKEN_ENDPOINT)
         )
         authRequestBuilder = AuthorizationRequest.Builder(
             serviceConfig,  // the authorization service configuration
@@ -66,19 +67,14 @@ class LoginActivity : AppCompatActivity() {
             Uri.parse(redirectUrl)
         )
         authRequestBuilder.setScope("*")
-        val authState = AuthState(serviceConfig)
-        authStateManager.replace(authState)
+        authStateManager.replace(AuthState(serviceConfig))
         val loginButton = findViewById<Button>(R.id.login_button)
         loginButton.setOnClickListener {
-            login()
+            login(authRequestBuilder.build())
         }
     }
 
-    private fun login() {
-        doAuthorization(authRequestBuilder.build())
-    }
-
-    private fun doAuthorization(authRequest: AuthorizationRequest) {
+    private fun login(authRequest: AuthorizationRequest) {
         val authIntent = service.getAuthorizationRequestIntent(authRequest)
         startActivityForResult(authIntent, RC_AUTH)
     }

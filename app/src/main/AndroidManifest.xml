@@ -13,7 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.CreateArticleActivity"></activity>
+        <activity
+            android:name=".activity.ArticleActivityV2"
+            android:label="@string/title_activity_article_v2"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".activity.CreateArticleActivity" />
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
