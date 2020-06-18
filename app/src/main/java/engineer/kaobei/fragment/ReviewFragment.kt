@@ -3,6 +3,7 @@ package engineer.kaobei.fragment
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -25,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.*
+import engineer.kaobei.activity.LoginActivity
 import engineer.kaobei.database.AuthStateManager
 import engineer.kaobei.model.ReviewArticle.SingleReviewArticle
 import engineer.kaobei.model.ReviewArticles.ReviewArticle
@@ -58,9 +61,14 @@ class ReviewFragment : Fragment() {
         val tv_page: TextView = view.findViewById(R.id.tv_page)
         val tv_tothefirst: TextView = view.findViewById(R.id.tv_tothefirst)
         val tv_tothelast: TextView = view.findViewById(R.id.tv_tothelast)
+        val view_not_authorized: LinearLayout = view.findViewById(R.id.view_not_authorized)
+        val login_button: Button = view.findViewById(R.id.login_button)
+        val view_review: NestedScrollView = view.findViewById(R.id.view_review)
 
         authStateManager = AuthStateManager.getInstance(view.context)
         if (authStateManager.getCurrent().isAuthorized) {
+            view_not_authorized.visibility = View.GONE
+            view_review.visibility = View.VISIBLE
             val accessToken: String? = authStateManager.getCurrent().accessToken
             if (accessToken != null) {
                 val adapter =
@@ -94,6 +102,13 @@ class ReviewFragment : Fragment() {
                 }
             }else{
 
+            }
+        }else{
+            view_not_authorized.visibility = View.VISIBLE
+            view_review.visibility = View.GONE
+            login_button.setOnClickListener {
+                val intent = Intent(context, LoginActivity::class.java)
+                activity?.startActivityForResult(intent, LoginActivity.RC_AUTH)
             }
         }
 

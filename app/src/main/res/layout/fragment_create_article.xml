@@ -338,7 +338,7 @@
         <include
             android:id="@+id/view_not_authorized"
             android:visibility="gone"
-            layout="@layout/view_create_article_not_authorized"/>
+            layout="@layout/view_not_authorized"/>
 
     </LinearLayout>
 

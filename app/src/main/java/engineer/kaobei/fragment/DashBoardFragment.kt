@@ -84,7 +84,6 @@ class DashBoardFragment : Fragment() {
 
         authStateManager = AuthStateManager.getInstance(view.context)
 
-
         val view_dashboard: LinearLayout = view.findViewById(R.id.view_dashboard)
         val view_not_authorized: LinearLayout = view.findViewById(R.id.view_not_authorized)
         val login_button: Button = view.findViewById(R.id.login_button)
