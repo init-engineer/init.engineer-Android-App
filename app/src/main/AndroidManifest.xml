@@ -19,7 +19,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".activity.CreateArticleActivity" />
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name=".activity.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/SettingTheme" />
         <activity android:name=".activity.LoginActivity" />
