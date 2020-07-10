@@ -159,7 +159,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout_tw"
+            android:id="@+id/layout_pl"
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -226,7 +226,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout_pl"
+            android:id="@+id/layout_tw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"

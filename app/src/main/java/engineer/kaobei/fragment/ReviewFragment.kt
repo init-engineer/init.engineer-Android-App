@@ -205,15 +205,17 @@ class ReviewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             date?.text = reviewArticle.createdDiff
             thumbnail.viewLoadingWithTransition(reviewArticle.image)
             tv_text?.text = reviewArticle.content
-            tv_approved_total?.text = reviewArticle.succeeded.toString()
-            tv_deny_total?.text = reviewArticle.failed.toString()
             if(reviewArticle.review>0){
+                tv_approved_total?.text = reviewArticle.succeeded.toString()
+                tv_deny_total?.text = reviewArticle.failed.toString()
                 card.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.RVY))
                 btn_approve.setBackgroundColor(ContextCompat.getColor(mContext, R.color.FxBlackT))
                 btn_deny.setBackgroundColor(ContextCompat.getColor(mContext, R.color.FxBlackT))
                 btn_approve.isClickable = false
                 btn_deny.isClickable = false
             }else if(reviewArticle.review==0){
+                tv_approved_total?.text = "Hidding"
+                tv_deny_total?.text = "Hidding"
                 card.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.FxBlackT))
                 btn_approve.setBackgroundColor(ContextCompat.getColor(mContext, R.color.RVY))
                 btn_deny.setBackgroundColor(ContextCompat.getColor(mContext, R.color.RVN))
@@ -294,6 +296,8 @@ class ReviewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         })
                 }
             }else if(reviewArticle.review<0){
+                tv_approved_total?.text = reviewArticle.succeeded.toString()
+                tv_deny_total?.text = reviewArticle.failed.toString()
                 card.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.RVN))
                 btn_approve.setBackgroundColor(ContextCompat.getColor(mContext, R.color.FxBlackT))
                 btn_deny.setBackgroundColor(ContextCompat.getColor(mContext, R.color.FxBlackT))
