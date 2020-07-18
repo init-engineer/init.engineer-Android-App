@@ -81,6 +81,8 @@
                         android:layout_height="wrap_content"/>
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:paddingBottom="70dp"
+                        android:clipToPadding="false"
                         android:layout_marginTop="10dp"
                         android:id="@+id/rv_dashboard"
                         android:layout_width="match_parent"
