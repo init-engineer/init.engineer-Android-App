@@ -25,13 +25,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.transition.MaterialSharedAxis
 import engineer.kaobei.*
+import engineer.kaobei.activity.AnimalAvatar
 import engineer.kaobei.activity.LoginActivity
+import engineer.kaobei.activity.animalList
 import engineer.kaobei.database.AuthStateManager
 import engineer.kaobei.model.ReviewArticle.SingleReviewArticle
 import engineer.kaobei.model.ReviewArticles.ReviewArticle
 import engineer.kaobei.util.SnackbarUtil
+import engineer.kaobei.util.ext.viewLoading
 import engineer.kaobei.util.ext.viewLoadingWithTransition
 import engineer.kaobei.viewmodel.ListViewModel
 import engineer.kaobei.viewmodel.ReviewViewModel
@@ -76,7 +80,7 @@ class ReviewFragment : Fragment() {
                         view.context,
                         accessToken
                     )
-                viewPager2.setPageTransformer(DepthPageTransformer())
+                //viewPager2.setPageTransformer(DepthPageTransformer())
                 viewPager2.adapter = adapter
                 val callback = object : ViewPager2.OnPageChangeCallback(){
                     override fun onPageSelected(position: Int) {
@@ -205,6 +209,25 @@ class ReviewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             date?.text = reviewArticle.createdDiff
             thumbnail.viewLoadingWithTransition(reviewArticle.image)
             tv_text?.text = reviewArticle.content
+            card.setOnClickListener{
+                val animalAvatar: AnimalAvatar = animalList.random()
+                val bt_sheet = BottomSheetDialog(mContext)
+                val mView = LayoutInflater.from(mContext).inflate(R.layout.bottom_sheet_review_article, null)
+                val img_article = mView.findViewById<ImageView>(R.id.img_article)
+                val content = mView.findViewById<TextView>(R.id.content)
+                val created_at = mView.findViewById<TextView>(R.id.created_at)
+                val avatar = mView.findViewById<ImageView>(R.id.avatar)
+                val name = mView.findViewById<TextView>(R.id.name)
+                val avatar_background = mView.findViewById<ImageView>(R.id.avatar_background)
+                avatar_background.viewLoadingWithTransition(ContextCompat.getDrawable(mContext, R.drawable.img_animated_rainbow))
+                img_article.viewLoadingWithTransition(reviewArticle.image)
+                content.text = reviewArticle.content
+                created_at.text = reviewArticle.createdDiff
+                avatar.viewLoadingWithTransition(ContextCompat.getDrawable(mContext, animalAvatar.id))
+                name.text =animalAvatar.name
+                bt_sheet.setContentView(mView)
+                bt_sheet.show()
+            }
             if(reviewArticle.review>0){
                 tv_approved_total?.text = reviewArticle.succeeded.toString()
                 tv_deny_total?.text = reviewArticle.failed.toString()

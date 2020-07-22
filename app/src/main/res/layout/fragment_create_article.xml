@@ -109,7 +109,7 @@
                         android:layout_height="7dp"
                         android:layout_alignParentTop="true"
                         android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="14dp"
                         android:layout_marginBottom="10dp"
                         android:src="@drawable/bottomsheet_line" />
 
@@ -126,7 +126,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="15dp"
-                                app:cardBackgroundColor="@color/FxBlackT">
+                                app:cardBackgroundColor="@color/FxBlackW">
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -198,7 +198,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="15dp"
-                                app:cardBackgroundColor="@color/FxBlackT">
+                                app:cardBackgroundColor="@color/FxBlackW">
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -234,7 +234,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="15dp"
-                                app:cardBackgroundColor="@color/FxBlackT">
+                                app:cardBackgroundColor="@color/FxBlackW">
 
                                 <RelativeLayout
                                     android:layout_width="match_parent"
@@ -264,7 +264,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="15dp"
-                                app:cardBackgroundColor="@color/FxBlackT">
+                                app:cardBackgroundColor="@color/FxBlackW">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -303,7 +303,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="right"
                                 android:layout_marginBottom="80dp"
-                                app:cardBackgroundColor="@color/FxBlackT">
+                                app:cardBackgroundColor="@color/FxBlackW">
 
                                 <RelativeLayout
                                     android:layout_width="wrap_content"

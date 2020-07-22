@@ -49,7 +49,6 @@ class IndexFragment : Fragment() {
         val card2: CardView = view.findViewById(R.id.card2)
         val card3: CardView = view.findViewById(R.id.card3)
         val card4: CardView = view.findViewById(R.id.card4)
-        val card5: CardView = view.findViewById(R.id.card5)
         card1.setOnClickListener {
             CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_ANIMAL_KOHLRABI)
         }
@@ -64,10 +63,6 @@ class IndexFragment : Fragment() {
 
         card4.setOnClickListener {
             CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_TWITTER)
-        }
-
-        card5.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_REVIEW)
         }
         loadADS(view.context, view)
         return view

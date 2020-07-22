@@ -80,9 +80,8 @@ class ArticleActivity : AppCompatActivity() {
                 articleInfoViewModel.addOnReceiveDataListener(object :
                     ObjectViewModel.OnReceiveDataListener {
                     override fun onReceiveData() {
-
+                        //Nothing
                     }
-
                     override fun onFailureReceiveData() {
                         val tv_article_not_found = findViewById<TextView>(R.id.tv_article_not_found)
                         tv_article_not_found.visibility = View.VISIBLE
@@ -124,7 +123,7 @@ class ArticleActivity : AppCompatActivity() {
         adapter.setHasStableIds(true)
         adapter.setListener(object : RecyclerViewAdapterListener<Comment> {
             override fun onTheFirstInit(list: List<Comment>) {
-                // Do something ...
+                //Nothing
             }
 
             override fun onReceiveData() {
@@ -155,7 +154,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
     private var comments: List<Comment> = listOf()
     private var linksIsLoaded: Boolean = false
     private var init: Boolean = false
-    public lateinit var mViewModel: CommentsViewModel
+    lateinit var mViewModel: CommentsViewModel
     private lateinit var mLinksViewModel: LinkViewModel
     private lateinit var mArticle: Article
     private lateinit var mLinks: KaobeiLink
@@ -223,9 +222,6 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
         )
-        //mViewModel.add(0, Comment())
-        //mViewModel.add(1, Comment())
-        //mViewModel.loadComments(article.id, 1)
         mLinksViewModel.loadLink(article.id)
     }
 
