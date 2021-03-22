@@ -49,7 +49,7 @@
             android:textColor="#fafafa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="發文傳送門 https://kaobei.engineer"
+            android:text="發文傳送門 https://init.engineer"
             android:textSize="14sp" />
 
         <TextView

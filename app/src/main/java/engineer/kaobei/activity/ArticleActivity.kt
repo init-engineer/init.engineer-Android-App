@@ -310,7 +310,7 @@ class ArticleRecyclerViewAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
             share.setOnClickListener {
-                setDialog(it, "https://kaobei.engineer/cards/show/" + article.id)
+                setDialog(it, "https://init.engineer/cards/show/" + article.id)
             }
 
             itemView.setOnClickListener {

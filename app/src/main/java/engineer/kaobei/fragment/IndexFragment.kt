@@ -28,11 +28,11 @@ import engineer.kaobei.viewmodel.IndexViewModel
 class IndexFragment : Fragment() {
 
     companion object {
-        val URL_KOBEENGINEER_ANIMAL_KOHLRABI = "https://kaobei.engineer/animal/kohlrabi"
+        val URL_KOBEENGINEER_ANIMAL_KOHLRABI = "https://init.engineer/animal/kohlrabi"
         val URL_KOBEENGINEER_FACEBOOK = "https://www.facebook.com/init.kobeengineer/"
         val URL_KOBEENGINEER_PLURK = "https://plurk.com/kaobei_engineer/"
         val URL_KOBEENGINEER_TWITTER = "https://twitter.com/kaobei_engineer/"
-        val URL_KOBEENGINEER_REVIEW = "https://kaobei.engineer/cards/review"
+        val URL_KOBEENGINEER_REVIEW = "https://init.engineer/cards/review"
     }
 
     private lateinit var viewModel: IndexViewModel

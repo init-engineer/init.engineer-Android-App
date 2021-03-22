@@ -13,7 +13,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
-const val BASE_URL =  "https://kaobei.engineer"
+const val BASE_URL =  "https://init.engineer"
 
 interface KaobeiEngineerService {
 

@@ -36,4 +36,4 @@
 ---
 # 聯絡資訊
 - 信箱 `kantai.developer@gmail.com`
-- 網站 `https://kaobei.engineer/`
+- 網站 `https://init.engineer`

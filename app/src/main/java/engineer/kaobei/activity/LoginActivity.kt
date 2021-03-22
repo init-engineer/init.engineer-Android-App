@@ -41,8 +41,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var authRequestBuilder: AuthorizationRequest.Builder
 
     companion object {
-        private const val AUTHORIZE_ENDPOINT = "https://kaobei.engineer/oauth/authorize"
-        private const val TOKEN_ENDPOINT = "https://kaobei.engineer/oauth/token"
+        private const val AUTHORIZE_ENDPOINT = "https://init.engineer/oauth/authorize"
+        private const val TOKEN_ENDPOINT = "https://init.engineer/oauth/token"
         private lateinit var service: AuthorizationService
         private lateinit var authStateManager: AuthStateManager
         const val RC_AUTH = 0
