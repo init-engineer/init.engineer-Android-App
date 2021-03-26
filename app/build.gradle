@@ -7,9 +7,9 @@ def apiKeyProperties = new Properties()
 apiKeyProperties.load(new FileInputStream(apiKeyPropertiesFile))
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
-    //Facebook Audience0
+    // Facebook Audience0
     packagingOptions {
         exclude 'AndroidManifest.xml'
     }
@@ -17,7 +17,7 @@ android {
     defaultConfig {
         applicationId "engineer.kaobei"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 112
         versionName "1.1.2"
 
@@ -43,13 +43,11 @@ android {
         }
         debug {
 
-
         }
     }
 
     // To inline the bytecode built with JVM target 1.8 into
     // bytecode that is being built with JVM target 1.6. (e.g. navArgs)
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -59,10 +57,10 @@ android {
         jvmTarget = "1.8"
     }
 
-
 }
 
 dependencies {
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -77,36 +75,37 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    //ui
+    // ui
     implementation 'com.google.android.material:material:1.2.0-alpha06'
     implementation 'androidx.browser:browser:1.2.0'
     implementation "androidx.paging:paging-runtime:2.1.2"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
 
-    //ads
+    // ads
     implementation 'com.google.android.gms:play-services-ads:19.1.0'
 
-    //shimmer
+    // shimmer
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
-    //gson
+    // gson
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    //glide
+    // glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    //okHttp
+    // okHttp
     implementation 'com.squareup.okhttp3:okhttp:4.7.1'
     implementation 'com.squareup.retrofit2:retrofit:2.8.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.2'
 
-    //oath2
+    // oath2
     implementation 'net.openid:appauth:0.7.1'
 
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.2.5"
 
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+
 }
