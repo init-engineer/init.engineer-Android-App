@@ -58,11 +58,11 @@ class IndexFragment : Fragment() {
         }
 
         card3.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_PLURK)
+            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_TWITTER)
         }
 
         card4.setOnClickListener {
-            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_TWITTER)
+            CustomTabUtil.createCustomTab(view.context, URL_KOBEENGINEER_PLURK)
         }
         loadADS(view.context, view)
         return view
